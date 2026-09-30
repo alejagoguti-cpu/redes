@@ -12,6 +12,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   
+  <!-- KaTeX Math LaTeX CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
   <!-- Base Theme, Sidebar & Topology Network Styles -->
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/sidebar.css">
@@ -73,7 +78,7 @@
     <main class="main-content">
       <header class="topbar">
         <div class="topbar-title">
-          <i class="fa-solid fa-circle-nodes"></i> Grafo de Red Topológica · Localidad de Kennedy
+          <i class="fa-solid fa-circle-nodes"></i> Grafo de Red Topológica & Cálculo Matemático · Localidad de Kennedy
         </div>
       </header>
 
@@ -81,8 +86,8 @@
       <div class="network-wrapper">
         
         <div class="network-header">
-          <h2>DIAGRAMA DE RED TOPOLÓGICA · KENNEDY</h2>
-          <p>Red de interconexiones cruzadas, relaciones directas e indirectas entre los ejes comerciales, de movilidad y ambientales.</p>
+          <h2>DIAGRAMA DE RED TOPOLÓGICA Y CÁLCULO DE NODOS</h2>
+          <p>Haz clic en cualquier nodo (A1 a C3) o en el nodo central para desplegar la <strong>fórmula matemática explícita</strong>, variables e indicadores cuantitativos (Sentinel-2, SDM, UAESP) y sus fuentes académicas.</p>
         </div>
 
         <!-- Circular Topology Stage -->
@@ -93,9 +98,9 @@
 
           <!-- Central Controller -->
           <div class="central-kennedy-btn" id="centralKennedyBtn">
-            <i class="fa-solid fa-circle-nodes"></i>
+            <i class="fa-solid fa-calculator"></i>
             <span>LOCALIDAD DE KENNEDY</span>
-            <span class="badge">Resetear Grafo</span>
+            <span class="badge">Fórmula General</span>
           </div>
 
         </div>
@@ -116,11 +121,8 @@
           </div>
         </div>
 
-        <!-- Relation Matrix Box -->
-        <div class="relation-details-box" id="relationDetailsBox">
-          <h4><i class="fa-solid fa-diagram-project"></i> Matriz de Relaciones Topológicas de Kennedy</h4>
-          <p>Haz clic en cualquier nodo perimetral (A1 a C3) para ver sus interconexiones complejas y relaciones de impacto directo/indirecto en la red urbana.</p>
-        </div>
+        <!-- Panel Interactivo de Cálculo Matemático -->
+        <div class="calc-panel" id="calculationPanel"></div>
 
       </div>
     </main>
