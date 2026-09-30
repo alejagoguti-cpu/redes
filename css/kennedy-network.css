@@ -544,14 +544,27 @@
   font-size: 16px;
 }
 
-.sub-node-box.highlight {
-  border-color: #e89a6c;
+.sub-node-box.node-green {
+  background: linear-gradient(90deg, #109156 0%, #2bd980 50%, #109156 100%);
+  border: 1px solid #45f59c;
   color: #ffffff;
-  box-shadow: 0 0 20px rgba(232, 154, 108, 0.4);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(16, 145, 86, 0.3);
 }
 
-.sub-node-box.highlight i {
-  color: #e89a6c;
+.sub-node-box.node-green i {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.sub-node-box.highlight-corabastos {
+  background: linear-gradient(90deg, #0e804b 0%, #2bd980 100%);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 20px rgba(43, 217, 128, 0.6);
+  font-size: 13px;
+  padding: 10px 20px;
 }
 
 @media (max-width: 950px) {

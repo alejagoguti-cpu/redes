@@ -254,38 +254,75 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!subnetworkSvgCanvas || !subnetworkModal.classList.contains('active')) return;
     subnetworkSvgCanvas.innerHTML = '';
 
+    // Topology according to the uploaded reference diagram:
+    // 1. Agricultores -> Acopiadores, Contrata Transporte, Transporte Propio
+    // 2. Acopiadores, Contrata Transporte, Transporte Propio -> Mayoristas Corabastos
+    // 3. Mayoristas Corabastos -> Consumidores (direct line down)
+    // 4. Mayoristas Corabastos -> Tiendas, Supermercados, Plazas, Institucionales, Agroalimentarias
+    // 5. Mayoristas Corabastos -> Otros Mayoristas Corabastos
+    // 6. Otros Mayoristas Corabastos -> Plazas, Empresas Agroalimentarias, Consumidores
+    // 7. Distribution channels -> Consumidores
+
     const connections = [
-      { from: 'sn-1', to: 'sn-2' },
-      { from: 'sn-2', to: 'sn-3' },
-      { from: 'sn-3', to: 'sn-4' },
-      { from: 'sn-3', to: 'sn-5' },
-      { from: 'sn-3', to: 'sn-6' },
-      { from: 'sn-3', to: 'sn-7' },
-      { from: 'sn-3', to: 'sn-8' },
-      { from: 'sn-4', to: 'sn-9' },
-      { from: 'sn-5', to: 'sn-9' },
-      { from: 'sn-6', to: 'sn-9' },
-      { from: 'sn-7', to: 'sn-9' },
-      { from: 'sn-8', to: 'sn-9' }
+      // Branch 1: Agricultores to 3 transportation methods
+      { from: 'sn-agricultores', to: 'sn-acopiadores', fromAnchor: 'right', toAnchor: 'left' },
+      { from: 'sn-agricultores', to: 'sn-contrata-transporte', fromAnchor: 'right', toAnchor: 'left' },
+      { from: 'sn-agricultores', to: 'sn-transporte-propio', fromAnchor: 'right', toAnchor: 'left' },
+
+      // Branch 2: 3 transportation methods to Mayoristas Corabastos
+      { from: 'sn-acopiadores', to: 'sn-mayoristas-corabastos', fromAnchor: 'right', toAnchor: 'left' },
+      { from: 'sn-contrata-transporte', to: 'sn-mayoristas-corabastos', fromAnchor: 'right', toAnchor: 'left' },
+      { from: 'sn-transporte-propio', to: 'sn-mayoristas-corabastos', fromAnchor: 'right', toAnchor: 'left' },
+
+      // Branch 3: Mayoristas Corabastos direct connections
+      { from: 'sn-mayoristas-corabastos', to: 'sn-consumidores', fromAnchor: 'left', toAnchor: 'top' },
+      { from: 'sn-mayoristas-corabastos', to: 'sn-otros-mayoristas', fromAnchor: 'right', toAnchor: 'top' },
+      
+      // Mayoristas Corabastos to channels
+      { from: 'sn-mayoristas-corabastos', to: 'sn-tiendas', fromAnchor: 'bottom', toAnchor: 'left' },
+      { from: 'sn-mayoristas-corabastos', to: 'sn-supermercados', fromAnchor: 'bottom', toAnchor: 'left' },
+      { from: 'sn-mayoristas-corabastos', to: 'sn-plazas', fromAnchor: 'bottom', toAnchor: 'left' },
+      { from: 'sn-mayoristas-corabastos', to: 'sn-institucionales', fromAnchor: 'bottom', toAnchor: 'left' },
+      { from: 'sn-mayoristas-corabastos', to: 'sn-agroalimentarias', fromAnchor: 'bottom', toAnchor: 'left' },
+
+      // Otros Mayoristas Corabastos to channels & consumidores
+      { from: 'sn-otros-mayoristas', to: 'sn-plazas', fromAnchor: 'left', toAnchor: 'right' },
+      { from: 'sn-otros-mayoristas', to: 'sn-agroalimentarias', fromAnchor: 'left', toAnchor: 'right' },
+      { from: 'sn-otros-mayoristas', to: 'sn-consumidores', fromAnchor: 'bottom', toAnchor: 'bottom' },
+
+      // Channels to Consumidores
+      { from: 'sn-tiendas', to: 'sn-consumidores', fromAnchor: 'left', toAnchor: 'right' },
+      { from: 'sn-supermercados', to: 'sn-consumidores', fromAnchor: 'left', toAnchor: 'right' },
+      { from: 'sn-plazas', to: 'sn-consumidores', fromAnchor: 'left', toAnchor: 'right' },
+      { from: 'sn-institucionales', to: 'sn-consumidores', fromAnchor: 'left', toAnchor: 'right' },
+      { from: 'sn-agroalimentarias', to: 'sn-consumidores', fromAnchor: 'left', toAnchor: 'right' }
     ];
 
-    connections.forEach(({ from, to }) => {
+    connections.forEach(({ from, to, fromAnchor, toAnchor }) => {
       const elFrom = document.getElementById(from);
       const elTo = document.getElementById(to);
       if (elFrom && elTo) {
         const posFrom = getSubNodePos(elFrom);
         const posTo = getSubNodePos(elTo);
 
-        const startX = posFrom.right;
-        const startY = posFrom.y;
-        const endX = posTo.left;
-        const endY = posTo.y;
+        let startX = posFrom.right;
+        let startY = posFrom.y;
+        if (fromAnchor === 'left') { startX = posFrom.left; startY = posFrom.y; }
+        if (fromAnchor === 'top') { startX = posFrom.x; startY = posFrom.top || (posFrom.y - 15); }
+        if (fromAnchor === 'bottom') { startX = posFrom.x; startY = posFrom.bottom || (posFrom.y + 15); }
+
+        let endX = posTo.left;
+        let endY = posTo.y;
+        if (toAnchor === 'right') { endX = posTo.right; endY = posTo.y; }
+        if (toAnchor === 'top') { endX = posTo.x; endY = posTo.top || (posTo.y - 15); }
+        if (toAnchor === 'bottom') { endX = posTo.x; endY = posTo.bottom || (posTo.y + 15); }
 
         const dx = endX - startX;
-        const cx1 = startX + dx * 0.5;
-        const cy1 = startY;
-        const cx2 = startX + dx * 0.5;
-        const cy2 = endY;
+        const dy = endY - startY;
+        const cx1 = startX + dx * 0.4;
+        const cy1 = startY + dy * 0.1;
+        const cx2 = startX + dx * 0.6;
+        const cy2 = startY + dy * 0.9;
 
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         const d = `M ${startX} ${startY} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${endX} ${endY}`;

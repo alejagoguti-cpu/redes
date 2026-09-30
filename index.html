@@ -146,36 +146,71 @@
     <div class="subnetwork-stage" id="subnetworkStage">
       <svg class="subnetwork-svg" id="subnetworkSvgCanvas"></svg>
 
-      <!-- Col 1: Origen / Producción -->
-      <div class="sub-col" id="col1">
-        <div class="sub-node-box" id="sn-1"><i class="fa-solid fa-wheat-awn"></i> Agricultores / Productores</div>
-      </div>
-
-      <!-- Col 2: Intermediación / Logística regional -->
-      <div class="sub-col" id="col2">
-        <div class="sub-node-box" id="sn-2"><i class="fa-solid fa-truck-moving"></i> Acopiadores y Transportadores</div>
-      </div>
-
-      <!-- Col 3: Central / Corabastos -->
-      <div class="sub-col" id="col3">
-        <div class="sub-node-box highlight" id="sn-3" style="font-size: 14px; padding: 14px 22px;">
-          <i class="fa-solid fa-warehouse"></i> Mayoristas Corabastos
+      <!-- Col 1: Agricultores (Izquierda Centro) -->
+      <div class="sub-col" id="col-agricultores" style="position: absolute; left: 30px; top: 110px;">
+        <div class="sub-node-box node-green" id="sn-agricultores">
+          <i class="fa-solid fa-tractor"></i> Agricultores
         </div>
       </div>
 
-      <!-- Col 4: Canales de Distribución -->
-      <div class="sub-col" id="col4">
-        <div class="sub-node-box" id="sn-4"><i class="fa-solid fa-store"></i> Tiendas de Barrio</div>
-        <div class="sub-node-box" id="sn-5"><i class="fa-solid fa-cart-shopping"></i> Supermercados</div>
-        <div class="sub-node-box" id="sn-6"><i class="fa-solid fa-building-columns"></i> Distribuidores Plazas</div>
-        <div class="sub-node-box" id="sn-7"><i class="fa-solid fa-utensils"></i> Clientes Institucionales</div>
-        <div class="sub-node-box" id="sn-8"><i class="fa-solid fa-industry"></i> Empresas Agroalimentarias</div>
+      <!-- Col 2: Intermediación / Transporte (3 opciones en rama) -->
+      <div class="sub-col" id="col-transporte" style="position: absolute; left: 220px; top: 50px; gap: 20px;">
+        <div class="sub-node-box node-green" id="sn-acopiadores">
+          <i class="fa-solid fa-truck-pickup"></i> Mayoristas, Acopiadores rurales
+        </div>
+        <div class="sub-node-box node-green" id="sn-contrata-transporte">
+          <i class="fa-solid fa-truck-moving"></i> Contrata un transporte
+        </div>
+        <div class="sub-node-box node-green" id="sn-transporte-propio">
+          <i class="fa-solid fa-truck-front"></i> Transporte Propio
+        </div>
       </div>
 
-      <!-- Col 5: Consumo Final -->
-      <div class="sub-col" id="col5">
-        <div class="sub-node-box" id="sn-9" style="border-color: #5b8def;"><i class="fa-solid fa-users"></i> Consumidores Finales</div>
+      <!-- Col 3: Mayoristas Corabastos (Centro Arriba) -->
+      <div class="sub-col" id="col-corabastos" style="position: absolute; left: 520px; top: 85px;">
+        <div class="sub-node-box node-green highlight-corabastos" id="sn-mayoristas-corabastos">
+          <i class="fa-solid fa-truck"></i> Mayoristas Corabastos
+        </div>
       </div>
+
+      <!-- Col 4: Otros Mayoristas Corabastos (Derecha Abajo) -->
+      <div class="sub-col" id="col-otros-corabastos" style="position: absolute; right: 40px; top: 320px;">
+        <div class="sub-node-box node-green" id="sn-otros-mayoristas">
+          <i class="fa-solid fa-truck-fast"></i> Otros Mayoristas Corabastos
+        </div>
+      </div>
+
+      <!-- Col 5: Canales de Distribución (Centro Abajo) -->
+      <div class="sub-col" id="col-canales" style="position: absolute; left: 360px; top: 200px; gap: 10px;">
+        <div class="sub-node-box node-green" id="sn-tiendas">
+          <i class="fa-solid fa-store"></i> Tiendas / Microempresas
+        </div>
+        <div class="sub-node-box node-green" id="sn-supermercados">
+          <i class="fa-solid fa-cart-shopping"></i> Supermercados
+        </div>
+        <div class="sub-node-box node-green" id="sn-plazas">
+          <i class="fa-solid fa-truck-ramp-box"></i> Comercializadores/Distribuidores Plazas
+        </div>
+        <div class="sub-node-box node-green" id="sn-institucionales">
+          <i class="fa-solid fa-building"></i> Clientes Institucionales
+        </div>
+        <div class="sub-node-box node-green" id="sn-agroalimentarias">
+          <i class="fa-solid fa-industry"></i> Empresas Agroalimentarias
+        </div>
+      </div>
+
+      <!-- Col 6: Consumidores (Extremo Izquierda Abajo) -->
+      <div class="sub-col" id="col-consumidores" style="position: absolute; left: 30px; top: 290px;">
+        <div class="sub-node-box node-green" id="sn-consumidores" style="padding: 12px 24px;">
+          <i class="fa-solid fa-users"></i> Consumidores
+        </div>
+      </div>
+
+      <!-- Nota flotante -->
+      <div class="subnetwork-note" style="position: absolute; right: 260px; top: 270px; width: 170px; font-size: 11px; color: #a0aec0; line-height: 1.3; text-align: center; font-style: italic;">
+        Dependiendo del producto y condiciones de oferta y demanda
+      </div>
+
     </div>
   </div>
 
