@@ -128,6 +128,57 @@
 
   </div>
 
+  <!-- Sub-network Modal for Corabastos Logistics Chain -->
+  <div class="subnetwork-modal" id="subnetworkModal">
+    <div class="subnetwork-modal-header">
+      <div class="modal-title-group">
+        <i class="fa-solid fa-truck-ramp-box"></i>
+        <div>
+          <h2>Cadena Logística y Distribución Alimentaria de Corabastos</h2>
+          <p>Red socioecológica-técnica de abastecimiento, intermediación y distribución urbana</p>
+        </div>
+      </div>
+      <button class="close-subnetwork-btn" id="closeSubnetworkBtn">
+        <i class="fa-solid fa-xmark"></i> Cerrar Sub-Red
+      </button>
+    </div>
+
+    <div class="subnetwork-stage" id="subnetworkStage">
+      <svg class="subnetwork-svg" id="subnetworkSvgCanvas"></svg>
+
+      <!-- Col 1: Origen / Producción -->
+      <div class="sub-col" id="col1">
+        <div class="sub-node-box" id="sn-1"><i class="fa-solid fa-wheat-awn"></i> Agricultores / Productores</div>
+      </div>
+
+      <!-- Col 2: Intermediación / Logística regional -->
+      <div class="sub-col" id="col2">
+        <div class="sub-node-box" id="sn-2"><i class="fa-solid fa-truck-moving"></i> Acopiadores y Transportadores</div>
+      </div>
+
+      <!-- Col 3: Central / Corabastos -->
+      <div class="sub-col" id="col3">
+        <div class="sub-node-box highlight" id="sn-3" style="font-size: 14px; padding: 14px 22px;">
+          <i class="fa-solid fa-warehouse"></i> Mayoristas Corabastos
+        </div>
+      </div>
+
+      <!-- Col 4: Canales de Distribución -->
+      <div class="sub-col" id="col4">
+        <div class="sub-node-box" id="sn-4"><i class="fa-solid fa-store"></i> Tiendas de Barrio</div>
+        <div class="sub-node-box" id="sn-5"><i class="fa-solid fa-cart-shopping"></i> Supermercados</div>
+        <div class="sub-node-box" id="sn-6"><i class="fa-solid fa-building-columns"></i> Distribuidores Plazas</div>
+        <div class="sub-node-box" id="sn-7"><i class="fa-solid fa-utensils"></i> Clientes Institucionales</div>
+        <div class="sub-node-box" id="sn-8"><i class="fa-solid fa-industry"></i> Empresas Agroalimentarias</div>
+      </div>
+
+      <!-- Col 5: Consumo Final -->
+      <div class="sub-col" id="col5">
+        <div class="sub-node-box" id="sn-9" style="border-color: #5b8def;"><i class="fa-solid fa-users"></i> Consumidores Finales</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="js/sidebar.js"></script>
   <script src="js/kennedy-network.js"></script>

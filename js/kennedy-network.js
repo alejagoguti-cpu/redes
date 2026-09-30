@@ -176,7 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
       sat.addEventListener('mouseleave', () => hideTooltip());
       sat.addEventListener('click', (e) => {
         e.stopPropagation();
-        showTooltip(item, color);
+        if (item.id === "s1-1") {
+          openSubnetworkModal();
+        } else {
+          showTooltip(item, color);
+        }
       });
 
       stage.appendChild(sat);
@@ -210,5 +214,89 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tooltipCard) tooltipCard.classList.remove('active');
   }
 
-  window.addEventListener('resize', updateConnections);
+  // --- CORABASTOS SUBNETWORK MODAL LOGIC ---
+  const subnetworkModal = document.getElementById('subnetworkModal');
+  const closeSubnetworkBtn = document.getElementById('closeSubnetworkBtn');
+  const subnetworkSvgCanvas = document.getElementById('subnetworkSvgCanvas');
+
+  function openSubnetworkModal() {
+    if (!subnetworkModal) return;
+    subnetworkModal.classList.add('active');
+    setTimeout(drawSubnetworkConnections, 100);
+  }
+
+  function closeSubnetworkModal() {
+    if (subnetworkModal) subnetworkModal.classList.remove('active');
+  }
+
+  if (closeSubnetworkBtn) {
+    closeSubnetworkBtn.addEventListener('click', closeSubnetworkModal);
+  }
+
+  if (subnetworkModal) {
+    subnetworkModal.addEventListener('click', (e) => {
+      if (e.target === subnetworkModal) closeSubnetworkModal();
+    });
+  }
+
+  function getSubNodePos(el) {
+    const stage = document.getElementById('subnetworkStage').getBoundingClientRect();
+    const rect = el.getBoundingClientRect();
+    return {
+      left: rect.left - stage.left,
+      right: rect.right - stage.left,
+      x: rect.left + rect.width / 2 - stage.left,
+      y: rect.top + rect.height / 2 - stage.top
+    };
+  }
+
+  function drawSubnetworkConnections() {
+    if (!subnetworkSvgCanvas || !subnetworkModal.classList.contains('active')) return;
+    subnetworkSvgCanvas.innerHTML = '';
+
+    const connections = [
+      { from: 'sn-1', to: 'sn-2' },
+      { from: 'sn-2', to: 'sn-3' },
+      { from: 'sn-3', to: 'sn-4' },
+      { from: 'sn-3', to: 'sn-5' },
+      { from: 'sn-3', to: 'sn-6' },
+      { from: 'sn-3', to: 'sn-7' },
+      { from: 'sn-3', to: 'sn-8' },
+      { from: 'sn-4', to: 'sn-9' },
+      { from: 'sn-5', to: 'sn-9' },
+      { from: 'sn-6', to: 'sn-9' },
+      { from: 'sn-7', to: 'sn-9' },
+      { from: 'sn-8', to: 'sn-9' }
+    ];
+
+    connections.forEach(({ from, to }) => {
+      const elFrom = document.getElementById(from);
+      const elTo = document.getElementById(to);
+      if (elFrom && elTo) {
+        const posFrom = getSubNodePos(elFrom);
+        const posTo = getSubNodePos(elTo);
+
+        const startX = posFrom.right;
+        const startY = posFrom.y;
+        const endX = posTo.left;
+        const endY = posTo.y;
+
+        const dx = endX - startX;
+        const cx1 = startX + dx * 0.5;
+        const cy1 = startY;
+        const cx2 = startX + dx * 0.5;
+        const cy2 = endY;
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const d = `M ${startX} ${startY} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${endX} ${endY}`;
+        path.setAttribute('d', d);
+        subnetworkSvgCanvas.appendChild(path);
+      }
+    });
+  }
+
+  window.addEventListener('resize', () => {
+    updateConnections();
+    drawSubnetworkConnections();
+  });
 });
