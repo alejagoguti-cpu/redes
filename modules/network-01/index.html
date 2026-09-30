@@ -70,7 +70,7 @@
     transition: left .8s cubic-bezier(.22,1,.36,1), top .8s cubic-bezier(.22,1,.36,1),
                 width .7s cubic-bezier(.22,1,.36,1), height .7s cubic-bezier(.22,1,.36,1), opacity .4s ease, filter .3s ease;
     animation: floatIdle 6s ease-in-out infinite;
-    mix-blend-mode: multiply;
+    opacity: 0.65;
   }
   .blob:hover {
     filter: brightness(1.1) drop-shadow(0 0 25px rgba(99, 102, 241, 0.5)) !important;
@@ -613,17 +613,25 @@
       const dx = b.x - a.x, dy = b.y - a.y;
       const dist = Math.hypot(dx, dy) || 1;
 
-      if (BRIDGES > 0 && dist < 500) {
-        for (let j = 0; j < BRIDGES; j++) {
-          const t = (j + 1) / (BRIDGES + 1);
-          const rr = ((rFrom * (1 - t) + rTo * t) * (1 - t * 0.22)) * 0.46;
-          const bridge = el("blob");
-          gooLayer.appendChild(bridge);
-          bridgeEls.push(bridge);
-          if (colorFrom.startsWith("#") && colorTo.startsWith("#")) bridge.style.background = lerpColor(colorFrom, colorTo, t);
-          size(bridge, rr);
-          place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
-        }
+      if (BRIDGES > 0 && dist < 550) {
+        const angle = Math.atan2(dy, dx);
+        const norm = angle + Math.PI / 2;
+        const wA = rFrom * 0.35;
+        const wB = rTo * 0.35;
+
+        const ax1 = a.x + Math.cos(norm) * wA, ay1 = a.y + Math.sin(norm) * wA;
+        const ax2 = a.x - Math.cos(norm) * wA, ay2 = a.y - Math.sin(norm) * wA;
+        const bx1 = b.x + Math.cos(norm) * wB, by1 = b.y + Math.sin(norm) * wB;
+        const bx2 = b.x - Math.cos(norm) * wB, by2 = b.y - Math.sin(norm) * wB;
+        const cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2;
+
+        const path = document.createElementNS(SVGNS, "path");
+        const dStr = `M ${ax1} ${ay1} Q ${cx} ${cy}, ${bx1} ${by1} L ${bx2} ${by2} Q ${cx} ${cy}, ${ax2} ${ay2} Z`;
+        path.setAttribute("d", dStr);
+        path.setAttribute("fill", colorFrom);
+        path.setAttribute("opacity", "0.28");
+        arrowsSvg.appendChild(path);
+        bridgeEls.push(path);
       }
     });
 
