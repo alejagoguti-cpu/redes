@@ -1,626 +1,214 @@
 /**
- * 3rd Network Layout: Red de Relaciones del Modelo Propio (N1 a N12)
- * 60fps HTML5 Canvas Physics Engine + Tabla de Indicadores Propios vs POT
+ * 2nd Network Layout: Interactive Neon Network Ecosystem
+ * Features: SVG dynamic lines, cluster radial expansion, orbital satellites & tooltips
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const canvas = document.getElementById('networkPhysicsCanvas');
-  const drawer = document.getElementById('calcDrawer');
-  const drawerCloseBtn = document.getElementById('drawerCloseBtn');
-  if (!canvas) return;
+  const centralNode = document.getElementById('centralKennedyNode');
+  const svgCanvas = document.getElementById('networkSvgCanvas');
+  const tooltipCard = document.getElementById('nodeTooltipCard');
 
-  const ctx = canvas.getContext('2d');
+  const clusters = document.querySelectorAll('.cluster-node');
+  let isCentralOpen = false;
 
-  // Exact 12 Nodes [N1] to [N12]
-  const rawNodes = [
-    // CAPA 1: Centralidades Comerciales, Logísticas e Industriales (#e89a6c)
-    {
-      id: "N1",
-      code: "[N1]",
-      label: "Corabastos y Centralidad Mayorista (María Paz)",
-      layer: "1",
-      layerName: "Capa 1: Comercio & Logística",
-      role: "Hub de Influencia (Grado Saliente Alto)",
-      radius: 34,
-      color: "#e89a6c",
-      glow: "#e89a6c",
-      desc: "Punto de concentración alimentario regional que genera flujos masivos de transporte pesado y toneladas diarias de residuos orgánicos.",
-      potDeficiente: "Clasificación de uso del suelo (Comercial / Zona de Abastecimiento). Ignora las tasas reales de lixiviados y carga logística.",
-      modeloPropio: "Tasa de Generación y Vertimiento de Carga Orgánica/Industrial No Tratada.",
-      queMide: "Mide las toneladas reales de residuos y lixiviados que llegan a la cuenca hídrica desde Corabastos y Carvajal.",
-      mecanismo: "Inyecta camiones pesados deteriorando la malla vial local (N8) y filtra lixiviados acelerando la eutrofización en Humedal La Vaca (N10)."
-    },
-    {
-      id: "N2",
-      code: "[N2]",
-      label: "Zona Industrial de Carvajal (Bodegaje & Manufactura)",
-      layer: "1",
-      layerName: "Capa 1: Comercio & Logística",
-      role: "Nodo de Entrada de Carga Industrial",
-      radius: 28,
-      color: "#e89a6c",
-      glow: "#e89a6c",
-      desc: "Polígono de pequeñas y grandes industrias (plásticos, metalmecánica) con alta demanda de almacenamiento y transporte de insumos.",
-      potDeficiente: "Clasificación de uso del suelo (Industrial).",
-      modeloPropio: "Tasa de Generación y Vertimiento de Carga Orgánica/Industrial No Tratada.",
-      queMide: "Mide las toneladas reales de vertimientos industriales no tratados hacia la cuenca del Río Fucha.",
-      mecanismo: "Descarga tráfico pesado sobre la Av. Ciudad de Cali (N6) y pavimenta suelo de absorción."
-    },
-    {
-      id: "N3",
-      code: "[N3]",
-      label: "Corredor de Carga Calle 13 / AE09 (Distrito Aeroportuario)",
-      layer: "1",
-      layerName: "Capa 1: Comercio & Logística",
-      role: "Nodo de Entrada Metropolitana",
-      radius: 28,
-      color: "#e89a6c",
-      glow: "#e89a6c",
-      desc: "Arteria de articulación metropolitana que inyecta transporte pesado de carga hacia el norte de la localidad.",
-      potDeficiente: "Clasificación de uso del suelo (Corredor de Carga).",
-      modeloPropio: "Tasa de Generación y Vertimiento de Carga Orgánica/Industrial No Tratada.",
-      queMide: "Mide la inyección masiva de transporte de carga pesada sobre el borde residencial norte de Kennedy.",
-      mecanismo: "Inyecta congestión de carga hacia la red primaria de Kennedy (N6)."
-    },
-    {
-      id: "N4",
-      code: "[N4]",
-      label: "Comercio Popular e Informal (Patio Bonito / Tintal / Kennedy Central)",
-      layer: "1",
-      layerName: "Capa 1: Comercio & Logística",
-      role: "Nodo de Abastecimiento Popular",
-      radius: 26,
-      color: "#e89a6c",
-      glow: "#e89a6c",
-      desc: "Redes de comercio en espacio público que sostienen el abastecimiento vecinal directo.",
-      potDeficiente: "Infracción o uso no permitido del suelo.",
-      modeloPropio: "Tasa de Generación y Vertimiento de Carga Orgánica/Industrial No Tratada.",
-      queMide: "Mide la basura comercial no recolectada en la fuente que termina en los drenajes pluviales.",
-      mecanismo: "Sobrecarga la malla vial de barrio (N8) con desechos comerciales."
-    },
+  const satelliteData = {
+    "1": [
+      { id: "s1-1", title: "Corabastos y María Paz", icon: "fa-warehouse", desc: "Principal centro de acopio alimentario y logística de gran escala." },
+      { id: "s1-2", title: "Zona Industrial Carvajal", icon: "fa-industry", desc: "Concentración manufacturera, de transformación e industria ligera." },
+      { id: "s1-3", title: "Corredor Calle 13 / AE09", icon: "fa-road", desc: "Eje de carga pesada e integración metropolitana occidente." },
+      { id: "s1-4", title: "Comercio informal (Patio Bonito, Tintal, Bosa)", icon: "fa-shop", desc: "Dinámicas comerciales espontáneas en bordes urbanos." }
+    ],
+    "2": [
+      { id: "s2-1", title: "Banderas (Av. Américas)", icon: "fa-bus", desc: "Nodo multimodal de alta fricción de movilidad y pasajeros." },
+      { id: "s2-2", title: "Av. Ciudad de Cali", icon: "fa-route", desc: "Corredor estructurante saturado por alta carga vehicular." },
+      { id: "s2-3", title: "Av. Boyacá & Cepeda Vargas", icon: "fa-car", desc: "Intersección crítica con cuellos de botella diarios." },
+      { id: "s2-4", title: "Embudo de flujos (Bosa, Soacha, Fontibón)", icon: "fa-arrows-to-dot", desc: "Convergencia masiva de desplazamientos intermunicipales." }
+    ],
+    "3": [
+      { id: "s3-1", title: "Humedales El Burro, La Vaca y Techo", icon: "fa-water", desc: "Ecosistemas estratégicos amenazados por presión urbana." },
+      { id: "s3-2", title: "Ríos Fucha y Tunjuelito", icon: "fa-water-ladder", desc: "Cuerpos hídricos principales impactados por vertimientos." },
+      { id: "s3-3", title: "Escorrentía en suelo duro (Castilla, Dindalito)", icon: "fa-cloud-showers-heavy", desc: "Impermeabilización crítica y riesgo de inundación." }
+    ]
+  };
 
-    // CAPA 2: Redes de Movilidad e Infraestructura Física (#f59e0b)
-    {
-      id: "N5",
-      code: "[N5]",
-      label: "Estación Banderas (Nodo de Transferencia Av. de las Américas)",
-      layer: "2",
-      layerName: "Capa 2: Movilidad & Flujos",
-      role: "Hub de Vulnerabilidad (Grado Entrante Alto)",
-      radius: 34,
-      color: "#f59e0b",
-      glow: "#f59e0b",
-      desc: "Embudo de transporte masivo donde converge la población residente y flotante en horas pico.",
-      potDeficiente: "Distancia plana de 500 m a estaciones (Proximidad teórica de 15 minutos).",
-      modeloPropio: "Índice de Hacinamiento en Andén (pers/m²) y Tiempo Real de Viaje (>60 min).",
-      queMide: "Mide las filas de más de 4 pers/m² y los sobretiempos (>60 min) causados por el embudo de Bosa y Soacha en Banderas.",
-      mecanismo: "Recibe el flujo masivo de Soacha/Bosa (N7) y el colapso de andenes ralentiza la malla vial de barrio (N8)."
-    },
-    {
-      id: "N6",
-      code: "[N6]",
-      label: "Corredor Arterial Av. Ciudad de Cali",
-      layer: "2",
-      layerName: "Capa 2: Movilidad & Flujos",
-      role: "Hub de Influencia & Nodo Puente Intercapa",
-      radius: 34,
-      color: "#f59e0b",
-      glow: "#f59e0b",
-      desc: "Eje longitudinal de alta velocidad y carga que atraviesa y fracciona físicamente el territorio.",
-      potDeficiente: "Distancia plana de 500 m a estaciones (Proximidad teórica).",
-      modeloPropio: "Índice de Hacinamiento en Andén (pers/m²) y Tiempo Real de Viaje.",
-      queMide: "Mide el colapso vehicular y la fricción espacial que fragmentó el Humedal El Burro.",
-      mecanismo: "Transmite ruido (>75 dB) y escorrentía con hidrocarburos al Humedal El Burro (N9)."
-    },
-    {
-      id: "N7",
-      code: "[N7]",
-      label: "Flujos Pendulares Extralocales (Soacha y Bosa → Kennedy)",
-      layer: "2",
-      layerName: "Capa 2: Movilidad & Flujos",
-      role: "Nodo de Presión Flotante Metodológico",
-      radius: 28,
-      color: "#f59e0b",
-      glow: "#f59e0b",
-      desc: "Cientos de miles de viajes diarios de paso que ingresan a Kennedy buscando acceso al centro de Bogotá.",
-      potDeficiente: "Invisibilizado por límites administrativos de UPZ.",
-      modeloPropio: "Índice de Hacinamiento en Andén (pers/m²) y Tiempo Real de Viaje.",
-      queMide: "Mide los sobretiempos de viaje causados por los flujos de pasajeros flotantes de Bosa y Soacha.",
-      mecanismo: "Empuja oleadas de viajeros embudándose en la Estación Banderas (N5)."
-    },
-    {
-      id: "N8",
-      code: "[N8]",
-      label: "Malla Vial Local y Conectores de Barrio",
-      layer: "2",
-      layerName: "Capa 2: Movilidad & Flujos",
-      role: "Nodo Receptor de Fricción Vial",
-      radius: 26,
-      color: "#f59e0b",
-      glow: "#f59e0b",
-      desc: "Vías de escala residencial sobrecargadas por el desvío de tráfico pesado y particular.",
-      potDeficiente: "Distancia plana de 500 m a estaciones.",
-      modeloPropio: "Índice de Hacinamiento en Andén (pers/m²) y Tiempo Real de Viaje.",
-      queMide: "Mide el retraso de alimentadores de barrio atrapados en la congestión vial local.",
-      mecanismo: "Recibe el desvío de camiones de Corabastos (N1) e inhibe la velocidad de alimentadores a Banderas (N5)."
-    },
-
-    // CAPA 3: Ecosistema, Agua y Metabolismo Territorial (#2fd4c8)
-    {
-      id: "N9",
-      code: "[N9]",
-      label: "Humedal El Burro (Fraccionado en dos por la Av. Cali)",
-      layer: "3",
-      layerName: "Capa 3: Ecosistema & Agua",
-      role: "Hub de Vulnerabilidad (Grado Entrante Alto)",
-      radius: 34,
-      color: "#2fd4c8",
-      glow: "#2fd4c8",
-      desc: "Reserva ecológica reducida históricamente a 18.8 ha (con solo 0.2 ha de espejo de agua) dividida por el asfalto.",
-      potDeficiente: "Área de Parque Ecológico delimitada en hectáreas en el mapa.",
-      modeloPropio: "Índice de Presión Sonora (>75 dB) y Porcentaje de Infiltración Efectiva.",
-      queMide: "Mide el ruido vehicular continuo (>75 dB) en la ronda de El Burro y la pérdida de capacidad del suelo para absorber agua de lluvia.",
-      mecanismo: "Sufre la presión de ruido/escorrentía de la Av. Cali (N6) y la falta de infiltración por suelo duro (N12)."
-    },
-    {
-      id: "N10",
-      code: "[N10]",
-      label: "Humedal La Vaca (Impactado por Lixiviados / Vertimientos)",
-      layer: "3",
-      layerName: "Capa 3: Ecosistema & Agua",
-      role: "Hub de Vulnerabilidad Hídrico-Sanitaria",
-      radius: 32,
-      color: "#2fd4c8",
-      glow: "#2fd4c8",
-      desc: "Ecosistema en la zona de influencia directa de Corabastos afectado por basura y carga contaminante.",
-      potDeficiente: "Área de Parque Ecológico delimitada en hectáreas en el mapa.",
-      modeloPropio: "Índice de Presión Sonora (>75 dB) y Porcentaje de Infiltración Efectiva.",
-      queMide: "Mide el deterioro de la calidad del agua por lixiviados y la pérdida de suelo de absorción.",
-      mecanismo: "Recibe basuras y lixiviados directos de Corabastos (N1) dañando su capacidad depuradora."
-    },
-    {
-      id: "N11",
-      code: "[N11]",
-      label: "Humedal Techo y Matriz Hídrica Fucha-Tunjuelito",
-      layer: "3",
-      layerName: "Capa 3: Ecosistema & Agua",
-      role: "Nodo Receptáculo de Cuenca Hidrográfica",
-      radius: 28,
-      color: "#2fd4c8",
-      glow: "#2fd4c8",
-      desc: "Canales y cuencas receptoras de la escorrentía pluvial urbana de toda la localidad.",
-      potDeficiente: "Área de Parque Ecológico delimitada en hectáreas en el mapa.",
-      modeloPropio: "Índice de Presión Sonora (>75 dB) y Porcentaje de Infiltración Efectiva.",
-      queMide: "Mide la sobrecarga de escorrentía pluvial no infiltrada que satura la cuenca hídrica.",
-      mecanismo: "Recibe el caudal de escorrentía no infiltrado del suelo pavimentado (N12)."
-    },
-    {
-      id: "N12",
-      code: "[N12]",
-      label: "Suelo Impermeabilizado y Cemento (Castilla / Tintal / Patio Bonito)",
-      layer: "3",
-      layerName: "Capa 3: Ecosistema & Agua",
-      role: "Nodo Puente / Articulador Intercapa (Cero Infiltración)",
-      radius: 34,
-      color: "#2fd4c8",
-      glow: "#2fd4c8",
-      desc: "Superficie pavimentada masiva que anula la capacidad de infiltración del terreno como 'ciudad esponja'.",
-      potDeficiente: "Área de Parque Ecológico delimitada en hectáreas en el mapa.",
-      modeloPropio: "Índice de Presión Sonora (>75 dB) y Porcentaje de Infiltración Efectiva.",
-      queMide: "Mide el porcentaje de pavimento (NDBI) que impide que el agua de lluvia se hunda, provocando inundaciones de calle.",
-      mecanismo: "Anula la infiltración (Causal -) hacia N9, N10 y N11, disparando encharcamientos e inundaciones."
-    }
-  ];
-
-  // Direct Connections Matrix
-  const linksData = [
-    { source: "N1", target: "N8", type: "Flujo de Carga", label: "N1 -> N8: Corabastos inyecta camiones a calles residenciales de María Paz" },
-    { source: "N1", target: "N10", type: "Causal + (Lixiviados)", label: "N1 -> N10: Desperdicios sin tratar filtran contaminantes al Humedal La Vaca" },
-    { source: "N7", target: "N5", type: "Flujo Pasajeros", label: "N7 -> N5: Demanda pendular de Soacha/Bosa sobrecarga andenes de Banderas" },
-    { source: "N6", target: "N9", type: "Causal + (Ruido >75dB)", label: "N6 -> N9: Av. Cali transmite vibración y ruido asustando la avifauna de El Burro" },
-    { source: "N12", target: "N9", type: "Causal - (Cero Infiltración)", label: "N12 -> N9: Suelo pavimentado impide infiltración en Humedal El Burro" },
-    { source: "N12", target: "N10", type: "Causal - (Cero Infiltración)", label: "N12 -> N10: Suelo pavimentado impide infiltración en Humedal La Vaca" },
-    { source: "N12", target: "N11", type: "Causal - (Cero Infiltración)", label: "N12 -> N11: Suelo duro anula infiltración y dispara inundaciones pluviales" },
-    { source: "N5", target: "N8", type: "Retroalimentación +", label: "N5 -> N8: Colapso en Banderas ralentiza alimentadores paralizando la movilidad local" },
-    { source: "N2", target: "N6", type: "Flujo Industrial", label: "N2 -> N6: Zona Industrial Carvajal inyecta tráfico pesado a Av. Cali" },
-    { source: "N3", target: "N6", type: "Carga Metropolitana", label: "N3 -> N6: Carga de Calle 13 / AE09 descarga hacia el corredor de Av. Cali" },
-    { source: "N4", target: "N8", type: "Residuos Urbanos", label: "N4 -> N8: Comercio informal sobrecarga espacio público y calles de barrio" },
-    { source: "N8", target: "N5", type: "Saturación Local", label: "N8 -> N5: Alimentadores de barrio convergen embudándose en Banderas" }
-  ];
-
-  let nodes = [];
-  let links = [];
-  let particles = [];
-  let width = 0;
-  let height = 0;
-  let activeFilter = 'ALL';
-  let hoveredNode = null;
-  let selectedNode = null;
-  let draggedNode = null;
-
-  function resizeCanvas() {
-    const parent = canvas.parentElement;
-    width = parent.clientWidth;
-    height = parent.clientHeight;
-    canvas.width = width * window.devicePixelRatio;
-    canvas.height = height * window.devicePixelRatio;
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-
-    if (nodes.length === 0) {
-      initPhysicsNodes();
-    }
-  }
-
-  function initPhysicsNodes() {
-    const cx = width / 2;
-
-    nodes = rawNodes.map((rn) => {
-      let layerY = height * 0.22;
-      if (rn.layer === "2") layerY = height * 0.5;
-      if (rn.layer === "3") layerY = height * 0.78;
-
-      return {
-        ...rn,
-        x: cx + (Math.random() - 0.5) * (width * 0.75),
-        y: layerY + (Math.random() - 0.5) * 35,
-        vx: 0,
-        vy: 0,
-        visible: true
-      };
-    });
-
-    links = linksData.map(l => ({
-      ...l,
-      sourceNode: nodes.find(n => n.id === l.source),
-      targetNode: nodes.find(n => n.id === l.target)
-    })).filter(l => l.sourceNode && l.targetNode);
-
-    particles = [];
-    for (let i = 0; i < 35; i++) {
-      const link = links[Math.floor(Math.random() * links.length)];
-      particles.push({
-        link,
-        progress: Math.random(),
-        speed: 0.003 + Math.random() * 0.004
-      });
-    }
-  }
-
-  function updatePhysics() {
-    const repulsion = 2200;
-    const kSpring = 0.003;
-    const damping = 0.82;
-
-    for (let i = 0; i < nodes.length; i++) {
-      if (!nodes[i].visible) continue;
-      for (let j = i + 1; j < nodes.length; j++) {
-        if (!nodes[j].visible) continue;
-
-        let dx = nodes[j].x - nodes[i].x;
-        let dy = nodes[j].y - nodes[i].y;
-        let distSq = dx * dx + dy * dy + 1;
-        let dist = Math.sqrt(distSq);
-
-        if (dist < 280) {
-          let force = (repulsion / distSq);
-          let fx = (dx / dist) * force;
-          let fy = (dy / dist) * force;
-
-          nodes[i].vx -= fx;
-          nodes[i].vy -= fy;
-          nodes[j].vx += fx;
-          nodes[j].vy += fy;
-        }
-      }
-    }
-
-    links.forEach(l => {
-      if (!l.sourceNode.visible || !l.targetNode.visible) return;
-      let dx = l.targetNode.x - l.sourceNode.x;
-      let dy = l.targetNode.y - l.sourceNode.y;
-      let dist = Math.sqrt(dx * dx + dy * dy) || 1;
-      let targetDist = 130;
-      let force = (dist - targetDist) * kSpring;
-
-      let fx = (dx / dist) * force;
-      let fy = (dy / dist) * force;
-
-      l.sourceNode.vx += fx;
-      l.sourceNode.vy += fy;
-      l.targetNode.vx -= fx;
-      l.targetNode.vy -= fy;
-    });
-
-    nodes.forEach(n => {
-      if (!n.visible) return;
-      if (n === draggedNode) return;
-
-      let targetY = height * 0.22;
-      if (n.layer === "2") targetY = height * 0.5;
-      if (n.layer === "3") targetY = height * 0.78;
-
-      n.vy += (targetY - n.y) * 0.01;
-
-      n.vx *= damping;
-      n.vy *= damping;
-
-      n.x += n.vx;
-      n.y += n.vy;
-
-      n.x = Math.max(n.radius + 10, Math.min(width - n.radius - 10, n.x));
-      n.y = Math.max(n.radius + 10, Math.min(height - n.radius - 10, n.y));
-    });
-
-    particles.forEach(p => {
-      p.progress += p.speed;
-      if (p.progress >= 1) p.progress = 0;
-    });
-  }
-
-  function drawFrame() {
-    ctx.clearRect(0, 0, width, height);
-
-    links.forEach(l => {
-      if (!l.sourceNode.visible || !l.targetNode.visible) return;
-
-      const isHighlight = (hoveredNode && (l.sourceNode === hoveredNode || l.targetNode === hoveredNode)) ||
-                          (selectedNode && (l.sourceNode === selectedNode || l.targetNode === selectedNode));
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(l.sourceNode.x, l.sourceNode.y);
-      ctx.lineTo(l.targetNode.x, l.targetNode.y);
-
-      if (isHighlight) {
-        ctx.strokeStyle = l.sourceNode.color;
-        ctx.lineWidth = 3.5;
-        ctx.shadowColor = l.sourceNode.color;
-        ctx.shadowBlur = 14;
-      } else {
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
-        ctx.lineWidth = 1.4;
-        ctx.setLineDash([4, 5]);
-      }
-      ctx.stroke();
-
-      const dx = l.targetNode.x - l.sourceNode.x;
-      const dy = l.targetNode.y - l.sourceNode.y;
-      const angle = Math.atan2(dy, dx);
-      const arrowDist = l.targetNode.radius + 6;
-      const ax = l.targetNode.x - arrowDist * Math.cos(angle);
-      const ay = l.targetNode.y - arrowDist * Math.sin(angle);
-
-      ctx.beginPath();
-      ctx.fillStyle = isHighlight ? l.sourceNode.color : '#8a96a8';
-      ctx.moveTo(ax, ay);
-      ctx.lineTo(ax - 10 * Math.cos(angle - Math.PI / 7), ay - 10 * Math.sin(angle - Math.PI / 7));
-      ctx.lineTo(ax - 10 * Math.cos(angle + Math.PI / 7), ay - 10 * Math.sin(angle + Math.PI / 7));
-      ctx.fill();
-
-      ctx.restore();
-    });
-
-    particles.forEach(p => {
-      if (!p.link.sourceNode.visible || !p.link.targetNode.visible) return;
-      const x = p.link.sourceNode.x + (p.link.targetNode.x - p.link.sourceNode.x) * p.progress;
-      const y = p.link.sourceNode.y + (p.link.targetNode.y - p.link.sourceNode.y) * p.progress;
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(x, y, 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = p.link.sourceNode.color;
-      ctx.shadowColor = p.link.sourceNode.color;
-      ctx.shadowBlur = 10;
-      ctx.fill();
-      ctx.restore();
-    });
-
-    nodes.forEach(n => {
-      if (!n.visible) return;
-
-      const isHover = n === hoveredNode;
-      const isSel = n === selectedNode;
-      const r = isHover || isSel ? n.radius * 1.14 : n.radius;
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
-      let grad = ctx.createRadialGradient(n.x, n.y, r * 0.3, n.x, n.y, r);
-      grad.addColorStop(0, '#141c2b');
-      grad.addColorStop(1, '#090e18');
-      ctx.fillStyle = grad;
-      ctx.lineWidth = isHover || isSel ? 3.5 : 2;
-      ctx.strokeStyle = n.color;
-      ctx.shadowColor = n.glow;
-      ctx.shadowBlur = isHover || isSel ? 28 : 14;
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 12px "Space Grotesk", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(n.id, n.x, n.y);
-
-      ctx.fillStyle = isHover || isSel ? '#ffffff' : '#cbd5e1';
-      ctx.font = `${isHover || isSel ? 'bold 11px' : '500 10.5px'} "Inter", sans-serif`;
-      ctx.fillText(n.label, n.x, n.y + r + 15);
-
-      ctx.restore();
-    });
-  }
-
-  function animate() {
-    updatePhysics();
-    drawFrame();
-    requestAnimationFrame(animate);
-  }
-
-  function getNodeAt(mx, my) {
-    for (let i = nodes.length - 1; i >= 0; i--) {
-      let n = nodes[i];
-      if (!n.visible) continue;
-      let dx = mx - n.x;
-      let dy = my - n.y;
-      if (Math.sqrt(dx * dx + dy * dy) <= n.radius + 8) {
-        return n;
-      }
-    }
-    return null;
-  }
-
-  function getMousePos(e) {
-    const rect = canvas.getBoundingClientRect();
+  function getCenterPos(el) {
+    const stage = document.getElementById('graphStage').getBoundingClientRect();
+    const rect = el.getBoundingClientRect();
     return {
-      x: (e.clientX || e.touches[0].clientX) - rect.left,
-      y: (e.clientY || e.touches[0].clientY) - rect.top
+      x: rect.left + rect.width / 2 - stage.left,
+      y: rect.top + rect.height / 2 - stage.top
     };
   }
 
-  canvas.addEventListener('mousemove', (e) => {
-    const pos = getMousePos(e);
-    if (draggedNode) {
-      draggedNode.x = pos.x;
-      draggedNode.y = pos.y;
+  function drawConnection(id, startPos, endPos, color, isActive = false) {
+    let path = document.getElementById(id);
+    if (!path) {
+      path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('id', id);
+      path.setAttribute('class', 'connection-line');
+      svgCanvas.appendChild(path);
+    }
+
+    const dx = endPos.x - startPos.x;
+    const dy = endPos.y - startPos.y;
+    const cx1 = startPos.x + dx * 0.4;
+    const cy1 = startPos.y;
+    const cx2 = startPos.x + dx * 0.6;
+    const cy2 = endPos.y;
+
+    const d = `M ${startPos.x} ${startPos.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${endPos.x} ${endPos.y}`;
+    path.setAttribute('d', d);
+    path.setAttribute('stroke', color);
+    if (isActive) {
+      path.classList.add('active');
     } else {
-      hoveredNode = getNodeAt(pos.x, pos.y);
+      path.classList.remove('active');
     }
-  });
-
-  canvas.addEventListener('mousedown', (e) => {
-    const pos = getMousePos(e);
-    const n = getNodeAt(pos.x, pos.y);
-    if (n) {
-      draggedNode = n;
-      selectNode(n);
-    }
-  });
-
-  window.addEventListener('mouseup', () => {
-    draggedNode = null;
-  });
-
-  canvas.addEventListener('touchstart', (e) => {
-    const pos = getMousePos(e);
-    const n = getNodeAt(pos.x, pos.y);
-    if (n) {
-      draggedNode = n;
-      selectNode(n);
-    }
-  }, { passive: true });
-
-  canvas.addEventListener('touchmove', (e) => {
-    if (draggedNode) {
-      const pos = getMousePos(e);
-      draggedNode.x = pos.x;
-      draggedNode.y = pos.y;
-    }
-  }, { passive: true });
-
-  canvas.addEventListener('touchend', () => {
-    draggedNode = null;
-  });
-
-  function selectNode(node) {
-    selectedNode = node;
-    if (!node || !drawer) return;
-
-    drawer.style.setProperty('--drawer-color', node.color);
-    drawer.querySelector('.drawer-title h3').textContent = `${node.code} ${node.label}`;
-    drawer.querySelector('.drawer-tag').textContent = `${node.layerName.toUpperCase()} · ${node.role}`;
-    drawer.querySelector('.drawer-desc').textContent = node.desc;
-
-    const compContainer = drawer.querySelector('.comparison-box');
-    compContainer.innerHTML = `
-      <div class="comp-row">
-        <span class="comp-label">Indicador Plano del POT (Deficiente)</span>
-        <div class="comp-val-pot">${node.potDeficiente}</div>
-      </div>
-      <div class="comp-row">
-        <span class="comp-label">Indicador Propuesto por Modelo Propio</span>
-        <div class="comp-val-propio">${node.modeloPropio}</div>
-      </div>
-      <div class="comp-row" style="margin-top:4px;">
-        <span class="comp-label">¿Qué mide en Kennedy que el POT ignora?</span>
-        <div style="font-size:11.5px; color:#cbd5e1; line-height:1.4">${node.queMide}</div>
-      </div>
-    `;
-
-    const connectedLinks = links.filter(l => l.sourceNode === node || l.targetNode === node);
-    const relsContainer = drawer.querySelector('.relations-list');
-    relsContainer.innerHTML = connectedLinks.map(l => `
-      <div class="rel-item">
-        <strong>${l.type}</strong>: ${l.label}
-      </div>
-    `).join('');
-
-    drawer.querySelector('.drawer-mecanismo').textContent = node.mecanismo;
-
-    drawer.classList.add('open');
   }
 
-  if (drawerCloseBtn) {
-    drawerCloseBtn.addEventListener('click', () => {
-      drawer.classList.remove('open');
-      selectedNode = null;
-    });
+  function removeConnection(id) {
+    const path = document.getElementById(id);
+    if (path) path.remove();
   }
 
-  // Interactive Table Rows Clicking Handler
-  const tableRows = document.querySelectorAll('.comparison-table tr[data-filter-fen]');
-  tableRows.forEach(row => {
-    row.addEventListener('click', () => {
-      const fen = row.getAttribute('data-filter-fen');
-      tableRows.forEach(r => r.classList.remove('active-row'));
-      row.classList.add('active-row');
+  function updateConnections() {
+    if (!isCentralOpen || !centralNode) return;
+    const cPos = getCenterPos(centralNode);
 
-      filterBtns.forEach(b => b.classList.remove('active'));
-      const targetBtn = document.querySelector(`.graph-btn[data-filter="${fen}"]`);
-      if (targetBtn) targetBtn.classList.add('active');
+    clusters.forEach(cluster => {
+      if (cluster.classList.contains('visible')) {
+        const clusterId = cluster.getAttribute('data-cluster');
+        const clPos = getCenterPos(cluster);
+        const color = getComputedStyle(cluster).getPropertyValue('--cluster-color').trim() || '#2fd4c8';
+        drawConnection(`line-central-${clusterId}`, cPos, clPos, color, cluster.classList.contains('active'));
 
-      nodes.forEach(n => {
-        n.visible = (n.layer === fen);
-      });
-    });
-  });
-
-  const filterBtns = document.querySelectorAll('.graph-btn[data-filter]');
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeFilter = btn.getAttribute('data-filter');
-
-      tableRows.forEach(r => r.classList.remove('active-row'));
-      const activeRow = document.querySelector(`.comparison-table tr[data-filter-fen="${activeFilter}"]`);
-      if (activeRow) activeRow.classList.add('active-row');
-
-      nodes.forEach(n => {
-        if (activeFilter === 'ALL') {
-          n.visible = true;
-        } else if (activeFilter === 'HUBS') {
-          n.visible = (n.id === 'N1' || n.id === 'N6' || n.id === 'N9' || n.id === 'N10' || n.id === 'N5' || n.id === 'N12');
-        } else {
-          n.visible = (n.layer === activeFilter);
+        if (cluster.classList.contains('active')) {
+          const satellites = document.querySelectorAll(`.satellite-node[data-parent="${clusterId}"]`);
+          satellites.forEach(sat => {
+            const satPos = getCenterPos(sat);
+            drawConnection(`line-sat-${sat.id}`, clPos, satPos, color, true);
+          });
         }
-      });
-    });
-  });
-
-  const resetBtn = document.getElementById('resetPhysicsBtn');
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      initPhysicsNodes();
-      if (drawer) drawer.classList.remove('open');
-      tableRows.forEach(r => r.classList.remove('active-row'));
-      filterBtns.forEach(b => b.classList.remove('active'));
-      document.querySelector('.graph-btn[data-filter="ALL"]').classList.add('active');
-      selectedNode = null;
+      }
     });
   }
 
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
-  animate();
+  if (centralNode) {
+    centralNode.addEventListener('click', () => {
+      isCentralOpen = !isCentralOpen;
+
+      if (isCentralOpen) {
+        centralNode.classList.add('active');
+        clusters.forEach((cluster, idx) => {
+          setTimeout(() => {
+            cluster.classList.add('visible', 'floating');
+            updateConnections();
+          }, idx * 180);
+        });
+      } else {
+        centralNode.classList.remove('active');
+        clusters.forEach(cluster => {
+          cluster.classList.remove('visible', 'active');
+          const clusterId = cluster.getAttribute('data-cluster');
+          removeConnection(`line-central-${clusterId}`);
+          removeSatellites(clusterId);
+        });
+        hideTooltip();
+      }
+    });
+  }
+
+  clusters.forEach(cluster => {
+    cluster.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const clusterId = cluster.getAttribute('data-cluster');
+      const isActive = cluster.classList.contains('active');
+
+      if (isActive) {
+        cluster.classList.remove('active');
+        removeSatellites(clusterId);
+        hideTooltip();
+      } else {
+        cluster.classList.add('active');
+        spawnSatellites(cluster, clusterId);
+      }
+      setTimeout(updateConnections, 50);
+    });
+  });
+
+  function spawnSatellites(clusterEl, clusterId) {
+    removeSatellites(clusterId);
+    const items = satelliteData[clusterId] || [];
+    const clPos = getCenterPos(clusterEl);
+    const stage = document.getElementById('graphStage');
+    const color = getComputedStyle(clusterEl).getPropertyValue('--cluster-color').trim() || '#2fd4c8';
+
+    const radius = 135;
+    let baseAngle = 0;
+    if (clusterId === "1") baseAngle = -45;
+    if (clusterId === "2") baseAngle = 225;
+    if (clusterId === "3") baseAngle = 90;
+
+    const totalAngle = 140;
+    const stepAngle = items.length > 1 ? totalAngle / (items.length - 1) : 0;
+    const startAngle = baseAngle - totalAngle / 2;
+
+    items.forEach((item, index) => {
+      const sat = document.createElement('div');
+      sat.className = 'satellite-node floating';
+      sat.id = item.id;
+      sat.setAttribute('data-parent', clusterId);
+      sat.style.setProperty('--parent-color', color);
+
+      const angle = (startAngle + index * stepAngle) * (Math.PI / 180);
+      const x = clPos.x + radius * Math.cos(angle) - 47.5;
+      const y = clPos.y + radius * Math.sin(angle) - 47.5;
+
+      sat.style.left = `${x}px`;
+      sat.style.top = `${y}px`;
+
+      sat.innerHTML = `
+        <i class="fa-solid ${item.icon}"></i>
+        <span>${item.title}</span>
+      `;
+
+      sat.addEventListener('mouseenter', () => showTooltip(item, color));
+      sat.addEventListener('mouseleave', () => hideTooltip());
+      sat.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showTooltip(item, color);
+      });
+
+      stage.appendChild(sat);
+
+      setTimeout(() => {
+        sat.classList.add('visible');
+        updateConnections();
+      }, index * 100);
+    });
+  }
+
+  function removeSatellites(clusterId) {
+    const satellites = document.querySelectorAll(`.satellite-node[data-parent="${clusterId}"]`);
+    satellites.forEach(sat => {
+      removeConnection(`line-sat-${sat.id}`);
+      sat.classList.remove('visible');
+      setTimeout(() => sat.remove(), 300);
+    });
+  }
+
+  function showTooltip(item, color) {
+    if (!tooltipCard) return;
+    tooltipCard.style.setProperty('--tt-color', color);
+    tooltipCard.querySelector('.tt-header i').className = `fa-solid ${item.icon}`;
+    tooltipCard.querySelector('.tt-title').textContent = item.title;
+    tooltipCard.querySelector('.tt-desc').textContent = item.desc;
+    tooltipCard.classList.add('active');
+  }
+
+  function hideTooltip() {
+    if (tooltipCard) tooltipCard.classList.remove('active');
+  }
+
+  window.addEventListener('resize', updateConnections);
 });
