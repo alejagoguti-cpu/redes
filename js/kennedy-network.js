@@ -1,225 +1,236 @@
 /**
- * Kennedy Interactive Neon Network Ecosystem
- * Handles SVG dynamic lines, cluster radial expansion, orbital satellites & tooltips
+ * Kennedy Topology Network Graph (Ultra-Responsive Circular Interconnected Graph)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const centralNode = document.getElementById('centralKennedyNode');
-  const svgCanvas = document.getElementById('networkSvgCanvas');
-  const tooltipCard = document.getElementById('nodeTooltipCard');
+  const stage = document.getElementById('topologyStage');
+  const svgCanvas = document.getElementById('topologySvg');
+  const centralBtn = document.getElementById('centralKennedyBtn');
+  const detailsBox = document.getElementById('relationDetailsBox');
+  const ringAxis = document.querySelector('.main-ring-axis');
 
-  const clusters = document.querySelectorAll('.cluster-node');
-  let isCentralOpen = false;
+  // Nodes dataset
+  const nodesData = [
+    // Sector 1: Comercial & Industrial (#e89a6c)
+    { id: "A1", cat: "1", label: "Corabastos y María Paz", color: "#e89a6c", desc: "Gran acopio alimentario; genera flujos de carga masivos e impacto en residuos orgánicos." },
+    { id: "A2", cat: "1", label: "Zona Ind. Carvajal", color: "#e89a6c", desc: "Núcleo de manufactura e industria ligera con demanda energética y vehicular constante." },
+    { id: "A3", cat: "1", label: "Corredor Calle 13", color: "#e89a6c", desc: "Arteria principal de logística regional y transporte pesado occidente." },
+    { id: "A4", cat: "1", label: "Comercio Informal (Patio Bonito)", color: "#e89a6c", desc: "Ocupación de espacio público y densidad comercial no regulada." },
 
-  // Data structure for satellites
-  const satelliteData = {
-    "1": [
-      { id: "s1-1", title: "Corabastos y María Paz", icon: "fa-warehouse", desc: "Principal centro de acopio alimentario y logística de gran escala." },
-      { id: "s1-2", title: "Zona Industrial Carvajal", icon: "fa-industry", desc: "Concentración manufacturera, de transformación e industria ligera." },
-      { id: "s1-3", title: "Corredor Calle 13 / AE09", icon: "fa-road", desc: "Eje de carga pesada e integración metropolitana occidente." },
-      { id: "s1-4", title: "Comercio informal (Patio Bonito, Tintal, Bosa)", icon: "fa-shop", desc: "Dinámicas comerciales espontáneas en bordes urbanos." }
-    ],
-    "2": [
-      { id: "s2-1", title: "Banderas (Av. Américas)", icon: "fa-bus", desc: "Nodo multimodal de alta fricción de movilidad y pasajeros." },
-      { id: "s2-2", title: "Av. Ciudad de Cali", icon: "fa-route", desc: "Corredor estructurante saturado por alta carga vehicular." },
-      { id: "s2-3", title: "Av. Boyacá & Cepeda Vargas", icon: "fa-car", desc: "Intersección crítica con cuellos de botella diarios." },
-      { id: "s2-4", title: "Embudo de flujos (Bosa, Soacha, Fontibón)", icon: "fa-arrows-to-dot", desc: "Convergencia masiva de desplazamientos intermunicipales." }
-    ],
-    "3": [
-      { id: "s3-1", title: "Humedales El Burro, La Vaca y Techo", icon: "fa-water", desc: "Ecosistemas estratégicos amenazados por presión urbana." },
-      { id: "s3-2", title: "Ríos Fucha y Tunjuelito", icon: "fa-water-ladder", desc: "Cuerpos hídricos principales impactados por vertimientos." },
-      { id: "s3-3", title: "Escorrentía en suelo duro (Castilla, Dindalito)", icon: "fa-cloud-showers-heavy", desc: "Impermeabilización crítica y riesgo de inundación." }
-    ]
-  };
+    // Sector 2: Movilidad (#5b8def)
+    { id: "B1", cat: "2", label: "Banderas (Av. Américas)", color: "#5b8def", desc: "Punto negrálgico de intercambio masivo TransMilenio y transporte colectivo." },
+    { id: "B2", cat: "2", label: "Av. Ciudad de Cali", color: "#5b8def", desc: "Eje longitudinal saturado por integración vehicular intermunicipal." },
+    { id: "B3", cat: "2", label: "Av. Boyacá & C. Vargas", color: "#5b8def", desc: "Intersección de alta fricción vehicular y embudo de embalse." },
+    { id: "B4", cat: "2", label: "Embudo Bosa/Soacha", color: "#5b8def", desc: "Confluencia de viajes pendulares masivos hacia el centro de la ciudad." },
 
-  // Function to calculate center position of an HTML element
-  function getCenterPos(el) {
-    const stage = document.getElementById('graphStage').getBoundingClientRect();
-    const rect = el.getBoundingClientRect();
-    return {
-      x: rect.left + rect.width / 2 - stage.left,
-      y: rect.top + rect.height / 2 - stage.top
-    };
-  }
+    // Sector 3: Ambiental (#2fd4c8)
+    { id: "C1", cat: "3", label: "Humedales (El Burro / La Vaca / Techo)", color: "#2fd4c8", desc: "Cuerpos de agua biodiversos fragmentados por construcciones y vertimientos." },
+    { id: "C2", cat: "3", label: "Ríos Fucha y Tunjuelito", color: "#2fd4c8", desc: "Drenajes principales urbanos afectados por carga contaminante e industrial." },
+    { id: "C3", cat: "3", label: "Escorrentía & Suelo Duro", color: "#2fd4c8", desc: "Alta tasa de impermeabilización en zonas como Castilla y Dindalito." }
+  ];
 
-  // Draw dynamic SVG line between two centers
-  function drawConnection(id, startPos, endPos, color, isActive = false) {
-    let path = document.getElementById(id);
-    if (!path) {
-      path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute('id', id);
-      path.setAttribute('class', 'connection-line');
-      svgCanvas.appendChild(path);
+  // Interconnection links
+  const linksData = [
+    { source: "A1", target: "B1", type: "directa", label: "Fricción de movilidad en Av. Américas" },
+    { source: "A1", target: "C2", type: "directa", label: "Vertimientos al Río Fucha" },
+    { source: "A1", target: "A4", type: "directa", label: "Encadenamiento comercio informal" },
+    { source: "A1", target: "B2", type: "indirecta", label: "Congestión pesada en Av. Cali" },
+    { source: "A2", target: "B3", type: "directa", label: "Flujo logístico a Av. Boyacá" },
+    { source: "A2", target: "C3", type: "directa", label: "Impermeabilización por naves industriales" },
+    { source: "A3", target: "B4", type: "directa", label: "Embudo logístico e intermunicipal" },
+    { source: "B2", target: "C1", type: "directa", label: "Fragmentación del Humedal El Burro" },
+    { source: "B4", target: "C2", type: "indirecta", label: "Presión sobre cuenca Tunjuelito" },
+    { source: "B1", target: "C3", type: "indirecta", label: "Escorrentía en plazoletas duras" },
+    { source: "C1", target: "C3", type: "directa", label: "Pérdida de capacidad de absorción" },
+    { source: "C2", target: "C1", type: "indirecta", label: "Conexión cuenca hidrográfica" }
+  ];
+
+  let activeNodeId = null;
+
+  // Calculate dynamic responsive circular positions
+  function positionNodes() {
+    if (!stage) return;
+    const stageRect = stage.getBoundingClientRect();
+    const centerX = stageRect.width / 2;
+    const centerY = stageRect.height / 2;
+
+    // DYNAMIC RADIUS BASED ON SCREEN WIDTH/HEIGHT
+    const minDim = Math.min(stageRect.width, stageRect.height);
+    const isMobile = window.innerWidth <= 640;
+    
+    // Clamp radius so nodes never overflow stage boundaries
+    const radius = Math.max(110, Math.min(minDim * 0.38, isMobile ? 120 : 210));
+
+    if (ringAxis) {
+      ringAxis.style.setProperty('--ring-size', `${radius * 2}px`);
     }
 
-    // Curved Bezier Path
-    const dx = endPos.x - startPos.x;
-    const dy = endPos.y - startPos.y;
-    const cx1 = startPos.x + dx * 0.4;
-    const cy1 = startPos.y;
-    const cx2 = startPos.x + dx * 0.6;
-    const cy2 = endPos.y;
+    const totalNodes = nodesData.length;
+    const angleStep = (2 * Math.PI) / totalNodes;
 
-    const d = `M ${startPos.x} ${startPos.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${endPos.x} ${endPos.y}`;
-    path.setAttribute('d', d);
-    path.setAttribute('stroke', color);
-    if (isActive) {
-      path.classList.add('active');
-    } else {
-      path.classList.remove('active');
-    }
-  }
+    nodesData.forEach((node, i) => {
+      const angle = i * angleStep - Math.PI / 2;
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
 
-  function removeConnection(id) {
-    const path = document.getElementById(id);
-    if (path) path.remove();
-  }
+      // Create or update Node Element
+      let el = document.getElementById(`node-${node.id}`);
+      if (!el) {
+        el = document.createElement('div');
+        el.id = `node-${node.id}`;
+        el.className = 'topo-node';
+        el.style.setProperty('--node-color', node.color);
+        el.style.setProperty('--node-glow', `${node.color}44`);
+        el.textContent = node.id;
+        stage.appendChild(el);
 
-  function updateConnections() {
-    if (!isCentralOpen) return;
-    const cPos = getCenterPos(centralNode);
+        // Label Element
+        const lbl = document.createElement('div');
+        lbl.id = `label-${node.id}`;
+        lbl.className = 'node-label-outer';
+        lbl.textContent = `${node.id}. ${node.label}`;
+        stage.appendChild(lbl);
 
-    clusters.forEach(cluster => {
-      if (cluster.classList.contains('visible')) {
-        const clusterId = cluster.getAttribute('data-cluster');
-        const clPos = getCenterPos(cluster);
-        const color = getComputedStyle(cluster).getPropertyValue('--cluster-color').trim() || '#2fd4c8';
-        drawConnection(`line-central-${clusterId}`, cPos, clPos, color, cluster.classList.contains('active'));
+        // Node click event
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          selectNode(node.id);
+        });
+      }
 
-        // Update satellite lines if active
-        if (cluster.classList.contains('active')) {
-          const satellites = document.querySelectorAll(`.satellite-node[data-parent="${clusterId}"]`);
-          satellites.forEach(sat => {
-            const satPos = getCenterPos(sat);
-            drawConnection(`line-sat-${sat.id}`, clPos, satPos, color, true);
-          });
+      const nodeHalfSize = el.offsetWidth > 0 ? el.offsetWidth / 2 : 22;
+      el.style.left = `${x - nodeHalfSize}px`;
+      el.style.top = `${y - nodeHalfSize}px`;
+
+      // Position Label Outer
+      const lbl = document.getElementById(`label-${node.id}`);
+      if (lbl) {
+        const lblRadius = radius + (isMobile ? 22 : 32);
+        const lx = centerX + lblRadius * Math.cos(angle);
+        const ly = centerY + lblRadius * Math.sin(angle);
+
+        lbl.style.left = `${lx}px`;
+        lbl.style.top = `${ly}px`;
+
+        if (Math.cos(angle) < -0.1) {
+          lbl.style.transform = 'translate(-100%, -50%)';
+        } else if (Math.cos(angle) > 0.1) {
+          lbl.style.transform = 'translate(0, -50%)';
+        } else {
+          lbl.style.transform = 'translate(-50%, -100%)';
         }
       }
     });
+
+    drawNetworkLinks();
   }
 
-  // 1. Central Node Toggle
-  if (centralNode) {
-    centralNode.addEventListener('click', () => {
-      isCentralOpen = !isCentralOpen;
+  // Draw Curved Bezier Arcs Across interior of circle
+  function drawNetworkLinks() {
+    if (!svgCanvas || !stage) return;
+    svgCanvas.innerHTML = '';
+    const stageRect = stage.getBoundingClientRect();
+    const centerX = stageRect.width / 2;
+    const centerY = stageRect.height / 2;
 
-      if (isCentralOpen) {
-        centralNode.classList.add('active');
-        clusters.forEach((cluster, idx) => {
-          setTimeout(() => {
-            cluster.classList.add('visible', 'floating');
-            updateConnections();
-          }, idx * 180);
-        });
-      } else {
-        centralNode.classList.remove('active');
-        clusters.forEach(cluster => {
-          cluster.classList.remove('visible', 'active');
-          const clusterId = cluster.getAttribute('data-cluster');
-          removeConnection(`line-central-${clusterId}`);
-          removeSatellites(clusterId);
-        });
-        hideTooltip();
+    linksData.forEach((link) => {
+      const srcEl = document.getElementById(`node-${link.source}`);
+      const tgtEl = document.getElementById(`node-${link.target}`);
+      if (!srcEl || !tgtEl) return;
+
+      const srcRect = srcEl.getBoundingClientRect();
+      const tgtRect = tgtEl.getBoundingClientRect();
+
+      const x1 = srcRect.left + srcRect.width / 2 - stageRect.left;
+      const y1 = srcRect.top + srcRect.height / 2 - stageRect.top;
+      const x2 = tgtRect.left + tgtRect.width / 2 - stageRect.left;
+      const y2 = tgtRect.top + tgtRect.height / 2 - stageRect.top;
+
+      // Arc curves toward circle center
+      const cx = (x1 + x2) / 2 + (centerX - (x1 + x2) / 2) * 0.55;
+      const cy = (y1 + y2) / 2 + (centerY - (y1 + y2) / 2) * 0.55;
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`);
+      path.setAttribute('class', 'net-link');
+      path.setAttribute('id', `link-${link.source}-${link.target}`);
+
+      const srcNode = nodesData.find(n => n.id === link.source);
+      path.setAttribute('stroke', srcNode ? srcNode.color : '#2fd4c8');
+
+      // Highlight logic
+      if (activeNodeId) {
+        if (link.source === activeNodeId || link.target === activeNodeId) {
+          path.classList.add('active');
+        } else {
+          path.classList.add('dimmed');
+        }
       }
+
+      svgCanvas.appendChild(path);
     });
   }
 
-  // 2. Click Cluster Node -> Spawn Satellite Orbit Bubbles
-  clusters.forEach(cluster => {
-    cluster.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const clusterId = cluster.getAttribute('data-cluster');
-      const isActive = cluster.classList.contains('active');
+  // Select Node & Highlight Links
+  function selectNode(id) {
+    if (activeNodeId === id) {
+      activeNodeId = null;
+    } else {
+      activeNodeId = id;
+    }
 
-      if (isActive) {
-        cluster.classList.remove('active');
-        removeSatellites(clusterId);
-        hideTooltip();
+    const nodeInfo = nodesData.find(n => n.id === id);
+    const connectedLinks = linksData.filter(l => l.source === id || l.target === id);
+
+    nodesData.forEach(n => {
+      const el = document.getElementById(`node-${n.id}`);
+      if (!el) return;
+
+      if (!activeNodeId) {
+        el.classList.remove('active', 'dimmed');
+      } else if (n.id === activeNodeId || connectedLinks.some(l => l.source === n.id || l.target === n.id)) {
+        el.classList.add('active');
+        el.classList.remove('dimmed');
       } else {
-        cluster.classList.add('active');
-        spawnSatellites(cluster, clusterId);
+        el.classList.remove('active');
+        el.classList.add('dimmed');
       }
-      setTimeout(updateConnections, 50);
     });
-  });
 
-  // Spawn Satellite Circles in Radial Arc
-  function spawnSatellites(clusterEl, clusterId) {
-    removeSatellites(clusterId);
-    const items = satelliteData[clusterId] || [];
-    const clPos = getCenterPos(clusterEl);
-    const stage = document.getElementById('graphStage');
-    const color = getComputedStyle(clusterEl).getPropertyValue('--cluster-color').trim() || '#2fd4c8';
+    if (activeNodeId && nodeInfo) {
+      const relTexts = connectedLinks.map(l => {
+        const otherId = l.source === id ? l.target : l.source;
+        const otherNode = nodesData.find(n => n.id === otherId);
+        return `<strong style="color:${otherNode ? otherNode.color : '#fff'}">${otherId} (${otherNode ? otherNode.label : ''})</strong>: ${l.label}`;
+      }).join('<br>• ');
 
-    // Radial offsets based on cluster position
-    const radius = 135;
-    let baseAngle = 0;
-    if (clusterId === "1") baseAngle = -45; // top left
-    if (clusterId === "2") baseAngle = 225; // top right
-    if (clusterId === "3") baseAngle = 90;  // bottom
-
-    const totalAngle = 140;
-    const stepAngle = items.length > 1 ? totalAngle / (items.length - 1) : 0;
-    const startAngle = baseAngle - totalAngle / 2;
-
-    items.forEach((item, index) => {
-      const sat = document.createElement('div');
-      sat.className = 'satellite-node floating';
-      sat.id = item.id;
-      sat.setAttribute('data-parent', clusterId);
-      sat.style.setProperty('--parent-color', color);
-
-      // Angle to radians
-      const angle = (startAngle + index * stepAngle) * (Math.PI / 180);
-      const x = clPos.x + radius * Math.cos(angle) - 47.5;
-      const y = clPos.y + radius * Math.sin(angle) - 47.5;
-
-      sat.style.left = `${x}px`;
-      sat.style.top = `${y}px`;
-
-      sat.innerHTML = `
-        <i class="fa-solid ${item.icon}"></i>
-        <span>${item.title}</span>
+      detailsBox.innerHTML = `
+        <h4 style="color:${nodeInfo.color}"><i class="fa-solid fa-circle-nodes"></i> NODO ${nodeInfo.id}: ${nodeInfo.label}</h4>
+        <p><strong>Descripción:</strong> ${nodeInfo.desc}</p>
+        <div style="margin-top:8px; padding-top:8px; border-top:1px dashed rgba(255,255,255,0.1);">
+          <strong style="color:#2fd4c8">Relaciones en la Red (${connectedLinks.length}):</strong><br>
+          • ${relTexts || 'Sin relaciones directas'}
+        </div>
       `;
+    } else {
+      detailsBox.innerHTML = `
+        <h4><i class="fa-solid fa-diagram-project"></i> Matriz de Relaciones Topológicas de Kennedy</h4>
+        <p>Haz clic en cualquier nodo perimetral (A1 a C3) para ver sus interconexiones complejas y relaciones de impacto directo/indirecto en la red urbana.</p>
+      `;
+    }
 
-      // Hover / Click to show detailed glassmorphism card
-      sat.addEventListener('mouseenter', () => showTooltip(item, color));
-      sat.addEventListener('mouseleave', () => hideTooltip());
-      sat.addEventListener('click', (e) => {
-        e.stopPropagation();
-        showTooltip(item, color);
-      });
+    drawNetworkLinks();
+  }
 
-      stage.appendChild(sat);
-
-      setTimeout(() => {
-        sat.classList.add('visible');
-        updateConnections();
-      }, index * 100);
+  if (centralBtn) {
+    centralBtn.addEventListener('click', () => {
+      activeNodeId = null;
+      selectNode(null);
     });
   }
 
-  function removeSatellites(clusterId) {
-    const satellites = document.querySelectorAll(`.satellite-node[data-parent="${clusterId}"]`);
-    satellites.forEach(sat => {
-      removeConnection(`line-sat-${sat.id}`);
-      sat.classList.remove('visible');
-      setTimeout(() => sat.remove(), 300);
-    });
-  }
-
-  function showTooltip(item, color) {
-    if (!tooltipCard) return;
-    tooltipCard.style.setProperty('--tt-color', color);
-    tooltipCard.querySelector('.tt-header i').className = `fa-solid ${item.icon}`;
-    tooltipCard.querySelector('.tt-title').textContent = item.title;
-    tooltipCard.querySelector('.tt-desc').textContent = item.desc;
-    tooltipCard.classList.add('active');
-  }
-
-  function hideTooltip() {
-    if (tooltipCard) tooltipCard.classList.remove('active');
-  }
-
-  window.addEventListener('resize', updateConnections);
+  // Handle window resize and orientation change dynamically
+  window.addEventListener('resize', positionNodes);
+  window.addEventListener('orientationchange', positionNodes);
+  setTimeout(positionNodes, 100);
 });

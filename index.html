@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redes · Ecosistema Localidad de Kennedy</title>
+  <title>Redes · Diagrama de Red Topológica Kennedy</title>
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   
-  <!-- Base Theme, Sidebar & Neon Network Ecosystem Styles -->
+  <!-- Base Theme, Sidebar & Topology Network Styles -->
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/sidebar.css">
   <link rel="stylesheet" href="css/kennedy-network.css">
@@ -31,7 +31,7 @@
 
       <!-- Primary Icon Navigation -->
       <nav class="icon-nav" aria-label="Navegación Módulos de Red">
-        <a href="index.html" class="icon-nav-item active" data-tooltip="Inicio / Kennedy Network">
+        <a href="index.html" class="icon-nav-item active" data-tooltip="Inicio / Grafo de Red">
           <i class="fa-solid fa-house"></i>
         </a>
         <a href="modules/network-01/index.html" class="icon-nav-item" data-tooltip="Módulo 01 · Escala Metropolitana">
@@ -73,54 +73,53 @@
     <main class="main-content">
       <header class="topbar">
         <div class="topbar-title">
-          <i class="fa-solid fa-share-nodes"></i> Redes & Ecosistemas · Localidad de Kennedy
+          <i class="fa-solid fa-circle-nodes"></i> Grafo de Red Topológica · Localidad de Kennedy
         </div>
       </header>
 
       <!-- Network Interactive Stage -->
       <div class="network-wrapper">
-        <div class="network-bg-grid"></div>
+        
+        <div class="network-header">
+          <h2>DIAGRAMA DE RED TOPOLÓGICA · KENNEDY</h2>
+          <p>Red de interconexiones cruzadas, relaciones directas e indirectas entre los ejes comerciales, de movilidad y ambientales.</p>
+        </div>
 
-        <div class="graph-stage" id="graphStage">
-          <!-- SVG Connections Layer -->
-          <svg class="network-svg-layer" id="networkSvgCanvas"></svg>
+        <!-- Circular Topology Stage -->
+        <div class="topology-stage" id="topologyStage">
+          
+          <div class="main-ring-axis"></div>
+          <svg class="topology-svg" id="topologySvg"></svg>
 
-          <!-- Central Orbital Node -->
-          <div class="central-orbital-node" id="centralKennedyNode">
-            <div class="orbital-ring r1"></div>
-            <div class="orbital-ring r2"></div>
-            <i class="fa-solid fa-city"></i>
-            <div class="title">LOCALIDAD DE KENNEDY</div>
-            <div class="hint-badge">Click para expandir</div>
+          <!-- Central Controller -->
+          <div class="central-kennedy-btn" id="centralKennedyBtn">
+            <i class="fa-solid fa-circle-nodes"></i>
+            <span>LOCALIDAD DE KENNEDY</span>
+            <span class="badge">Resetear Grafo</span>
           </div>
 
-          <!-- Cluster Node 1 -->
-          <div class="cluster-node" data-cluster="1">
-            <span class="cluster-num">EJE 1</span>
-            <span class="cluster-label">Concentración Comercial, Logística e Industrial</span>
-          </div>
+        </div>
 
-          <!-- Cluster Node 2 -->
-          <div class="cluster-node" data-cluster="2">
-            <span class="cluster-num">EJE 2</span>
-            <span class="cluster-label">Colapso de Movilidad y Fricción de Flujos</span>
+        <!-- Legend Bar -->
+        <div class="category-legend-bar">
+          <div class="legend-item" style="--leg-color: #e89a6c;">
+            <div class="dot"></div>
+            <span>Eje 1: Comercial & Industrial (A1 - A4)</span>
           </div>
-
-          <!-- Cluster Node 3 -->
-          <div class="cluster-node" data-cluster="3">
-            <span class="cluster-num">EJE 3</span>
-            <span class="cluster-label">Basuras, Impermeabilización y Degradación Ambiental</span>
+          <div class="legend-item" style="--leg-color: #5b8def;">
+            <div class="dot"></div>
+            <span>Eje 2: Movilidad & Flujos (B1 - B4)</span>
           </div>
-
-          <!-- Glassmorphism Floating Detail Card -->
-          <div class="node-tooltip-card" id="nodeTooltipCard">
-            <div class="tt-header">
-              <i class="fa-solid fa-info-circle"></i>
-              <div class="tt-title">Detalle del Nodo</div>
-            </div>
-            <div class="tt-desc">Haz clic o pasa el cursor sobre los elementos de la red para explorar sus impactos.</div>
+          <div class="legend-item" style="--leg-color: #2fd4c8;">
+            <div class="dot"></div>
+            <span>Eje 3: Basuras & Ambiental (C1 - C3)</span>
           </div>
+        </div>
 
+        <!-- Relation Matrix Box -->
+        <div class="relation-details-box" id="relationDetailsBox">
+          <h4><i class="fa-solid fa-diagram-project"></i> Matriz de Relaciones Topológicas de Kennedy</h4>
+          <p>Haz clic en cualquier nodo perimetral (A1 a C3) para ver sus interconexiones complejas y relaciones de impacto directo/indirecto en la red urbana.</p>
         </div>
 
       </div>
