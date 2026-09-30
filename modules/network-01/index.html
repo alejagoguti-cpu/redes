@@ -48,10 +48,39 @@
   .goo-layer{ position:absolute; inset:0; filter:url(#goo); }
   .arrows-svg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
   .arrow-line{ fill:none; stroke-linecap:round; }
-  .blob{
+  @keyframes pulseGlow {
+    0%, 100% { filter: drop-shadow(0 0 12px rgba(226,99,90,0.6)); }
+    50% { filter: drop-shadow(0 0 26px rgba(226,99,90,0.95)); }
+  }
+
+  @keyframes floatIdle {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+    50% { transform: translate(-50%, -50%) translateY(-6px); }
+  }
+
+  @keyframes dashFlow {
+    to { stroke-dashoffset: -24; }
+  }
+
+  .blob {
     position:absolute; border-radius:50%; top:0; left:0; transform:translate(-50%,-50%); background:var(--node);
     transition: left .8s cubic-bezier(.22,1,.36,1), top .8s cubic-bezier(.22,1,.36,1),
-                width .7s cubic-bezier(.22,1,.36,1), height .7s cubic-bezier(.22,1,.36,1), opacity .4s ease;
+                width .7s cubic-bezier(.22,1,.36,1), height .7s cubic-bezier(.22,1,.36,1), opacity .4s ease, filter .3s ease;
+    animation: floatIdle 6s ease-in-out infinite;
+  }
+  .blob:hover {
+    filter: brightness(1.25) drop-shadow(0 0 20px rgba(255,255,255,0.7)) !important;
+    cursor: pointer;
+  }
+  .arrow-line {
+    fill:none; stroke-linecap:round;
+    stroke-dasharray: 6 4;
+    animation: dashFlow 1.8s linear infinite;
+    transition: stroke-width 0.2s ease;
+  }
+  .arrow-line:hover {
+    stroke-width: 4.5px !important;
+    stroke-opacity: 1 !important;
   }
   .label-layer{ position:absolute; inset:0; pointer-events:none; }
   .label{
@@ -922,6 +951,32 @@
       place(nodeBlobs[n.id], nodePos[n.id].x, nodePos[n.id].y); size(nodeBlobs[n.id], ownR);
       place(l, nodePos[n.id].x, nodePos[n.id].y);
       place(h, nodePos[n.id].x, nodePos[n.id].y); size(h, ownR);
+
+      // Interactive hover highlight for connected nodes & edges
+      h.addEventListener("mouseenter", () => {
+        const connectedNodes = new Set([n.id]);
+        activeRel.forEach(r => {
+          if (r.from === n.id) connectedNodes.add(r.to);
+          if (r.to === n.id) connectedNodes.add(r.from);
+        });
+
+        activeNodes.forEach(other => {
+          if (!connectedNodes.has(other.id)) {
+            if (nodeBlobs[other.id]) nodeBlobs[other.id].style.opacity = "0.2";
+            if (nodeLabels[other.id]) nodeLabels[other.id].style.opacity = "0.2";
+          } else {
+            if (nodeBlobs[other.id]) nodeBlobs[other.id].style.opacity = "1";
+            if (nodeLabels[other.id]) nodeLabels[other.id].style.opacity = "1";
+          }
+        });
+      });
+
+      h.addEventListener("mouseleave", () => {
+        activeNodes.forEach(other => {
+          if (nodeBlobs[other.id]) nodeBlobs[other.id].style.opacity = "1";
+          if (nodeLabels[other.id]) nodeLabels[other.id].style.opacity = "1";
+        });
+      });
     });
 
     renderEdges();
