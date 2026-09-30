@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redes · Localidad de Kennedy</title>
+  <title>Redes · Ecosistema Localidad de Kennedy</title>
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   
-  <!-- Base Theme, Sidebar & Network Diagram Styles -->
+  <!-- Base Theme, Sidebar & Neon Network Ecosystem Styles -->
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/sidebar.css">
   <link rel="stylesheet" href="css/kennedy-network.css">
@@ -31,7 +31,7 @@
 
       <!-- Primary Icon Navigation -->
       <nav class="icon-nav" aria-label="Navegación Módulos de Red">
-        <a href="index.html" class="icon-nav-item active" data-tooltip="Inicio / Kennedy">
+        <a href="index.html" class="icon-nav-item active" data-tooltip="Inicio / Kennedy Network">
           <i class="fa-solid fa-house"></i>
         </a>
         <a href="modules/network-01/index.html" class="icon-nav-item" data-tooltip="Módulo 01 · Escala Metropolitana">
@@ -73,114 +73,52 @@
     <main class="main-content">
       <header class="topbar">
         <div class="topbar-title">
-          <i class="fa-solid fa-share-nodes"></i> Arquitectura de Red · Bogotá Viva
+          <i class="fa-solid fa-share-nodes"></i> Redes & Ecosistemas · Localidad de Kennedy
         </div>
       </header>
 
-      <div class="container">
-        
-        <!-- Red Interactiva de Kennedy -->
-        <div class="network-container">
-          
-          <!-- Nodo Central -->
-          <div class="central-node-wrapper">
-            <button type="button" class="central-node" id="centralNodeKennedy" aria-expanded="false">
-              <i class="fa-solid fa-city icon-main"></i>
-              <span>LOCALIDAD DE KENNEDY</span>
-              <span class="node-indicator"><i class="fa-solid fa-chevron-down"></i></span>
-            </button>
-            <div class="central-connector" id="centralConnector"></div>
+      <!-- Network Interactive Stage -->
+      <div class="network-wrapper">
+        <div class="network-bg-grid"></div>
+
+        <div class="graph-stage" id="graphStage">
+          <!-- SVG Connections Layer -->
+          <svg class="network-svg-layer" id="networkSvgCanvas"></svg>
+
+          <!-- Central Orbital Node -->
+          <div class="central-orbital-node" id="centralKennedyNode">
+            <div class="orbital-ring r1"></div>
+            <div class="orbital-ring r2"></div>
+            <i class="fa-solid fa-city"></i>
+            <div class="title">LOCALIDAD DE KENNEDY</div>
+            <div class="hint-badge">Click para expandir</div>
           </div>
 
-          <!-- Módulos / Ramas de la Red -->
-          <div class="categories-grid" id="categoriesGrid">
-            
-            <!-- Categoria 1 -->
-            <div class="category-card" style="--card-accent: #e89a6c; --card-glow: rgba(232, 154, 108, 0.25);">
-              <div class="category-header">
-                <span class="category-number">1</span>
-                <span class="category-title">Concentración Comercial, Logística e Industrial</span>
-                <span class="category-toggle-btn"><i class="fa-solid fa-chevron-down"></i></span>
-              </div>
-              
-              <div class="sub-elements-list">
-                <div class="sub-element-item">
-                  <i class="fa-solid fa-warehouse"></i>
-                  <span>Corabastos y María Paz</span>
-                </div>
-                <div class="sub-element-item">
-                  <i class="fa-solid fa-industry"></i>
-                  <span>Zona Industrial de Carvajal</span>
-                </div>
-                <div class="sub-element-item">
-                  <i class="fa-solid fa-road"></i>
-                  <span>Corredor Calle 13 / AE09</span>
-                </div>
-                <div class="sub-element-item">
-                  <div style="display:flex; align-items:flex-start; gap:8px;">
-                    <i class="fa-solid fa-store" style="margin-top:2px;"></i>
-                    <span>Comercio informal en Patio Bonito, Tintal y Bosa Borde</span>
-                  </div>
-                </div>
-              </div>
+          <!-- Cluster Node 1 -->
+          <div class="cluster-node" data-cluster="1">
+            <span class="cluster-num">EJE 1</span>
+            <span class="cluster-label">Concentración Comercial, Logística e Industrial</span>
+          </div>
+
+          <!-- Cluster Node 2 -->
+          <div class="cluster-node" data-cluster="2">
+            <span class="cluster-num">EJE 2</span>
+            <span class="cluster-label">Colapso de Movilidad y Fricción de Flujos</span>
+          </div>
+
+          <!-- Cluster Node 3 -->
+          <div class="cluster-node" data-cluster="3">
+            <span class="cluster-num">EJE 3</span>
+            <span class="cluster-label">Basuras, Impermeabilización y Degradación Ambiental</span>
+          </div>
+
+          <!-- Glassmorphism Floating Detail Card -->
+          <div class="node-tooltip-card" id="nodeTooltipCard">
+            <div class="tt-header">
+              <i class="fa-solid fa-info-circle"></i>
+              <div class="tt-title">Detalle del Nodo</div>
             </div>
-
-            <!-- Categoria 2 -->
-            <div class="category-card" style="--card-accent: #5b8def; --card-glow: rgba(91, 141, 239, 0.25);">
-              <div class="category-header">
-                <span class="category-number">2</span>
-                <span class="category-title">Colapso de Movilidad y Fricción de Flujos</span>
-                <span class="category-toggle-btn"><i class="fa-solid fa-chevron-down"></i></span>
-              </div>
-
-              <div class="sub-elements-list">
-                <div class="sub-element-item">
-                  <i class="fa-solid fa-bus"></i>
-                  <span>Banderas (Av. Américas)</span>
-                </div>
-                <div class="sub-element-item">
-                  <i class="fa-solid fa-route"></i>
-                  <span>Av. Ciudad de Cali</span>
-                </div>
-                <div class="sub-element-item">
-                  <i class="fa-solid fa-car"></i>
-                  <span>Av. Boyacá y Cepeda Vargas</span>
-                </div>
-                <div class="sub-element-item">
-                  <div style="display:flex; align-items:flex-start; gap:8px;">
-                    <i class="fa-solid fa-arrows-to-dot" style="margin-top:2px;"></i>
-                    <span>Embudo de flujos desde Bosa, Soacha y Fontibón</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Categoria 3 -->
-            <div class="category-card" style="--card-accent: #2fd4c8; --card-glow: rgba(47, 212, 200, 0.25);">
-              <div class="category-header">
-                <span class="category-number">3</span>
-                <span class="category-title">Basuras, Impermeabilización y Degradación Ambiental</span>
-                <span class="category-toggle-btn"><i class="fa-solid fa-chevron-down"></i></span>
-              </div>
-
-              <div class="sub-elements-list">
-                <div class="sub-element-item">
-                  <i class="fa-solid fa-water"></i>
-                  <span>Humedales El Burro, La Vaca y Techo</span>
-                </div>
-                <div class="sub-element-item">
-                  <i class="fa-solid fa-water-ladder"></i>
-                  <span>Ríos Fucha y Tunjuelito</span>
-                </div>
-                <div class="sub-element-item">
-                  <div style="display:flex; align-items:flex-start; gap:8px;">
-                    <i class="fa-solid fa-cloud-showers-heavy" style="margin-top:2px;"></i>
-                    <span>Escorrentía en suelo duro en Castilla, Dindalito, etc.</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+            <div class="tt-desc">Haz clic o pasa el cursor sobre los elementos de la red para explorar sus impactos.</div>
           </div>
 
         </div>
