@@ -1,7 +1,7 @@
 /**
  * Red de Relaciones del Modelo Propio · Localidad de Kennedy
  * Sistema Socioecológico-Técnico Complejo de 3 Capas Interconectadas (N1 a N12)
- * 60fps HTML5 Canvas Physics Engine con Enlaces Dirigidos, Partículas & Drawer de Análisis
+ * 60fps HTML5 Canvas Physics Engine (Sin nodo central de Kennedy)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ctx = canvas.getContext('2d');
 
-  // Exact 12 Nodes [N1] to [N12] organized in 3 Interconnected Layers
+  // Exact 12 Nodes [N1] to [N12] organized in 3 Interconnected Layers (Sin nodo central)
   const rawNodes = [
     // CAPA 1: Centralidades Comerciales, Logísticas e Industriales (Presión / Entradas - #e89a6c)
     {
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
       layer: "1",
       layerName: "Capa 1: Comercio & Logística",
       role: "Hub de Influencia (Grado Saliente Alto)",
-      radius: 36,
+      radius: 34,
       color: "#e89a6c",
       glow: "#e89a6c",
       desc: "Punto de concentración alimentario regional que genera flujos masivos de transporte pesado y toneladas diarias de residuos orgánicos.",
@@ -213,9 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
-  // Explicit Direct Connections Matrix (Enlances Principales con Tipos)
+  // Direct Connections Matrix (Enlances Principales con Tipos)
   const linksData = [
-    // Direct Directed Edges specified in prompt:
     { source: "N1", target: "N8", type: "Flujo de Carga", label: "N1 -> N8: Corabastos inyecta camiones a calles residenciales de María Paz" },
     { source: "N1", target: "N10", type: "Causal + (Lixiviados)", label: "N1 -> N10: Desperdicios sin tratar filtran contaminantes al Humedal La Vaca" },
     { source: "N7", target: "N5", type: "Flujo Pasajeros", label: "N7 -> N5: Demanda pendular de Soacha/Bosa sobrecarga andenes de Banderas" },
@@ -224,8 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
     { source: "N12", target: "N10", type: "Causal - (Cero Infiltración)", label: "N12 -> N10: Suelo pavimentado impide infiltración en Humedal La Vaca" },
     { source: "N12", target: "N11", type: "Causal - (Cero Infiltración)", label: "N12 -> N11: Suelo duro anula infiltración y dispara inundaciones pluviales" },
     { source: "N5", target: "N8", type: "Retroalimentación +", label: "N5 -> N8: Colapso en Banderas ralentiza alimentadores paralizando la movilidad local" },
-
-    // Additional Structural Inter-layer Edges:
     { source: "N2", target: "N6", type: "Flujo Industrial", label: "N2 -> N6: Zona Industrial Carvajal inyecta tráfico pesado a Av. Cali" },
     { source: "N3", target: "N6", type: "Carga Metropolitana", label: "N3 -> N6: Carga de Calle 13 / AE09 descarga hacia el corredor de Av. Cali" },
     { source: "N4", target: "N8", type: "Residuos Urbanos", label: "N4 -> N8: Comercio informal sobrecarga espacio público y calles de barrio" },
@@ -279,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
       targetNode: nodes.find(n => n.id === l.target)
     })).filter(l => l.sourceNode && l.targetNode);
 
-    // Moving energy particles along directed links
     particles = [];
     for (let i = 0; i < 35; i++) {
       const link = links[Math.floor(Math.random() * links.length)];
@@ -291,13 +287,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Physics Simulation Loop
   function updatePhysics() {
     const repulsion = 2200;
     const kSpring = 0.003;
     const damping = 0.82;
 
-    // Repulsion
     for (let i = 0; i < nodes.length; i++) {
       if (!nodes[i].visible) continue;
       for (let j = i + 1; j < nodes.length; j++) {
@@ -321,7 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Springs along directed edges
     links.forEach(l => {
       if (!l.sourceNode.visible || !l.targetNode.visible) return;
       let dx = l.targetNode.x - l.sourceNode.x;
@@ -339,7 +332,6 @@ document.addEventListener('DOMContentLoaded', () => {
       l.targetNode.vy -= fy;
     });
 
-    // Layer Y-axis tethering & Velocity Update
     nodes.forEach(n => {
       if (!n.visible) return;
       if (n === draggedNode) return;
@@ -360,18 +352,15 @@ document.addEventListener('DOMContentLoaded', () => {
       n.y = Math.max(n.radius + 10, Math.min(height - n.radius - 10, n.y));
     });
 
-    // Move particles
     particles.forEach(p => {
       p.progress += p.speed;
       if (p.progress >= 1) p.progress = 0;
     });
   }
 
-  // Draw 60fps Frame
   function drawFrame() {
     ctx.clearRect(0, 0, width, height);
 
-    // Draw Directed Links with Arrows
     links.forEach(l => {
       if (!l.sourceNode.visible || !l.targetNode.visible) return;
 
@@ -395,7 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       ctx.stroke();
 
-      // Draw Arrowhead at Target Node
       const dx = l.targetNode.x - l.sourceNode.x;
       const dy = l.targetNode.y - l.sourceNode.y;
       const angle = Math.atan2(dy, dx);
@@ -413,7 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.restore();
     });
 
-    // Draw Flow Particles
     particles.forEach(p => {
       if (!p.link.sourceNode.visible || !p.link.targetNode.visible) return;
       const x = p.link.sourceNode.x + (p.link.targetNode.x - p.link.sourceNode.x) * p.progress;
@@ -429,7 +416,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.restore();
     });
 
-    // Draw 12 Nodes [N1] to [N12]
     nodes.forEach(n => {
       if (!n.visible) return;
 
@@ -438,7 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const r = isHover || isSel ? n.radius * 1.14 : n.radius;
 
       ctx.save();
-      // Outer Glow
       ctx.beginPath();
       ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
       let grad = ctx.createRadialGradient(n.x, n.y, r * 0.3, n.x, n.y, r);
@@ -452,7 +437,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.fill();
       ctx.stroke();
 
-      // Node Code Badge inside
       ctx.shadowBlur = 0;
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 12px "Space Grotesk", sans-serif';
@@ -460,7 +444,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.textBaseline = 'middle';
       ctx.fillText(n.id, n.x, n.y);
 
-      // Node Label Text below
       ctx.fillStyle = isHover || isSel ? '#ffffff' : '#cbd5e1';
       ctx.font = `${isHover || isSel ? 'bold 11px' : '500 10.5px'} "Inter", sans-serif`;
       ctx.fillText(n.label, n.x, n.y + r + 15);
@@ -540,7 +523,6 @@ document.addEventListener('DOMContentLoaded', () => {
     draggedNode = null;
   });
 
-  // Open Drawer with POT vs. Modelo Propio Analysis
   function selectNode(node) {
     selectedNode = node;
     if (!node || !drawer) return;
@@ -550,7 +532,6 @@ document.addEventListener('DOMContentLoaded', () => {
     drawer.querySelector('.drawer-tag').textContent = `${node.layerName.toUpperCase()} · ${node.role}`;
     drawer.querySelector('.drawer-desc').textContent = node.desc;
 
-    // POT vs Modelo Propio Comparison Box
     const compContainer = drawer.querySelector('.comparison-box');
     compContainer.innerHTML = `
       <div class="comp-row">
@@ -567,7 +548,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
 
-    // Direct Relations List
     const connectedLinks = links.filter(l => l.sourceNode === node || l.targetNode === node);
     const relsContainer = drawer.querySelector('.relations-list');
     relsContainer.innerHTML = connectedLinks.map(l => `
@@ -588,7 +568,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Filter Buttons Handler
   const filterBtns = document.querySelectorAll('.graph-btn[data-filter]');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
