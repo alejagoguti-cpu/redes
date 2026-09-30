@@ -602,35 +602,60 @@
     bridgeEls.forEach(b => b.remove());
     arrowEls.forEach(a => a.remove());
     bridgeEls = []; arrowEls = [];
-    const BRIDGES = level === "full" ? 0 : 30;
+    
+    // Draw organic organic metaball connections
     activeRel.forEach(r => {
       const a = nodePos[r.from], b = nodePos[r.to];
       if (!a || !b) return;
       const rFrom = nodeRadiusMap[r.from], rTo = nodeRadiusMap[r.to];
       const colorFrom = activeColorOf(r.from), colorTo = activeColorOf(r.to);
-      if (BRIDGES > 0) {
-        for (let j = 0; j < BRIDGES; j++) {
-          const t = (j + 1) / (BRIDGES + 1);
-          const rr = ((rFrom * (1 - t) + rTo * t) * (1 - t * 0.35)) * 0.17;
-          const bridge = el("blob"); gooLayer.appendChild(bridge); bridgeEls.push(bridge);
-          if (colorFrom.startsWith("#") && colorTo.startsWith("#")) bridge.style.background = lerpColor(colorFrom, colorTo, t);
-          size(bridge, rr); place(bridge, a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
-        }
-      }
       const dx = b.x - a.x, dy = b.y - a.y;
       const dist = Math.hypot(dx, dy) || 1;
+
+      // Draw organic fluid neck (metaball path)
+      if (dist < 450) {
+        const angle = Math.atan2(dy, dx);
+        const normalAngle = angle + Math.PI / 2;
+        
+        // Calculate tangent points on both circles for smooth organic bridge
+        const wFrom = rFrom * 0.45;
+        const wTo = rTo * 0.45;
+        
+        const ax1 = a.x + Math.cos(normalAngle) * wFrom;
+        const ay1 = a.y + Math.sin(normalAngle) * wFrom;
+        const ax2 = a.x - Math.cos(normalAngle) * wFrom;
+        const ay2 = a.y - Math.sin(normalAngle) * wFrom;
+
+        const bx1 = b.x + Math.cos(normalAngle) * wTo;
+        const by1 = b.y + Math.sin(normalAngle) * wTo;
+        const bx2 = b.x - Math.cos(normalAngle) * wTo;
+        const by2 = b.y - Math.sin(normalAngle) * wTo;
+
+        const cx = (a.x + b.x) / 2;
+        const cy = (a.y + b.y) / 2;
+
+        const path = document.createElementNS(SVGNS, "path");
+        const dStr = `M ${ax1} ${ay1} Q ${cx} ${cy}, ${bx1} ${by1} L ${bx2} ${by2} Q ${cx} ${cy}, ${ax2} ${ay2} Z`;
+        path.setAttribute("d", dStr);
+        path.setAttribute("fill", colorFrom);
+        path.setAttribute("opacity", "0.35");
+        path.style.mixBlendMode = "multiply";
+        arrowsSvg.appendChild(path);
+        bridgeEls.push(path);
+      }
+
       const ux = dx / dist, uy = dy / dist;
       const startX = a.x + ux * (rFrom + 4), startY = a.y + uy * (rFrom + 4);
       const endX = b.x - ux * (rTo + 4), endY = b.y - uy * (rTo + 4);
-      const arrowColorRaw = level === "full" ? "#ffffff" : (r.inter ? "#24c8bd" : (colorFrom.startsWith("#") ? colorFrom : "#e8ecf1"));
+      const arrowColorRaw = level === "full" ? "#4f46e5" : (r.inter ? "#7b61ff" : (colorFrom.startsWith("#") ? colorFrom : "#475569"));
       const markerKey = ensureArrowMarker(arrowColorRaw);
       const line = document.createElementNS(SVGNS, "line");
       line.setAttribute("class", "arrow-line");
       line.setAttribute("x1", startX); line.setAttribute("y1", startY);
       line.setAttribute("x2", endX); line.setAttribute("y2", endY);
       line.setAttribute("stroke", arrowColorRaw);
-      line.setAttribute("stroke-width", level === "full" ? (r.inter ? "2.2" : "1.8") : "2.8");
-      line.setAttribute("stroke-opacity", level === "full" ? "0.85" : "0.9");
+      line.setAttribute("stroke-width", level === "full" ? (r.inter ? "2.2" : "1.8") : "2.5");
+      line.setAttribute("stroke-opacity", "0.65");
       if (r.inter) {
         line.setAttribute("stroke-dasharray", "5 3");
       }
