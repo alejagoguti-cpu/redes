@@ -308,56 +308,83 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // Helper to draw clean orthogonal SVG path
-    function createPath(dStr, hasArrow = true) {
+    function createPath(dStr, color = '#2fd4c8', hasArrow = false) {
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', dStr);
       path.setAttribute('fill', 'none');
-      path.setAttribute('stroke', '#2fd4c8');
+      path.setAttribute('stroke', color);
       path.setAttribute('stroke-width', '1.5');
       if (hasArrow) path.setAttribute('marker-end', 'url(#arrow)');
       subnetworkSvgCanvas.appendChild(path);
     }
 
-    connections.forEach(({ from, to, type }) => {
-      const elFrom = document.getElementById(from);
-      const elTo = document.getElementById(to);
-      if (!elFrom || !elTo) return;
+    const pAgri = getSubNodePos(document.getElementById('sn-agricultores'));
+    const pAcop = getSubNodePos(document.getElementById('sn-acopiadores'));
+    const pCont = getSubNodePos(document.getElementById('sn-contrata-transporte'));
+    const pProp = getSubNodePos(document.getElementById('sn-transporte-propio'));
+    const pCora = getSubNodePos(document.getElementById('sn-mayoristas-corabastos'));
+    const pOtros = getSubNodePos(document.getElementById('sn-otros-mayoristas'));
+    const pCons = getSubNodePos(document.getElementById('sn-consumidores'));
 
-      const p1 = getSubNodePos(elFrom);
-      const p2 = getSubNodePos(elTo);
+    const channels = ['sn-tiendas', 'sn-supermercados', 'sn-plazas', 'sn-institucionales', 'sn-agroalimentarias'];
 
-      if (type === 'straight-h') {
-        createPath(`M ${p1.right} ${p1.y} L ${p2.left} ${p2.y}`);
-      } else if (type === 'fork-right' || type === 'join-right') {
-        const midX = (p1.right + p2.left) / 2;
-        createPath(`M ${p1.right} ${p1.y} H ${midX} V ${p2.y} H ${p2.left}`);
-      } else if (type === 'corabastos-to-consumidores') {
-        // Line down from Corabastos left edge to Consumidores top edge
-        const dropX = p1.left + 25;
-        createPath(`M ${dropX} ${p1.bottom} V ${p2.top - 15} H ${p2.x} V ${p2.top}`);
-      } else if (type === 'corabastos-to-otros') {
-        // Line down from Corabastos right edge to Otros Mayoristas top edge
-        const dropX = p1.right - 25;
-        createPath(`M ${dropX} ${p1.bottom} V ${p2.top}`);
-      } else if (type === 'corabastos-to-channel-bus') {
-        // Drop down from Corabastos center and enter channel left
-        const dropX = p1.x;
-        const channelEntryX = p2.left;
-        createPath(`M ${dropX} ${p1.bottom} V ${p2.y} H ${channelEntryX}`);
-      } else if (type === 'otros-to-channel') {
-        // From Otros Mayoristas left into channels right
-        const midX = p1.left - 20;
-        createPath(`M ${p1.left} ${p1.y} H ${midX} V ${p2.y} H ${p2.right}`);
-      } else if (type === 'bottom-loop') {
-        // Bottom loop from Otros Mayoristas down and left to Consumidores bottom
-        const dropY = p1.bottom + 25;
-        createPath(`M ${p1.x} ${p1.bottom} V ${dropY} H ${p2.x} V ${p2.bottom}`);
-      } else if (type === 'channels-to-consumidores') {
-        // From channels left to Consumidores right
-        const midX = (p1.left + p2.right) / 2;
-        createPath(`M ${p1.left} ${p1.y} H ${midX} V ${p2.y} H ${p2.right}`);
-      }
+    // 1. Branching out from Agricultores (Izquierda) -> 3 Transports
+    const forkX1 = pAgri.right + 15;
+    createPath(`M ${pAgri.right} ${pAgri.y} H ${forkX1}`);
+    createPath(`M ${forkX1} ${pAcop.y} V ${pProp.y}`);
+    createPath(`M ${forkX1} ${pAcop.y} H ${pAcop.left}`);
+    createPath(`M ${forkX1} ${pCont.y} H ${pCont.left}`);
+    createPath(`M ${forkX1} ${pProp.y} H ${pProp.left}`);
+
+    // 2. Joining 3 Transports -> Mayoristas Corabastos
+    const joinX2 = pCora.left - 20;
+    createPath(`M ${pAcop.right} ${pAcop.y} H ${joinX2}`);
+    createPath(`M ${pCont.right} ${pCont.y} H ${joinX2}`);
+    createPath(`M ${pProp.right} ${pProp.y} H ${joinX2}`);
+    createPath(`M ${joinX2} ${pAcop.y} V ${pProp.y}`);
+    createPath(`M ${joinX2} ${pCora.y} H ${pCora.left}`);
+
+    // 3. From Mayoristas Corabastos down lines (3 buses):
+    // Line 3A: Left vertical drop to Consumidores
+    const dropLeftX = pCora.left + 30;
+    createPath(`M ${dropLeftX} ${pCora.bottom} V ${pCons.top - 20} H ${pCons.x} V ${pCons.top}`);
+
+    // Line 3B: Center vertical drop to Channel Bus (entering channel rows from the right)
+    const dropCenterX = pCora.x + 40;
+    const channelBusRightX = pCora.x + 80;
+    createPath(`M ${dropCenterX} ${pCora.bottom} V ${pOtros.top - 40} H ${channelBusRightX}`);
+    
+    // Connect bus line to right side of each channel
+    channels.forEach(chId => {
+      const pCh = getSubNodePos(document.getElementById(chId));
+      createPath(`M ${channelBusRightX} ${pCh.y} H ${pCh.right}`);
     });
+
+    // Line 3C: Right vertical drop to Otros Mayoristas
+    const dropRightX = pCora.right - 25;
+    createPath(`M ${dropRightX} ${pCora.bottom} V ${pOtros.top}`);
+
+    // 4. From Channels (Left side) -> Consumidores (Right side)
+    const channelBusLeftX = getSubNodePos(document.getElementById(channels[0])).left - 20;
+    const topChanY = getSubNodePos(document.getElementById(channels[0])).y;
+    const botChanY = getSubNodePos(document.getElementById(channels[channels.length - 1])).y;
+
+    createPath(`M ${channelBusLeftX} ${topChanY} V ${botChanY}`);
+    channels.forEach(chId => {
+      const pCh = getSubNodePos(document.getElementById(chId));
+      createPath(`M ${pCh.left} ${pCh.y} H ${channelBusLeftX}`);
+    });
+    createPath(`M ${channelBusLeftX} ${pCons.y} H ${pCons.right}`);
+
+    // 5. From Otros Mayoristas (Left side) -> Plazas, Agroalimentarias
+    const pPlaza = getSubNodePos(document.getElementById('sn-plazas'));
+    const pAgro = getSubNodePos(document.getElementById('sn-agroalimentarias'));
+    createPath(`M ${pOtros.left} ${pOtros.y} H ${pPlaza.right + 15} V ${pPlaza.y} H ${pPlaza.right}`);
+    createPath(`M ${pOtros.left} ${pOtros.y} H ${pAgro.right + 15} V ${pAgro.y} H ${pAgro.right}`);
+
+    // 6. From Otros Mayoristas (Bottom) -> Consumidores (Bottom) loop
+    const loopBottomY = pOtros.bottom + 25;
+    createPath(`M ${pOtros.x} ${pOtros.bottom} V ${loopBottomY} H ${pCons.x} V ${pCons.bottom}`);
   }
 
   window.addEventListener('resize', () => {

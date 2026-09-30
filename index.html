@@ -146,15 +146,15 @@
     <div class="subnetwork-stage" id="subnetworkStage">
       <svg class="subnetwork-svg" id="subnetworkSvgCanvas"></svg>
 
-      <!-- Col 1: Agricultores (Izquierda Centro) -->
-      <div class="sub-col" id="col-agricultores" style="position: absolute; left: 30px; top: 110px;">
+      <!-- Fila 1: Agricultores (Izquierda Arriba) -->
+      <div class="sub-col" id="col-agricultores" style="position: absolute; left: 30px; top: 100px;">
         <div class="sub-node-box node-green" id="sn-agricultores">
           <i class="fa-solid fa-tractor"></i> Agricultores
         </div>
       </div>
 
-      <!-- Col 2: Intermediación / Transporte (3 opciones en rama) -->
-      <div class="sub-col" id="col-transporte" style="position: absolute; left: 220px; top: 50px; gap: 20px;">
+      <!-- Fila 1: 3 Vías de Transporte (Centro-Izquierda Arriba) -->
+      <div class="sub-col" id="col-transporte" style="position: absolute; left: 210px; top: 40px; gap: 15px;">
         <div class="sub-node-box node-green" id="sn-acopiadores">
           <i class="fa-solid fa-truck-pickup"></i> Mayoristas, Acopiadores rurales
         </div>
@@ -166,22 +166,22 @@
         </div>
       </div>
 
-      <!-- Col 3: Mayoristas Corabastos (Centro Arriba) -->
-      <div class="sub-col" id="col-corabastos" style="position: absolute; left: 520px; top: 85px;">
+      <!-- Fila 1: Mayoristas Corabastos (Centro-Derecha Arriba) -->
+      <div class="sub-col" id="col-corabastos" style="position: absolute; left: 560px; top: 85px;">
         <div class="sub-node-box node-green highlight-corabastos" id="sn-mayoristas-corabastos">
           <i class="fa-solid fa-truck"></i> Mayoristas Corabastos
         </div>
       </div>
 
-      <!-- Col 4: Otros Mayoristas Corabastos (Derecha Abajo) -->
-      <div class="sub-col" id="col-otros-corabastos" style="position: absolute; right: 40px; top: 320px;">
-        <div class="sub-node-box node-green" id="sn-otros-mayoristas">
-          <i class="fa-solid fa-truck-fast"></i> Otros Mayoristas Corabastos
+      <!-- Fila 2: Consumidores (Izquierda Centro) -->
+      <div class="sub-col" id="col-consumidores" style="position: absolute; left: 30px; top: 290px;">
+        <div class="sub-node-box node-green" id="sn-consumidores" style="padding: 12px 24px;">
+          <i class="fa-solid fa-users"></i> Consumidores
         </div>
       </div>
 
-      <!-- Col 5: Canales de Distribución (Centro Abajo) -->
-      <div class="sub-col" id="col-canales" style="position: absolute; left: 360px; top: 200px; gap: 10px;">
+      <!-- Fila 2: Pila de Canales de Distribución (Centro) -->
+      <div class="sub-col" id="col-canales" style="position: absolute; left: 340px; top: 200px; gap: 8px;">
         <div class="sub-node-box node-green" id="sn-tiendas">
           <i class="fa-solid fa-store"></i> Tiendas / Microempresas
         </div>
@@ -199,15 +199,15 @@
         </div>
       </div>
 
-      <!-- Col 6: Consumidores (Extremo Izquierda Abajo) -->
-      <div class="sub-col" id="col-consumidores" style="position: absolute; left: 30px; top: 290px;">
-        <div class="sub-node-box node-green" id="sn-consumidores" style="padding: 12px 24px;">
-          <i class="fa-solid fa-users"></i> Consumidores
+      <!-- Fila 2: Otros Mayoristas Corabastos (Derecha) -->
+      <div class="sub-col" id="col-otros-corabastos" style="position: absolute; right: 40px; top: 290px;">
+        <div class="sub-node-box node-green" id="sn-otros-mayoristas">
+          <i class="fa-solid fa-truck-fast"></i> Otros Mayoristas Corabastos
         </div>
       </div>
 
       <!-- Nota flotante -->
-      <div class="subnetwork-note" style="position: absolute; right: 260px; top: 270px; width: 170px; font-size: 11px; color: #a0aec0; line-height: 1.3; text-align: center; font-style: italic;">
+      <div class="subnetwork-note" style="position: absolute; right: 280px; top: 275px; width: 140px; font-size: 10px; color: #a0aec0; line-height: 1.2; text-align: center; font-style: italic;">
         Dependiendo del producto y condiciones de oferta y demanda
       </div>
 
