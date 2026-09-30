@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redes · Diagrama de Red Topológica Kennedy</title>
+  <title>Redes · Ecosistema Interactivo de Red Física Kennedy</title>
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -17,7 +17,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 
-  <!-- Base Theme, Sidebar & Topology Network Styles -->
+  <!-- Base Theme, Sidebar & Physics Canvas Network Styles -->
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/sidebar.css">
   <link rel="stylesheet" href="css/kennedy-network.css">
@@ -36,7 +36,7 @@
 
       <!-- Primary Icon Navigation -->
       <nav class="icon-nav" aria-label="Navegación Módulos de Red">
-        <a href="index.html" class="icon-nav-item active" data-tooltip="Inicio / Grafo de Red">
+        <a href="index.html" class="icon-nav-item active" data-tooltip="Red Física Interactiva">
           <i class="fa-solid fa-house"></i>
         </a>
         <a href="modules/network-01/index.html" class="icon-nav-item" data-tooltip="Módulo 01 · Escala Metropolitana">
@@ -78,51 +78,76 @@
     <main class="main-content">
       <header class="topbar">
         <div class="topbar-title">
-          <i class="fa-solid fa-circle-nodes"></i> Grafo de Red Topológica & Cálculo Matemático · Localidad de Kennedy
+          <i class="fa-solid fa-circle-nodes"></i> Motor de Red Física 60fps & Simulación · Localidad de Kennedy
         </div>
       </header>
 
-      <!-- Network Interactive Stage -->
+      <!-- Interactive Canvas Physics Stage -->
       <div class="network-wrapper">
-        
-        <div class="network-header">
-          <h2>DIAGRAMA DE RED TOPOLÓGICA Y CÁLCULO DE NODOS</h2>
-          <p>Haz clic en cualquier nodo (A1 a C3) o en el nodo central para desplegar la <strong>fórmula matemática explícita</strong>, variables e indicadores cuantitativos (Sentinel-2, SDM, UAESP) y sus fuentes académicas.</p>
+
+        <!-- Top Controls Bar -->
+        <div class="graph-toolbar">
+          <button type="button" class="graph-btn active" data-filter="ALL">
+            <i class="fa-solid fa-network-wired"></i> Toda la Red
+          </button>
+          <button type="button" class="graph-btn" data-filter="1" style="--btn-color:#e89a6c;">
+            <i class="fa-solid fa-store"></i> Eje 1: Comercial
+          </button>
+          <button type="button" class="graph-btn" data-filter="2" style="--btn-color:#5b8def;">
+            <i class="fa-solid fa-bus"></i> Eje 2: Movilidad
+          </button>
+          <button type="button" class="graph-btn" data-filter="3" style="--btn-color:#2fd4c8;">
+            <i class="fa-solid fa-water"></i> Eje 3: Ambiental
+          </button>
+          <button type="button" class="graph-btn" id="resetPhysicsBtn" title="Reiniciar Física de Nodos">
+            <i class="fa-solid fa-rotate-right"></i> Reiniciar Grafo
+          </button>
         </div>
 
-        <!-- Circular Topology Stage -->
-        <div class="topology-stage" id="topologyStage">
-          
-          <div class="main-ring-axis"></div>
-          <svg class="topology-svg" id="topologySvg"></svg>
+        <!-- 60fps Physics Canvas -->
+        <canvas id="networkPhysicsCanvas"></canvas>
 
-          <!-- Central Controller -->
-          <div class="central-kennedy-btn" id="centralKennedyBtn">
-            <i class="fa-solid fa-calculator"></i>
-            <span>LOCALIDAD DE KENNEDY</span>
-            <span class="badge">Fórmula General</span>
-          </div>
-
+        <!-- Floating Hint -->
+        <div class="graph-hint">
+          <i class="fa-solid fa-hand-pointer"></i> Arrastra cualquier nodo para moverlo en tiempo real o haz clic para ver su fórmula matemática explícita.
         </div>
 
-        <!-- Legend Bar -->
-        <div class="category-legend-bar">
-          <div class="legend-item" style="--leg-color: #e89a6c;">
-            <div class="dot"></div>
-            <span>Eje 1: Comercial & Industrial (A1 - A4)</span>
+        <!-- Sliding Math Calculation Drawer -->
+        <aside class="calc-drawer" id="calcDrawer">
+          <div class="drawer-header">
+            <div class="drawer-title">
+              <h3>Fórmula de Cálculo</h3>
+              <span class="drawer-tag">Ecuación Algebraica</span>
+            </div>
+            <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Cerrar panel">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
           </div>
-          <div class="legend-item" style="--leg-color: #5b8def;">
-            <div class="dot"></div>
-            <span>Eje 2: Movilidad & Flujos (B1 - B4)</span>
-          </div>
-          <div class="legend-item" style="--leg-color: #2fd4c8;">
-            <div class="dot"></div>
-            <span>Eje 3: Basuras & Ambiental (C1 - C3)</span>
-          </div>
-        </div>
 
-        <!-- Panel Interactivo de Cálculo Matemático -->
-        <div class="calc-panel" id="calculationPanel"></div>
+          <!-- Formula Box -->
+          <div class="drawer-formula-box">
+            <div class="drawer-formula-display"></div>
+            <div class="drawer-formula-desc"></div>
+          </div>
+
+          <!-- Variables list -->
+          <div class="drawer-sec-title">
+            <i class="fa-solid fa-database"></i> Variables Cuantitativas & Fuentes
+          </div>
+          <div class="drawer-vars-list"></div>
+
+          <!-- Mechanism -->
+          <div class="drawer-sec-title">
+            <i class="fa-solid fa-diagram-project"></i> Mecanismo Causal
+          </div>
+          <div class="drawer-formula-desc drawer-mecanismo" style="margin-bottom:14px;"></div>
+
+          <!-- Citations Footer -->
+          <div class="drawer-meta-box">
+            <strong>Sustentación Académica:</strong><br>
+            <span class="cite drawer-fuente"></span>
+          </div>
+        </aside>
 
       </div>
     </main>
