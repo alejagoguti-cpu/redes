@@ -1,13 +1,13 @@
 /* ==========================================================================
-   INTERACTIVE CANVAS PHYSICS NETWORK GRAPH & DRAWER STYLES
+   RED DE RELACIONES DEL MODELO PROPIO · 3 CAPAS INTERCONECTADAS (KENNEDY)
    ========================================================================== */
 
 .network-wrapper {
   position: relative;
   width: 100%;
   height: calc(100vh - 60px);
-  min-height: 600px;
-  background: radial-gradient(circle at 50% 50%, #0c121c 0%, #06090e 70%, #030508 100%);
+  min-height: 620px;
+  background: radial-gradient(circle at 50% 40%, #0c131f 0%, #06090e 70%, #030508 100%);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -15,22 +15,22 @@
   box-sizing: border-box;
 }
 
-/* Control Topbar inside Canvas */
+/* Control Toolbar */
 .graph-toolbar {
   position: absolute;
-  top: 16px;
+  top: 14px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: rgba(13, 18, 27, 0.85);
-  backdrop-filter: blur(12px);
+  gap: 8px;
+  background: rgba(10, 14, 22, 0.88);
+  backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 8px 16px;
+  padding: 6px 14px;
   border-radius: 30px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -40,10 +40,10 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #cbd5e1;
   font-family: var(--site-font-display);
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 20px;
+  padding: 5px 12px;
+  border-radius: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -56,6 +56,38 @@
   color: #06090e;
   border-color: var(--btn-color, #2fd4c8);
   box-shadow: 0 0 12px var(--btn-color, rgba(47, 212, 200, 0.4));
+}
+
+/* Layer Badges Legend Overlay Top Right */
+.layer-legend-panel {
+  position: absolute;
+  top: 65px;
+  right: 18px;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(10, 15, 24, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+.layer-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5e1;
+}
+
+.layer-legend-item .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--l-color);
+  box-shadow: 0 0 8px var(--l-color);
 }
 
 /* Canvas Element */
@@ -72,18 +104,18 @@
   cursor: grabbing;
 }
 
-/* Floating Hint Overlay */
+/* Floating Hint Overlay Bottom Left */
 .graph-hint {
   position: absolute;
-  bottom: 20px;
-  left: 20px;
+  bottom: 16px;
+  left: 16px;
   z-index: 10;
-  background: rgba(10, 15, 24, 0.75);
+  background: rgba(10, 15, 24, 0.8);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 8px 14px;
   border-radius: 8px;
-  font-size: 11.5px;
+  font-size: 11px;
   color: #94a3b8;
   pointer-events: none;
   display: flex;
@@ -95,18 +127,18 @@
   color: #2fd4c8;
 }
 
-/* Slide-over Side Drawer for Math Calculation */
+/* Slide-over Side Drawer for Node Data & Analysis */
 .calc-drawer {
   position: absolute;
   top: 0;
   right: 0;
-  width: 440px;
-  max-width: 90vw;
+  width: 480px;
+  max-width: 92vw;
   height: 100%;
-  background: rgba(10, 14, 22, 0.94);
-  backdrop-filter: blur(16px);
+  background: rgba(9, 13, 20, 0.95);
+  backdrop-filter: blur(18px);
   border-left: 1px solid var(--drawer-color, rgba(47, 212, 200, 0.3));
-  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.8);
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.85);
   z-index: 50;
   display: flex;
   flex-direction: column;
@@ -126,8 +158,8 @@
   align-items: flex-start;
   justify-content: space-between;
   border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
-  padding-bottom: 16px;
-  margin-bottom: 20px;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .drawer-title {
@@ -154,8 +186,8 @@
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #cbd5e1;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -168,28 +200,50 @@
   color: #ffffff;
 }
 
-/* Formula Box in Drawer */
-.drawer-formula-box {
-  background: #06080d;
-  border: 1px solid var(--drawer-color, rgba(47, 212, 200, 0.3));
+/* Comparison Table POT vs Modelo Propio */
+.comparison-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
-  padding: 16px;
+  padding: 14px;
   margin-bottom: 16px;
-  text-align: center;
-  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
 }
 
-.drawer-formula-display {
-  font-size: 16px;
-  color: var(--drawer-color, #2fd4c8);
-  margin-bottom: 8px;
-  overflow-x: auto;
-}
-
-.drawer-formula-desc {
+.comp-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
   font-size: 11.5px;
+}
+
+.comp-row:last-child {
+  margin-bottom: 0;
+}
+
+.comp-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
   color: #94a3b8;
-  line-height: 1.45;
+  letter-spacing: 0.5px;
+}
+
+.comp-val-pot {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(248, 113, 113, 0.2);
+}
+
+.comp-val-propio {
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.1);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  font-weight: 600;
 }
 
 /* Section Title inside Drawer */
@@ -200,7 +254,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: #a0aec0;
-  margin: 16px 0 10px;
+  margin: 14px 0 8px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -210,64 +264,41 @@
   color: var(--drawer-color, #2fd4c8);
 }
 
-/* Variables List */
-.drawer-vars-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
+.drawer-desc {
+  font-size: 12px;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin-bottom: 12px;
 }
 
-.drawer-var-card {
+/* Relations List in Drawer */
+.relations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.rel-item {
+  font-size: 11px;
+  padding: 8px 10px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  padding: 10px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 11.5px;
-}
-
-.drawer-var-head {
-  display: flex;
-  justify-content: space-between;
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.drawer-var-head strong {
-  color: var(--drawer-color, #2fd4c8);
-}
-
-.drawer-var-body {
-  color: #94a3b8;
-  font-size: 11px;
-}
-
-/* Footer Citations */
-.drawer-meta-box {
-  background: rgba(255, 255, 255, 0.02);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 14px;
-  margin-top: auto;
-  font-size: 11.5px;
-  color: #94a3b8;
-  line-height: 1.45;
-}
-
-.drawer-meta-box strong {
+  border-radius: 6px;
   color: #e2e8f0;
+  line-height: 1.35;
 }
 
-.drawer-meta-box span.cite {
-  color: #2fd4c8;
-  font-style: italic;
+.rel-item strong {
+  color: var(--drawer-color, #2fd4c8);
 }
 
 @media (max-width: 768px) {
   .calc-drawer {
     width: 100vw;
     max-width: 100vw;
+  }
+  .layer-legend-panel {
+    display: none;
   }
 }

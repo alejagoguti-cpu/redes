@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redes · Ecosistema Interactivo de Red Física Kennedy</title>
+  <title>Redes · Red de Relaciones del Modelo Propio (Kennedy)</title>
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -11,11 +11,6 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-  
-  <!-- KaTeX Math LaTeX CDN -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 
   <!-- Base Theme, Sidebar & Physics Canvas Network Styles -->
   <link rel="stylesheet" href="css/main.css">
@@ -36,7 +31,7 @@
 
       <!-- Primary Icon Navigation -->
       <nav class="icon-nav" aria-label="Navegación Módulos de Red">
-        <a href="index.html" class="icon-nav-item active" data-tooltip="Red Física Interactiva">
+        <a href="index.html" class="icon-nav-item active" data-tooltip="Red del Modelo Propio (3 Capas)">
           <i class="fa-solid fa-house"></i>
         </a>
         <a href="modules/network-01/index.html" class="icon-nav-item" data-tooltip="Módulo 01 · Escala Metropolitana">
@@ -78,7 +73,7 @@
     <main class="main-content">
       <header class="topbar">
         <div class="topbar-title">
-          <i class="fa-solid fa-circle-nodes"></i> Motor de Red Física 60fps & Simulación · Localidad de Kennedy
+          <i class="fa-solid fa-diagram-project"></i> Red de Relaciones del Modelo Propio · Sistema Socioecológico de Kennedy
         </div>
       </header>
 
@@ -88,20 +83,39 @@
         <!-- Top Controls Bar -->
         <div class="graph-toolbar">
           <button type="button" class="graph-btn active" data-filter="ALL">
-            <i class="fa-solid fa-network-wired"></i> Toda la Red
+            <i class="fa-solid fa-network-wired"></i> Red Completa (12 Nodos)
           </button>
           <button type="button" class="graph-btn" data-filter="1" style="--btn-color:#e89a6c;">
-            <i class="fa-solid fa-store"></i> Eje 1: Comercial
+            <i class="fa-solid fa-store"></i> Capa 1: Comercio & Logística
           </button>
-          <button type="button" class="graph-btn" data-filter="2" style="--btn-color:#5b8def;">
-            <i class="fa-solid fa-bus"></i> Eje 2: Movilidad
+          <button type="button" class="graph-btn" data-filter="2" style="--btn-color:#f59e0b;">
+            <i class="fa-solid fa-bus"></i> Capa 2: Movilidad & Flujos
           </button>
           <button type="button" class="graph-btn" data-filter="3" style="--btn-color:#2fd4c8;">
-            <i class="fa-solid fa-water"></i> Eje 3: Ambiental
+            <i class="fa-solid fa-water"></i> Capa 3: Ecosistema & Agua
           </button>
-          <button type="button" class="graph-btn" id="resetPhysicsBtn" title="Reiniciar Física de Nodos">
-            <i class="fa-solid fa-rotate-right"></i> Reiniciar Grafo
+          <button type="button" class="graph-btn" data-filter="HUBS" style="--btn-color:#ef4444;">
+            <i class="fa-solid fa-circle-nodes"></i> Ver Hubs & Nodos Puente
           </button>
+          <button type="button" class="graph-btn" id="resetPhysicsBtn" title="Reiniciar Grafo">
+            <i class="fa-solid fa-rotate-right"></i> Reiniciar
+          </button>
+        </div>
+
+        <!-- Layer Legend Panel -->
+        <div class="layer-legend-panel">
+          <div class="layer-legend-item" style="--l-color:#e89a6c;">
+            <div class="dot"></div>
+            <span>Capa 1: Presiones / Comercio [N1-N4]</span>
+          </div>
+          <div class="layer-legend-item" style="--l-color:#f59e0b;">
+            <div class="dot"></div>
+            <span>Capa 2: Movilidad / Fricción [N5-N8]</span>
+          </div>
+          <div class="layer-legend-item" style="--l-color:#2fd4c8;">
+            <div class="dot"></div>
+            <span>Capa 3: Ecosistema / Soporte [N9-N12]</span>
+          </div>
         </div>
 
         <!-- 60fps Physics Canvas -->
@@ -109,44 +123,38 @@
 
         <!-- Floating Hint -->
         <div class="graph-hint">
-          <i class="fa-solid fa-hand-pointer"></i> Arrastra cualquier nodo para moverlo en tiempo real o haz clic para ver su fórmula matemática explícita.
+          <i class="fa-solid fa-hand-pointer"></i> Arrastra cualquier nodo [N1-N12] o presiónalo para ver su comparación con el POT y relaciones dirigidas.
         </div>
 
-        <!-- Sliding Math Calculation Drawer -->
+        <!-- Sliding Math & POT Comparison Drawer -->
         <aside class="calc-drawer" id="calcDrawer">
           <div class="drawer-header">
             <div class="drawer-title">
-              <h3>Fórmula de Cálculo</h3>
-              <span class="drawer-tag">Ecuación Algebraica</span>
+              <h3>Análisis del Nodo</h3>
+              <span class="drawer-tag">Modelo Propio vs POT</span>
             </div>
             <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Cerrar panel">
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
 
-          <!-- Formula Box -->
-          <div class="drawer-formula-box">
-            <div class="drawer-formula-display"></div>
-            <div class="drawer-formula-desc"></div>
-          </div>
+          <!-- Description -->
+          <div class="drawer-desc"></div>
 
-          <!-- Variables list -->
+          <!-- POT vs Modelo Propio Comparison Box -->
+          <div class="comparison-box"></div>
+
+          <!-- Direct Directed Links -->
           <div class="drawer-sec-title">
-            <i class="fa-solid fa-database"></i> Variables Cuantitativas & Fuentes
+            <i class="fa-solid fa-diagram-project"></i> Relaciones Dirigidas en la Red
           </div>
-          <div class="drawer-vars-list"></div>
+          <div class="relations-list"></div>
 
-          <!-- Mechanism -->
+          <!-- Causal Mechanism -->
           <div class="drawer-sec-title">
-            <i class="fa-solid fa-diagram-project"></i> Mecanismo Causal
+            <i class="fa-solid fa-route"></i> Mecanismo Causal
           </div>
-          <div class="drawer-formula-desc drawer-mecanismo" style="margin-bottom:14px;"></div>
-
-          <!-- Citations Footer -->
-          <div class="drawer-meta-box">
-            <strong>Sustentación Académica:</strong><br>
-            <span class="cite drawer-fuente"></span>
-          </div>
+          <div class="drawer-desc drawer-mecanismo"></div>
         </aside>
 
       </div>
