@@ -1,0 +1,148 @@
+/* ==========================================================================
+   SIDEBAR NAVIGATION STYLESHEET (RAPOT / REDES)
+   ========================================================================== */
+
+.sidebar {
+  flex: 0 0 80px;
+  width: 80px;
+  min-width: 80px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 0 20px;
+  background: #080b0d;
+  border-right: 1px solid rgba(255, 255, 255, 0.10);
+  color: #dfe8e5;
+  z-index: 100;
+  user-select: none;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+/* --- Brand / Logo Icon --- */
+.sidebar .brand-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 24px;
+  border: 1px solid rgba(70, 214, 208, 0.72);
+  border-radius: 12px;
+  background: #24c8bd;
+  color: #061414;
+  font-size: 20px;
+  text-decoration: none;
+  box-shadow: 0 0 20px rgba(70, 214, 208, 0.22);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.2s ease, 
+              background 0.2s ease;
+}
+
+.sidebar .brand-icon:hover {
+  transform: translateY(-2px) scale(1.03);
+  background: #45d8cf;
+  box-shadow: 0 0 26px rgba(70, 214, 208, 0.45);
+}
+
+/* --- Nav Containers --- */
+.sidebar .icon-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  flex: 1;
+}
+
+.sidebar .icon-nav-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* --- Navigation Link Items --- */
+.sidebar .icon-nav-item {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #8891a5;
+  font-size: 18px;
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid transparent;
+  transition: color 0.2s ease, 
+              background 0.2s ease, 
+              border-color 0.2s ease, 
+              transform 0.15s ease;
+}
+
+.sidebar .icon-nav-item:hover {
+  color: #2fd4c8;
+  background: rgba(47, 212, 200, 0.12);
+  border-color: rgba(47, 212, 200, 0.25);
+  transform: scale(1.05);
+}
+
+/* --- Active Item State --- */
+.sidebar .icon-nav-item.active {
+  color: #2fd4c8;
+  background: rgba(47, 212, 200, 0.18);
+  border-color: rgba(47, 212, 200, 0.5);
+  box-shadow: inset 0 0 12px rgba(47, 212, 200, 0.15);
+}
+
+.sidebar .icon-nav-item.active::after {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  background: #2fd4c8;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 0 0 8px #2fd4c8;
+}
+
+/* --- Custom Tooltip on Hover --- */
+.sidebar .icon-nav-item[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 62px;
+  top: 50%;
+  transform: translateY(-50%) translateX(-6px);
+  background: #101417;
+  color: #e8eeee;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(70, 214, 208, 0.28);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 150;
+}
+
+.sidebar .icon-nav-item[data-tooltip]:hover::before {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
