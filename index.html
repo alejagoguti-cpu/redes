@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redes · Red de Relaciones del Modelo Propio (Kennedy)</title>
+  <title>Redes · Localidad de Kennedy</title>
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -11,13 +11,8 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-
-  <!-- KaTeX Math LaTeX CDN -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
-
-  <!-- Base Theme, Sidebar & Physics Canvas Network Styles -->
+  
+  <!-- Base Theme, Sidebar & Network Diagram Styles -->
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/sidebar.css">
   <link rel="stylesheet" href="css/kennedy-network.css">
@@ -36,7 +31,7 @@
 
       <!-- Primary Icon Navigation -->
       <nav class="icon-nav" aria-label="Navegación Módulos de Red">
-        <a href="index.html" class="icon-nav-item active" data-tooltip="Red del Modelo Propio (3 Capas)">
+        <a href="index.html" class="icon-nav-item active" data-tooltip="Inicio / Kennedy">
           <i class="fa-solid fa-house"></i>
         </a>
         <a href="modules/network-01/index.html" class="icon-nav-item" data-tooltip="Módulo 01 · Escala Metropolitana">
@@ -78,160 +73,117 @@
     <main class="main-content">
       <header class="topbar">
         <div class="topbar-title">
-          <i class="fa-solid fa-diagram-project"></i> Red de Relaciones del Modelo Propio · Sistema Socioecológico de Kennedy
+          <i class="fa-solid fa-share-nodes"></i> Arquitectura de Red · Bogotá Viva
         </div>
       </header>
 
-      <!-- Network Interactive Stage -->
-      <div class="network-wrapper">
-
-        <!-- Top Controls Bar -->
-        <div class="graph-toolbar">
-          <button type="button" class="graph-btn active" data-filter="ALL">
-            <i class="fa-solid fa-network-wired"></i> Red Completa (12 Nodos)
-          </button>
-          <button type="button" class="graph-btn" data-filter="1" style="--btn-color:#e89a6c;">
-            <i class="fa-solid fa-store"></i> Capa 1: Comercio & Logística
-          </button>
-          <button type="button" class="graph-btn" data-filter="2" style="--btn-color:#f59e0b;">
-            <i class="fa-solid fa-bus"></i> Capa 2: Movilidad & Flujos
-          </button>
-          <button type="button" class="graph-btn" data-filter="3" style="--btn-color:#2fd4c8;">
-            <i class="fa-solid fa-water"></i> Capa 3: Ecosistema & Agua
-          </button>
-          <button type="button" class="graph-btn" data-filter="HUBS" style="--btn-color:#ef4444;">
-            <i class="fa-solid fa-circle-nodes"></i> Ver Hubs & Nodos Puente
-          </button>
-          <button type="button" class="graph-btn" id="resetPhysicsBtn" title="Reiniciar Grafo">
-            <i class="fa-solid fa-rotate-right"></i> Reiniciar
-          </button>
-        </div>
-
-        <!-- 60fps Physics Canvas Container -->
-        <div class="canvas-container">
-          <!-- Layer Legend Panel -->
-          <div class="layer-legend-panel">
-            <div class="layer-legend-item" style="--l-color:#e89a6c;">
-              <div class="dot"></div>
-              <span>Capa 1: Presiones / Comercio [N1-N4]</span>
-            </div>
-            <div class="layer-legend-item" style="--l-color:#f59e0b;">
-              <div class="dot"></div>
-              <span>Capa 2: Movilidad / Fricción [N5-N8]</span>
-            </div>
-            <div class="layer-legend-item" style="--l-color:#2fd4c8;">
-              <div class="dot"></div>
-              <span>Capa 3: Ecosistema / Soporte [N9-N12]</span>
-            </div>
-          </div>
-
-          <canvas id="networkPhysicsCanvas"></canvas>
+      <div class="container">
+        
+        <!-- Red Interactiva de Kennedy (Primera Versión) -->
+        <div class="network-container">
           
-          <div class="graph-hint">
-            <i class="fa-solid fa-hand-pointer"></i> Arrastra cualquier nodo [N1-N12] o haz clic en las filas de la tabla inferior para filtrar la red.
-          </div>
-        </div>
-
-        <!-- TABLA DE INDICADORES: MODELO PROPIO VS POT -->
-        <section class="table-section">
-          <div class="table-header-title">
-            <i class="fa-solid fa-table-list"></i>
-            <h3>Tabla Integrada: Indicadores Propios vs. POT en Toda la Localidad</h3>
-          </div>
-
-          <div class="comparison-table-wrapper">
-            <table class="comparison-table">
-              <thead>
-                <tr>
-                  <th style="width: 24%;">Fenómeno Transversal</th>
-                  <th style="width: 25%;">Indicador Plano del POT (Deficiente)</th>
-                  <th style="width: 26%;">Indicador Propuesto por el Modelo Propio</th>
-                  <th style="width: 25%;">¿Qué mide en Kennedy que el POT ignora?</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr data-filter-fen="1">
-                  <td>
-                    <span class="fenomeno-badge" style="--f-color: #e89a6c;">
-                      <i class="fa-solid fa-store"></i> 1. Concentración Comercial e Industrial
-                    </span>
-                  </td>
-                  <td>
-                    <span class="pot-deficiente-badge">Clasificación de uso del suelo (Comercial / Industrial)</span>
-                  </td>
-                  <td>
-                    <span class="propio-propuesto-badge">Tasa de Generación y Vertimiento de Carga Orgánica/Industrial No Tratada</span>
-                  </td>
-                  <td>
-                    Mide las toneladas reales de residuos y lixiviados que llegan a la cuenca hídrica desde Corabastos y Carvajal.
-                  </td>
-                </tr>
-                <tr data-filter-fen="2">
-                  <td>
-                    <span class="fenomeno-badge" style="--f-color: #f59e0b;">
-                      <i class="fa-solid fa-bus"></i> 2. Movilidad y Colapso de Redes
-                    </span>
-                  </td>
-                  <td>
-                    <span class="pot-deficiente-badge">Distancia plana de 500 m a estaciones (Proximidad teórica)</span>
-                  </td>
-                  <td>
-                    <span class="propio-propuesto-badge">Índice de Hacinamiento en Andén (pers/m²) y Tiempo Real de Viaje</span>
-                  </td>
-                  <td>
-                    Mide las filas de más de 4 pers/m² y los sobretiempos (>60 min) causados por el embudo de Bosa y Soacha en Banderas.
-                  </td>
-                </tr>
-                <tr data-filter-fen="3">
-                  <td>
-                    <span class="fenomeno-badge" style="--f-color: #2fd4c8;">
-                      <i class="fa-solid fa-water"></i> 3. Residuos e Impermeabilización
-                    </span>
-                  </td>
-                  <td>
-                    <span class="pot-deficiente-badge">Área de Parque Ecológico delimitada en hectáreas en el mapa</span>
-                  </td>
-                  <td>
-                    <span class="propio-propuesto-badge">Índice de Presión Sonora (>75 dB) y Porcentaje de Infiltración Efectiva</span>
-                  </td>
-                  <td>
-                    Mide el ruido vehicular en la ronda de El Burro y la pérdida de capacidad del suelo para absorber agua de lluvia.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- Sliding Math & POT Comparison Drawer -->
-        <aside class="calc-drawer" id="calcDrawer">
-          <div class="drawer-header">
-            <div class="drawer-title">
-              <h3>Análisis del Nodo</h3>
-              <span class="drawer-tag">Modelo Propio vs POT</span>
-            </div>
-            <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Cerrar panel">
-              <i class="fa-solid fa-xmark"></i>
+          <!-- Nodo Central -->
+          <div class="central-node-wrapper">
+            <button type="button" class="central-node" id="centralNodeKennedy" aria-expanded="false">
+              <i class="fa-solid fa-city icon-main"></i>
+              <span>LOCALIDAD DE KENNEDY</span>
+              <span class="node-indicator"><i class="fa-solid fa-chevron-down"></i></span>
             </button>
+            <div class="central-connector" id="centralConnector"></div>
           </div>
 
-          <div class="drawer-desc"></div>
+          <!-- Módulos / Ramas de la Red -->
+          <div class="categories-grid" id="categoriesGrid">
+            
+            <!-- Categoria 1 -->
+            <div class="category-card" style="--card-accent: #e89a6c; --card-glow: rgba(232, 154, 108, 0.25);">
+              <div class="category-header">
+                <span class="category-number">1</span>
+                <span class="category-title">Concentración Comercial, Logística e Industrial</span>
+                <span class="category-toggle-btn"><i class="fa-solid fa-chevron-down"></i></span>
+              </div>
+              
+              <div class="sub-elements-list">
+                <div class="sub-element-item">
+                  <i class="fa-solid fa-warehouse"></i>
+                  <span>Corabastos y María Paz</span>
+                </div>
+                <div class="sub-element-item">
+                  <i class="fa-solid fa-industry"></i>
+                  <span>Zona Industrial de Carvajal</span>
+                </div>
+                <div class="sub-element-item">
+                  <i class="fa-solid fa-road"></i>
+                  <span>Corredor Calle 13 / AE09</span>
+                </div>
+                <div class="sub-element-item">
+                  <div style="display:flex; align-items:flex-start; gap:8px;">
+                    <i class="fa-solid fa-store" style="margin-top:2px;"></i>
+                    <span>Comercio informal en Patio Bonito, Tintal y Bosa Borde</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-          <!-- POT vs Modelo Propio Comparison Box -->
-          <div class="comparison-box"></div>
+            <!-- Categoria 2 -->
+            <div class="category-card" style="--card-accent: #5b8def; --card-glow: rgba(91, 141, 239, 0.25);">
+              <div class="category-header">
+                <span class="category-number">2</span>
+                <span class="category-title">Colapso de Movilidad y Fricción de Flujos</span>
+                <span class="category-toggle-btn"><i class="fa-solid fa-chevron-down"></i></span>
+              </div>
 
-          <!-- Direct Directed Links -->
-          <div class="drawer-sec-title">
-            <i class="fa-solid fa-diagram-project"></i> Relaciones Dirigidas en la Red
+              <div class="sub-elements-list">
+                <div class="sub-element-item">
+                  <i class="fa-solid fa-bus"></i>
+                  <span>Banderas (Av. Américas)</span>
+                </div>
+                <div class="sub-element-item">
+                  <i class="fa-solid fa-route"></i>
+                  <span>Av. Ciudad de Cali</span>
+                </div>
+                <div class="sub-element-item">
+                  <i class="fa-solid fa-car"></i>
+                  <span>Av. Boyacá y Cepeda Vargas</span>
+                </div>
+                <div class="sub-element-item">
+                  <div style="display:flex; align-items:flex-start; gap:8px;">
+                    <i class="fa-solid fa-arrows-to-dot" style="margin-top:2px;"></i>
+                    <span>Embudo de flujos desde Bosa, Soacha y Fontibón</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Categoria 3 -->
+            <div class="category-card" style="--card-accent: #2fd4c8; --card-glow: rgba(47, 212, 200, 0.25);">
+              <div class="category-header">
+                <span class="category-number">3</span>
+                <span class="category-title">Basuras, Impermeabilización y Degradación Ambiental</span>
+                <span class="category-toggle-btn"><i class="fa-solid fa-chevron-down"></i></span>
+              </div>
+
+              <div class="sub-elements-list">
+                <div class="sub-element-item">
+                  <i class="fa-solid fa-water"></i>
+                  <span>Humedales El Burro, La Vaca y Techo</span>
+                </div>
+                <div class="sub-element-item">
+                  <i class="fa-solid fa-water-ladder"></i>
+                  <span>Ríos Fucha y Tunjuelito</span>
+                </div>
+                <div class="sub-element-item">
+                  <div style="display:flex; align-items:flex-start; gap:8px;">
+                    <i class="fa-solid fa-cloud-showers-heavy" style="margin-top:2px;"></i>
+                    <span>Escorrentía en suelo duro en Castilla, Dindalito, etc.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
-          <div class="relations-list"></div>
 
-          <!-- Causal Mechanism -->
-          <div class="drawer-sec-title">
-            <i class="fa-solid fa-route"></i> Mecanismo Causal
-          </div>
-          <div class="drawer-desc drawer-mecanismo"></div>
-        </aside>
+        </div>
 
       </div>
     </main>
