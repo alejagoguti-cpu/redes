@@ -1,7 +1,7 @@
 /**
  * Red de Relaciones del Modelo Propio · Localidad de Kennedy
  * Sistema Socioecológico-Técnico Complejo de 3 Capas Interconectadas (N1 a N12)
- * 60fps HTML5 Canvas Physics Engine (Sin nodo central de Kennedy)
+ * 60fps HTML5 Canvas Physics Engine + Tabla de Indicadores Propios vs POT
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ctx = canvas.getContext('2d');
 
-  // Exact 12 Nodes [N1] to [N12] organized in 3 Interconnected Layers (Sin nodo central)
+  // Exact 12 Nodes [N1] to [N12]
   const rawNodes = [
-    // CAPA 1: Centralidades Comerciales, Logísticas e Industriales (Presión / Entradas - #e89a6c)
+    // CAPA 1: Centralidades Comerciales, Logísticas e Industriales (#e89a6c)
     {
       id: "N1",
       code: "[N1]",
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
       desc: "Punto de concentración alimentario regional que genera flujos masivos de transporte pesado y toneladas diarias de residuos orgánicos.",
       potDeficiente: "Clasificación de uso del suelo (Comercial / Zona de Abastecimiento). Ignora las tasas reales de lixiviados y carga logística.",
       modeloPropio: "Tasa de Generación y Vertimiento de Carga Orgánica/Industrial No Tratada.",
-      queMide: "Mide las toneladas reales de residuos y lixiviados que llegan a la cuenca hídrica desde Corabastos.",
+      queMide: "Mide las toneladas reales de residuos y lixiviados que llegan a la cuenca hídrica desde Corabastos y Carvajal.",
       mecanismo: "Inyecta camiones pesados deteriorando la malla vial local (N8) y filtra lixiviados acelerando la eutrofización en Humedal La Vaca (N10)."
     },
     {
@@ -42,9 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
       color: "#e89a6c",
       glow: "#e89a6c",
       desc: "Polígono de pequeñas y grandes industrias (plásticos, metalmecánica) con alta demanda de almacenamiento y transporte de insumos.",
-      potDeficiente: "Zonificación industrial plana en mapa.",
-      modeloPropio: "Índice de Demanda Logística e Impermeabilización por Naves Industriales.",
-      queMide: "Mide el consumo de suelo por pavimentación industrial y generación de transporte de insumos.",
+      potDeficiente: "Clasificación de uso del suelo (Industrial).",
+      modeloPropio: "Tasa de Generación y Vertimiento de Carga Orgánica/Industrial No Tratada.",
+      queMide: "Mide las toneladas reales de vertimientos industriales no tratados hacia la cuenca del Río Fucha.",
       mecanismo: "Descarga tráfico pesado sobre la Av. Ciudad de Cali (N6) y pavimenta suelo de absorción."
     },
     {
@@ -58,9 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
       color: "#e89a6c",
       glow: "#e89a6c",
       desc: "Arteria de articulación metropolitana que inyecta transporte pesado de carga hacia el norte de la localidad.",
-      potDeficiente: "Eje de transporte metropolitano sin medición de fricción residencial.",
-      modeloPropio: "Índice de Fricción Logística e Inyección de Carga Pesada Extralocal.",
-      queMide: "Mide el volumen de camiones regionales sobre la barrera residencial de Calle 13.",
+      potDeficiente: "Clasificación de uso del suelo (Corredor de Carga).",
+      modeloPropio: "Tasa de Generación y Vertimiento de Carga Orgánica/Industrial No Tratada.",
+      queMide: "Mide la inyección masiva de transporte de carga pesada sobre el borde residencial norte de Kennedy.",
       mecanismo: "Inyecta congestión de carga hacia la red primaria de Kennedy (N6)."
     },
     {
@@ -75,12 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
       glow: "#e89a6c",
       desc: "Redes de comercio en espacio público que sostienen el abastecimiento vecinal directo.",
       potDeficiente: "Infracción o uso no permitido del suelo.",
-      modeloPropio: "Densidad de Comercio Popular y Generación de Residuos Urbanos en Fuente.",
-      queMide: "Mide la ocupación de andenes y la basura comercial no recolectada por la norma.",
+      modeloPropio: "Tasa de Generación y Vertimiento de Carga Orgánica/Industrial No Tratada.",
+      queMide: "Mide la basura comercial no recolectada en la fuente que termina en los drenajes pluviales.",
       mecanismo: "Sobrecarga la malla vial de barrio (N8) con desechos comerciales."
     },
 
-    // CAPA 2: Redes de Movilidad e Infraestructura Física (Fricción / Flujos - #f59e0b / #5b8def)
+    // CAPA 2: Redes de Movilidad e Infraestructura Física (#f59e0b)
     {
       id: "N5",
       code: "[N5]",
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
       desc: "Embudo de transporte masivo donde converge la población residente y flotante en horas pico.",
       potDeficiente: "Distancia plana de 500 m a estaciones (Proximidad teórica de 15 minutos).",
       modeloPropio: "Índice de Hacinamiento en Andén (pers/m²) y Tiempo Real de Viaje (>60 min).",
-      queMide: "Mide las filas de más de 4 pers/m² y sobretiempos causados por el embudo de Bosa y Soacha.",
+      queMide: "Mide las filas de más de 4 pers/m² y los sobretiempos (>60 min) causados por el embudo de Bosa y Soacha en Banderas.",
       mecanismo: "Recibe el flujo masivo de Soacha/Bosa (N7) y el colapso de andenes ralentiza la malla vial de barrio (N8)."
     },
     {
@@ -108,9 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
       color: "#f59e0b",
       glow: "#f59e0b",
       desc: "Eje longitudinal de alta velocidad y carga que atraviesa y fracciona físicamente el territorio.",
-      potDeficiente: "Vía arterial de transporte público y particular.",
-      modeloPropio: "Índice de Presión Sonora (>75 dB) y Coeficiente de Fragmentación Ecológica.",
-      queMide: "Mide el ruido continuo y la barrera física que aisló en dos al Humedal El Burro.",
+      potDeficiente: "Distancia plana de 500 m a estaciones (Proximidad teórica).",
+      modeloPropio: "Índice de Hacinamiento en Andén (pers/m²) y Tiempo Real de Viaje.",
+      queMide: "Mide el colapso vehicular y la fricción espacial que fragmentó el Humedal El Burro.",
       mecanismo: "Transmite ruido (>75 dB) y escorrentía con hidrocarburos al Humedal El Burro (N9)."
     },
     {
@@ -124,9 +124,9 @@ document.addEventListener('DOMContentLoaded', () => {
       color: "#f59e0b",
       glow: "#f59e0b",
       desc: "Cientos de miles de viajes diarios de paso que ingresan a Kennedy buscando acceso al centro de Bogotá.",
-      potDeficiente: "Cien por ciento invisibilizado en el POT por límites administrativos de UPZ.",
-      modeloPropio: "Tasa de Inyección de Pasajeros Flotantes Extralocales sobre la Infraestructura de Kennedy.",
-      queMide: "Mide el volumen de personas no residentes que consumen la capacidad de transporte local.",
+      potDeficiente: "Invisibilizado por límites administrativos de UPZ.",
+      modeloPropio: "Índice de Hacinamiento en Andén (pers/m²) y Tiempo Real de Viaje.",
+      queMide: "Mide los sobretiempos de viaje causados por los flujos de pasajeros flotantes de Bosa y Soacha.",
       mecanismo: "Empuja oleadas de viajeros embudándose en la Estación Banderas (N5)."
     },
     {
@@ -140,13 +140,13 @@ document.addEventListener('DOMContentLoaded', () => {
       color: "#f59e0b",
       glow: "#f59e0b",
       desc: "Vías de escala residencial sobrecargadas por el desvío de tráfico pesado y particular.",
-      potDeficiente: "Vías locales de servicio barrial.",
-      modeloPropio: "Índice de Deterioro de Pavimento y Fricción Vial Residencial.",
-      queMide: "Mide el daño en calles de barrio por camiones desviados de Corabastos.",
+      potDeficiente: "Distancia plana de 500 m a estaciones.",
+      modeloPropio: "Índice de Hacinamiento en Andén (pers/m²) y Tiempo Real de Viaje.",
+      queMide: "Mide el retraso de alimentadores de barrio atrapados en la congestión vial local.",
       mecanismo: "Recibe el desvío de camiones de Corabastos (N1) e inhibe la velocidad de alimentadores a Banderas (N5)."
     },
 
-    // CAPA 3: Ecosistema, Agua y Metabolismo Territorial (Capacidad de Soporte - #2fd4c8)
+    // CAPA 3: Ecosistema, Agua y Metabolismo Territorial (#2fd4c8)
     {
       id: "N9",
       code: "[N9]",
@@ -158,9 +158,9 @@ document.addEventListener('DOMContentLoaded', () => {
       color: "#2fd4c8",
       glow: "#2fd4c8",
       desc: "Reserva ecológica reducida históricamente a 18.8 ha (con solo 0.2 ha de espejo de agua) dividida por el asfalto.",
-      potDeficiente: "Área de Parque Ecológico Distrital delimitada en plano en hectáreas.",
-      modeloPropio: "Porcentaje de Infiltración Biofísica Efectiva y Presión Sonora en Borde.",
-      queMide: "Mide el aislamiento de la avifauna y el ruido de buses constante (>75 dB).",
+      potDeficiente: "Área de Parque Ecológico delimitada en hectáreas en el mapa.",
+      modeloPropio: "Índice de Presión Sonora (>75 dB) y Porcentaje de Infiltración Efectiva.",
+      queMide: "Mide el ruido vehicular continuo (>75 dB) en la ronda de El Burro y la pérdida de capacidad del suelo para absorber agua de lluvia.",
       mecanismo: "Sufre la presión de ruido/escorrentía de la Av. Cali (N6) y la falta de infiltración por suelo duro (N12)."
     },
     {
@@ -174,9 +174,9 @@ document.addEventListener('DOMContentLoaded', () => {
       color: "#2fd4c8",
       glow: "#2fd4c8",
       desc: "Ecosistema en la zona de influencia directa de Corabastos afectado por basura y carga contaminante.",
-      potDeficiente: "Polígono de conservación hídrica estático.",
-      modeloPropio: "Tasa de Vertimiento de Carga Orgánica y Nivel de Eutrofización en Agua.",
-      queMide: "Mide los lixiviados y la pérdida de oxígeno que producen malos olores (ácido sulfhídrico).",
+      potDeficiente: "Área de Parque Ecológico delimitada en hectáreas en el mapa.",
+      modeloPropio: "Índice de Presión Sonora (>75 dB) y Porcentaje de Infiltración Efectiva.",
+      queMide: "Mide el deterioro de la calidad del agua por lixiviados y la pérdida de suelo de absorción.",
       mecanismo: "Recibe basuras y lixiviados directos de Corabastos (N1) dañando su capacidad depuradora."
     },
     {
@@ -190,9 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
       color: "#2fd4c8",
       glow: "#2fd4c8",
       desc: "Canales y cuencas receptoras de la escorrentía pluvial urbana de toda la localidad.",
-      potDeficiente: "Canales de drenaje de concreto aislados.",
-      modeloPropio: "Índice de Saturación de Caudal Pluvial y Carga Pollutante de Cuenca Media.",
-      queMide: "Mide el volumen de agua sucia que descarga al Río Bogotá por sobrecarga urbana.",
+      potDeficiente: "Área de Parque Ecológico delimitada en hectáreas en el mapa.",
+      modeloPropio: "Índice de Presión Sonora (>75 dB) y Porcentaje de Infiltración Efectiva.",
+      queMide: "Mide la sobrecarga de escorrentía pluvial no infiltrada que satura la cuenca hídrica.",
       mecanismo: "Recibe el caudal de escorrentía no infiltrado del suelo pavimentado (N12)."
     },
     {
@@ -206,14 +206,14 @@ document.addEventListener('DOMContentLoaded', () => {
       color: "#2fd4c8",
       glow: "#2fd4c8",
       desc: "Superficie pavimentada masiva que anula la capacidad de infiltración del terreno como 'ciudad esponja'.",
-      potDeficiente: "Superficie urbana construible autorizada por licencias.",
-      modeloPropio: "Porcentaje (%) de Suelo Impermeable (NDBI) y Coeficiente de Escorrentía Pluvial.",
-      queMide: "Mide el cemento que impide que el agua de lluvia se hunda, provocando inundaciones de calle.",
+      potDeficiente: "Área de Parque Ecológico delimitada en hectáreas en el mapa.",
+      modeloPropio: "Índice de Presión Sonora (>75 dB) y Porcentaje de Infiltración Efectiva.",
+      queMide: "Mide el porcentaje de pavimento (NDBI) que impide que el agua de lluvia se hunda, provocando inundaciones de calle.",
       mecanismo: "Anula la infiltración (Causal -) hacia N9, N10 y N11, disparando encharcamientos e inundaciones."
     }
   ];
 
-  // Direct Connections Matrix (Enlances Principales con Tipos)
+  // Direct Connections Matrix
   const linksData = [
     { source: "N1", target: "N8", type: "Flujo de Carga", label: "N1 -> N8: Corabastos inyecta camiones a calles residenciales de María Paz" },
     { source: "N1", target: "N10", type: "Causal + (Lixiviados)", label: "N1 -> N10: Desperdicios sin tratar filtran contaminantes al Humedal La Vaca" },
@@ -256,14 +256,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const cx = width / 2;
 
     nodes = rawNodes.map((rn) => {
-      let layerY = height * 0.25;
+      let layerY = height * 0.22;
       if (rn.layer === "2") layerY = height * 0.5;
-      if (rn.layer === "3") layerY = height * 0.75;
+      if (rn.layer === "3") layerY = height * 0.78;
 
       return {
         ...rn,
-        x: cx + (Math.random() - 0.5) * (width * 0.7),
-        y: layerY + (Math.random() - 0.5) * 40,
+        x: cx + (Math.random() - 0.5) * (width * 0.75),
+        y: layerY + (Math.random() - 0.5) * 35,
         vx: 0,
         vy: 0,
         visible: true
@@ -336,9 +336,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!n.visible) return;
       if (n === draggedNode) return;
 
-      let targetY = height * 0.25;
+      let targetY = height * 0.22;
       if (n.layer === "2") targetY = height * 0.5;
-      if (n.layer === "3") targetY = height * 0.75;
+      if (n.layer === "3") targetY = height * 0.78;
 
       n.vy += (targetY - n.y) * 0.01;
 
@@ -568,12 +568,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Interactive Table Rows Clicking Handler
+  const tableRows = document.querySelectorAll('.comparison-table tr[data-filter-fen]');
+  tableRows.forEach(row => {
+    row.addEventListener('click', () => {
+      const fen = row.getAttribute('data-filter-fen');
+      tableRows.forEach(r => r.classList.remove('active-row'));
+      row.classList.add('active-row');
+
+      // Filter graph by layer corresponding to phenomenon
+      filterBtns.forEach(b => b.classList.remove('active'));
+      const targetBtn = document.querySelector(`.graph-btn[data-filter="${fen}"]`);
+      if (targetBtn) targetBtn.classList.add('active');
+
+      nodes.forEach(n => {
+        n.visible = (n.layer === fen);
+      });
+    });
+  });
+
   const filterBtns = document.querySelectorAll('.graph-btn[data-filter]');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeFilter = btn.getAttribute('data-filter');
+
+      tableRows.forEach(r => r.classList.remove('active-row'));
+      const activeRow = document.querySelector(`.comparison-table tr[data-filter-fen="${activeFilter}"]`);
+      if (activeRow) activeRow.classList.add('active-row');
 
       nodes.forEach(n => {
         if (activeFilter === 'ALL') {
@@ -592,6 +615,9 @@ document.addEventListener('DOMContentLoaded', () => {
     resetBtn.addEventListener('click', () => {
       initPhysicsNodes();
       if (drawer) drawer.classList.remove('open');
+      tableRows.forEach(r => r.classList.remove('active-row'));
+      filterBtns.forEach(b => b.classList.remove('active'));
+      document.querySelector('.graph-btn[data-filter="ALL"]').classList.add('active');
       selectedNode = null;
     });
   }
