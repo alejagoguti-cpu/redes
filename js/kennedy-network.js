@@ -245,6 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return {
       left: rect.left - stage.left,
       right: rect.right - stage.left,
+      top: rect.top - stage.top,
+      bottom: rect.bottom - stage.top,
       x: rect.left + rect.width / 2 - stage.left,
       y: rect.top + rect.height / 2 - stage.top
     };
@@ -254,80 +256,106 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!subnetworkSvgCanvas || !subnetworkModal.classList.contains('active')) return;
     subnetworkSvgCanvas.innerHTML = '';
 
-    // Topology according to the uploaded reference diagram:
-    // 1. Agricultores -> Acopiadores, Contrata Transporte, Transporte Propio
-    // 2. Acopiadores, Contrata Transporte, Transporte Propio -> Mayoristas Corabastos
-    // 3. Mayoristas Corabastos -> Consumidores (direct line down)
-    // 4. Mayoristas Corabastos -> Tiendas, Supermercados, Plazas, Institucionales, Agroalimentarias
-    // 5. Mayoristas Corabastos -> Otros Mayoristas Corabastos
-    // 6. Otros Mayoristas Corabastos -> Plazas, Empresas Agroalimentarias, Consumidores
-    // 7. Distribution channels -> Consumidores
+    // Add marker arrow definition once
+    let defs = subnetworkSvgCanvas.querySelector('defs');
+    if (!defs) {
+      defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+      defs.innerHTML = `
+        <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#2fd4c8" />
+        </marker>
+      `;
+      subnetworkSvgCanvas.appendChild(defs);
+    }
 
     const connections = [
-      // Branch 1: Agricultores to 3 transportation methods
-      { from: 'sn-agricultores', to: 'sn-acopiadores', fromAnchor: 'right', toAnchor: 'left' },
-      { from: 'sn-agricultores', to: 'sn-contrata-transporte', fromAnchor: 'right', toAnchor: 'left' },
-      { from: 'sn-agricultores', to: 'sn-transporte-propio', fromAnchor: 'right', toAnchor: 'left' },
+      // 1. Agricultores -> 3 transport options
+      { from: 'sn-agricultores', to: 'sn-acopiadores', type: 'fork-right' },
+      { from: 'sn-agricultores', to: 'sn-contrata-transporte', type: 'straight-h' },
+      { from: 'sn-agricultores', to: 'sn-transporte-propio', type: 'fork-right' },
 
-      // Branch 2: 3 transportation methods to Mayoristas Corabastos
-      { from: 'sn-acopiadores', to: 'sn-mayoristas-corabastos', fromAnchor: 'right', toAnchor: 'left' },
-      { from: 'sn-contrata-transporte', to: 'sn-mayoristas-corabastos', fromAnchor: 'right', toAnchor: 'left' },
-      { from: 'sn-transporte-propio', to: 'sn-mayoristas-corabastos', fromAnchor: 'right', toAnchor: 'left' },
+      // 2. 3 transport options -> Mayoristas Corabastos
+      { from: 'sn-acopiadores', to: 'sn-mayoristas-corabastos', type: 'join-right' },
+      { from: 'sn-contrata-transporte', to: 'sn-mayoristas-corabastos', type: 'straight-h' },
+      { from: 'sn-transporte-propio', to: 'sn-mayoristas-corabastos', type: 'join-right' },
 
-      // Branch 3: Mayoristas Corabastos direct connections
-      { from: 'sn-mayoristas-corabastos', to: 'sn-consumidores', fromAnchor: 'left', toAnchor: 'top' },
-      { from: 'sn-mayoristas-corabastos', to: 'sn-otros-mayoristas', fromAnchor: 'right', toAnchor: 'top' },
-      
-      // Mayoristas Corabastos to channels
-      { from: 'sn-mayoristas-corabastos', to: 'sn-tiendas', fromAnchor: 'bottom', toAnchor: 'left' },
-      { from: 'sn-mayoristas-corabastos', to: 'sn-supermercados', fromAnchor: 'bottom', toAnchor: 'left' },
-      { from: 'sn-mayoristas-corabastos', to: 'sn-plazas', fromAnchor: 'bottom', toAnchor: 'left' },
-      { from: 'sn-mayoristas-corabastos', to: 'sn-institucionales', fromAnchor: 'bottom', toAnchor: 'left' },
-      { from: 'sn-mayoristas-corabastos', to: 'sn-agroalimentarias', fromAnchor: 'bottom', toAnchor: 'left' },
+      // 3. Mayoristas Corabastos -> Consumidores (línea vertical descendente izquierda)
+      { from: 'sn-mayoristas-corabastos', to: 'sn-consumidores', type: 'corabastos-to-consumidores' },
 
-      // Otros Mayoristas Corabastos to channels & consumidores
-      { from: 'sn-otros-mayoristas', to: 'sn-plazas', fromAnchor: 'left', toAnchor: 'right' },
-      { from: 'sn-otros-mayoristas', to: 'sn-agroalimentarias', fromAnchor: 'left', toAnchor: 'right' },
-      { from: 'sn-otros-mayoristas', to: 'sn-consumidores', fromAnchor: 'bottom', toAnchor: 'bottom' },
+      // 4. Mayoristas Corabastos -> Bus de Canales (línea descendente hacia el centro)
+      { from: 'sn-mayoristas-corabastos', to: 'sn-tiendas', type: 'corabastos-to-channel-bus' },
+      { from: 'sn-mayoristas-corabastos', to: 'sn-supermercados', type: 'corabastos-to-channel-bus' },
+      { from: 'sn-mayoristas-corabastos', to: 'sn-plazas', type: 'corabastos-to-channel-bus' },
+      { from: 'sn-mayoristas-corabastos', to: 'sn-institucionales', type: 'corabastos-to-channel-bus' },
+      { from: 'sn-mayoristas-corabastos', to: 'sn-agroalimentarias', type: 'corabastos-to-channel-bus' },
 
-      // Channels to Consumidores
-      { from: 'sn-tiendas', to: 'sn-consumidores', fromAnchor: 'left', toAnchor: 'right' },
-      { from: 'sn-supermercados', to: 'sn-consumidores', fromAnchor: 'left', toAnchor: 'right' },
-      { from: 'sn-plazas', to: 'sn-consumidores', fromAnchor: 'left', toAnchor: 'right' },
-      { from: 'sn-institucionales', to: 'sn-consumidores', fromAnchor: 'left', toAnchor: 'right' },
-      { from: 'sn-agroalimentarias', to: 'sn-consumidores', fromAnchor: 'left', toAnchor: 'right' }
+      // 5. Mayoristas Corabastos -> Otros Mayoristas Corabastos (línea vertical descendente derecha)
+      { from: 'sn-mayoristas-corabastos', to: 'sn-otros-mayoristas', type: 'corabastos-to-otros' },
+
+      // 6. Otros Mayoristas -> Plazas, Agroalimentarias
+      { from: 'sn-otros-mayoristas', to: 'sn-plazas', type: 'otros-to-channel' },
+      { from: 'sn-otros-mayoristas', to: 'sn-agroalimentarias', type: 'otros-to-channel' },
+
+      // 7. Otros Mayoristas -> Consumidores (línea inferior envolvente)
+      { from: 'sn-otros-mayoristas', to: 'sn-consumidores', type: 'bottom-loop' },
+
+      // 8. Canales -> Consumidores
+      { from: 'sn-tiendas', to: 'sn-consumidores', type: 'channels-to-consumidores' },
+      { from: 'sn-supermercados', to: 'sn-consumidores', type: 'channels-to-consumidores' },
+      { from: 'sn-plazas', to: 'sn-consumidores', type: 'channels-to-consumidores' },
+      { from: 'sn-institucionales', to: 'sn-consumidores', type: 'channels-to-consumidores' },
+      { from: 'sn-agroalimentarias', to: 'sn-consumidores', type: 'channels-to-consumidores' }
     ];
 
-    connections.forEach(({ from, to, fromAnchor, toAnchor }) => {
+    // Helper to draw clean orthogonal SVG path
+    function createPath(dStr, hasArrow = true) {
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', dStr);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', '#2fd4c8');
+      path.setAttribute('stroke-width', '1.5');
+      if (hasArrow) path.setAttribute('marker-end', 'url(#arrow)');
+      subnetworkSvgCanvas.appendChild(path);
+    }
+
+    connections.forEach(({ from, to, type }) => {
       const elFrom = document.getElementById(from);
       const elTo = document.getElementById(to);
-      if (elFrom && elTo) {
-        const posFrom = getSubNodePos(elFrom);
-        const posTo = getSubNodePos(elTo);
+      if (!elFrom || !elTo) return;
 
-        let startX = posFrom.right;
-        let startY = posFrom.y;
-        if (fromAnchor === 'left') { startX = posFrom.left; startY = posFrom.y; }
-        if (fromAnchor === 'top') { startX = posFrom.x; startY = posFrom.top || (posFrom.y - 15); }
-        if (fromAnchor === 'bottom') { startX = posFrom.x; startY = posFrom.bottom || (posFrom.y + 15); }
+      const p1 = getSubNodePos(elFrom);
+      const p2 = getSubNodePos(elTo);
 
-        let endX = posTo.left;
-        let endY = posTo.y;
-        if (toAnchor === 'right') { endX = posTo.right; endY = posTo.y; }
-        if (toAnchor === 'top') { endX = posTo.x; endY = posTo.top || (posTo.y - 15); }
-        if (toAnchor === 'bottom') { endX = posTo.x; endY = posTo.bottom || (posTo.y + 15); }
-
-        const dx = endX - startX;
-        const dy = endY - startY;
-        const cx1 = startX + dx * 0.4;
-        const cy1 = startY + dy * 0.1;
-        const cx2 = startX + dx * 0.6;
-        const cy2 = startY + dy * 0.9;
-
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        const d = `M ${startX} ${startY} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${endX} ${endY}`;
-        path.setAttribute('d', d);
-        subnetworkSvgCanvas.appendChild(path);
+      if (type === 'straight-h') {
+        createPath(`M ${p1.right} ${p1.y} L ${p2.left} ${p2.y}`);
+      } else if (type === 'fork-right' || type === 'join-right') {
+        const midX = (p1.right + p2.left) / 2;
+        createPath(`M ${p1.right} ${p1.y} H ${midX} V ${p2.y} H ${p2.left}`);
+      } else if (type === 'corabastos-to-consumidores') {
+        // Line down from Corabastos left edge to Consumidores top edge
+        const dropX = p1.left + 25;
+        createPath(`M ${dropX} ${p1.bottom} V ${p2.top - 15} H ${p2.x} V ${p2.top}`);
+      } else if (type === 'corabastos-to-otros') {
+        // Line down from Corabastos right edge to Otros Mayoristas top edge
+        const dropX = p1.right - 25;
+        createPath(`M ${dropX} ${p1.bottom} V ${p2.top}`);
+      } else if (type === 'corabastos-to-channel-bus') {
+        // Drop down from Corabastos center and enter channel left
+        const dropX = p1.x;
+        const channelEntryX = p2.left;
+        createPath(`M ${dropX} ${p1.bottom} V ${p2.y} H ${channelEntryX}`);
+      } else if (type === 'otros-to-channel') {
+        // From Otros Mayoristas left into channels right
+        const midX = p1.left - 20;
+        createPath(`M ${p1.left} ${p1.y} H ${midX} V ${p2.y} H ${p2.right}`);
+      } else if (type === 'bottom-loop') {
+        // Bottom loop from Otros Mayoristas down and left to Consumidores bottom
+        const dropY = p1.bottom + 25;
+        createPath(`M ${p1.x} ${p1.bottom} V ${dropY} H ${p2.x} V ${p2.bottom}`);
+      } else if (type === 'channels-to-consumidores') {
+        // From channels left to Consumidores right
+        const midX = (p1.left + p2.right) / 2;
+        createPath(`M ${p1.left} ${p1.y} H ${midX} V ${p2.y} H ${p2.right}`);
       }
     });
   }
