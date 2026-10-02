@@ -189,6 +189,7 @@
       { id:"P2-C4", causa:"Alta demanda de movilidad en modos sostenibles", indicador:"Viajes en modos sostenibles", valor:73, unidad:"%", anio:"2023", ambito:"Kennedy", fuente:SRC_MOV, estado:"Cuantificado" },
       { id:"P2-C5", causa:"Concentración de viajes en moto originados en el suroccidente", indicador:"Viajes en moto en hora de máxima demanda en Bogotá-Región; Kennedy aparece entre los principales orígenes", valor:161019, unidad:"viajes/hora máxima (Bogotá-Región)", anio:"2023", ambito:"Bogotá-Región; Kennedy entre zonas de origen", fuente:"https://observatorio.movilidadbogota.gov.co/sites/default/files/2025-09/Cartilla%20Encuesta%20de%20Movilidad%202023.pdf", estado:"Cifra regional; no atribuir total a Kennedy" },
       { id:"P2-C6", causa:"Alta densidad poblacional y residencial en Kennedy", indicador:"Densidad poblacional de Kennedy", nota:"Dato a calcular con población / área urbana", unidad:"hab/ha", anio:"Último disponible", ambito:"Kennedy", fuente:"https://www.sdp.gov.co/", estado:"Indicador territorial; requiere cálculo con base oficial" },
+      { id:"P2-C7", causa:"Alto tránsito de vehículos de carga y operaciones de cargue y descargue", indicador:"Vehículos de carga ingresados a Corabastos", valor:3867945, unidad:"veh/año", anio:"2023", ambito:"Corabastos", fuente:SRC_COR, estado:"Cuantificado con dato de Corabastos; no es la cifra total de Kennedy" },
     ],
     n3: [
       { id:"P3-C1", causa:"Conexiones erradas que descargan aguas residuales hacia el sistema hídrico", indicador:"Conexiones erradas corregidas en La Vaca", valor:11, unidad:"conexiones", anio:"2022", ambito:"Humedal La Vaca", fuente:SRC_VACA, estado:"Cuantificado" },
@@ -224,6 +225,8 @@
       ["P2-C5", "P2-C1", "+", "Los viajes en moto desde el suroccidente se suman a la demanda total de viajes."],
       ["P2-C1", "P2-C2", "+", "Más viajes saturan las vías y alargan el tiempo de desplazamiento."],
       ["P2-C4", "P2-C2", "-", "Una mayor oferta de modos sostenibles tiende a reducir el tiempo de viaje (relación por verificar)."],
+      ["P2-C7", "P2-C2", "+", "Los vehículos de carga y sus maniobras de cargue y descargue congestionan las vías y alargan los desplazamientos."],
+      ["P2-C7", "P2-C1", "+", "Los viajes de vehículos de carga se suman a la demanda total de viajes diarios."],
     ],
     n3: [
       ["P3-C1", "P3-C6", "+", "Las conexiones erradas descargan aguas residuales con materia orgánica."],
@@ -249,7 +252,7 @@
   // Nombres cortos para la vista general
   const SHORT = {
     "P1-C1": "Entrada de alimentos", "P1-C2": "Entrada de vehículos", "P1-C3": "Carga por vehículo", "P1-C4": "Concentración de bodegas", "P1-C5": "Usos comerciales e industriales", "P1-C6": "Actividad en María Paz y El Amparo",
-    "P2-C1": "Viajes diarios", "P2-C2": "Tiempos de desplazamiento", "P2-C3": "Viajes por trabajo", "P2-C4": "Modos sostenibles", "P2-C5": "Viajes en moto", "P2-C6": "Densidad poblacional",
+    "P2-C1": "Viajes diarios", "P2-C2": "Tiempos de desplazamiento", "P2-C3": "Viajes por trabajo", "P2-C4": "Modos sostenibles", "P2-C5": "Viajes en moto", "P2-C6": "Densidad poblacional", "P2-C7": "Vehículos de carga y descarga",
     "P3-C1": "Conexiones erradas", "P3-C2": "Conexiones por intervenir", "P3-C3": "Vertimientos industriales", "P3-C4": "Descargas clandestinas", "P3-C5": "Residuos cerca de humedales", "P3-C6": "Materia orgánica en el agua",
     "P4-C1": "Venta informal", "P4-C2": "Venta en María Paz", "P4-C3": "Venta en El Amparo", "P4-C4": "Ocupación de andenes", "P4-C5": "Cargue y descargue en vía", "P4-C6": "Estacionamiento indebido",
   };
