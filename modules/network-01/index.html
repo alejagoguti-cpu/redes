@@ -215,7 +215,6 @@
   </aside>
   <main class="main">
 
-<button type="button" id="fullNetBtn" class="full-net-btn"><i class="fa-solid fa-network-wired"></i> 🌐 Ver Red Interconectada Completa (13 Causalidades Inter-Redes)</button>
 
 <!-- Panel de Acomodar Bolas, Ajustar Tamaño y Copiar Coordenadas -->
 <div id="netEditorPanel" style="position:absolute; top:20px; left:20px; z-index:10; background:rgba(17,20,24,.92); border:1px solid rgba(255,255,255,.18); border-radius:14px; padding:10px 14px; backdrop-filter:blur(10px); box-shadow:0 8px 30px rgba(0,0,0,.5); color:#e8ecf1; font-family:'Segoe UI',sans-serif; display:flex; align-items:center; gap:12px;">
@@ -273,145 +272,68 @@
   const mainEl = document.querySelector(".main");
   function mainW() { return Math.max(320, (mainEl && mainEl.clientWidth) ? mainEl.clientWidth : window.innerWidth); }
   function mainH() { return Math.max(320, (mainEl && mainEl.clientHeight) ? mainEl.clientHeight : window.innerHeight); }
+  // Datos tomados de red_P1_P2_P3_P4_causas_indicadores.xlsx
   const MACRO = [
-    { id:"n1", corto:"P7 · Sobrecarga de la malla vial", full:"Sobrecarga operativa de la malla vial y transporte pesado", color:"#a3b899" },
-    { id:"n2", corto:"P3 · Eutrofización hídrica", full:"Eutrofización y deterioro de la calidad de la red hídrica", color:"#e2b4bd" },
-    { id:"n3", corto:"P1 · Concentración del mercado mayorista", full:"Concentración del mercado mayorista e hipercomercialización", color:"#b5a9cc" },
-    { id:"n4", corto:"P4 · Densificación residencial en altura", full:"Sobrecarga por densificación residencial vertical en altura", color:"#c9c5ed" },
-    { id:"n5", corto:"P6 · Interferencia en el espacio público", full:"Interferencia y ocupación del espacio público peatonal", color:"#8bb8a8" },
-    { id:"n6", corto:"P2 · Degradación de suelos", full:"Degradación de suelos biológicos por acumulación de residuos", color:"#f0d3a7" },
-    { id:"n7", corto:"P5 · Inoperancia del ordenamiento", full:"Inoperancia del ordenamiento oficial ante patrones reales", color:"#9bc1bc" },
+    { id:"n1", corto:"P1 · Concentración comercial y logística", full:"P1 · Concentración comercial y logística", color:"#b5a9cc" },
+    { id:"n2", corto:"P2 · Sobrecarga de movilidad", full:"P2 · Sobrecarga de movilidad", color:"#f0d3a7" },
+    { id:"n3", corto:"P3 · Contaminación de cuerpos de agua", full:"P3 · Contaminación de cuerpos de agua", color:"#9bc1bc" },
+    { id:"n4", corto:"P4 · Interferencia del espacio público", full:"P4 · Interferencia del espacio público", color:"#e2b4bd" },
   ];
+  // Hoja "Relaciones entre P"
   const MACRO_REL = [
-    { from:"n3", to:"n1", pol:"+", verbo:"P1→P7: el volumen de más de 5,4 millones de toneladas de alimentos al año presiona la capacidad vial." },
-    { from:"n1", to:"n5", pol:"+", verbo:"P7→P6: el represamiento de más de 1.500 camiones desplaza la operación hacia vías y andenes." },
-    { from:"n5", to:"n6", pol:"+", verbo:"P6→P2: el parqueo en vía y el acopio informal deterioran la zona de amortiguación." },
-    { from:"n6", to:"n2", pol:"+", verbo:"P2→P3: la pérdida de absorción en el suelo canaliza lixiviados y escorrentía hacia el humedal." },
-    { from:"n2", to:"n4", pol:"-", verbo:"P3→P4: la pérdida de calidad ambiental degrada el entorno habitacional." },
-    { from:"n7", to:"n3", pol:"+", verbo:"P5→P1: la falta de regulación integrada perpetúa el crecimiento del mercado sin mitigación." },
+    { from:"n1", to:"n2", pol:"+", verbo:"P1→P2: La concentración comercial-logística incrementa demanda de movimientos de abastecimiento y acceso. Estado: sustentable con datos de Corabastos + movilidad." },
+    { from:"n1", to:"n4", pol:"+", verbo:"P1→P4: La concentración de actividad económica coincide con usos intensivos del espacio público en el entorno. Estado: requiere medición local para cuantificar intensidad." },
+    { from:"n2", to:"n4", pol:"+", verbo:"P2→P4: La sobrecarga vial puede aumentar conflictos por estacionamiento y cargue/descargue en vía. Estado: requiere aforo local." },
+    { from:"n1", to:"n3", pol:"+", verbo:"P1→P3: La actividad económica solo se conecta con contaminación hídrica mediante un mecanismo demostrado (residuos/vertimientos/conexiones). Estado: no asumir causalidad directa." },
   ];
 
-  const SUBNETS = {
-    n1: {
-      nodes: [
-        { id:"s1_1", t:"C7.1 · Confluencia de flujos intermunicipales de carga en corredores regionales y descalce de horarios" },
-        { id:"s1_2", t:"C7.2 · Geometría de accesos con portones a 90° sobre arterias sin bahías de desaceleración" },
-        { id:"s1_3", t:"K7.1 · Restricción de capacidad en la red vial perimetral de calzada sencilla (María Paz, Patio Bonito)" },
-        { id:"s1_4", t:"K7.2 · Estado físico malo/regular en más del 60% de la capa de rodadura por sobrepeso" },
-        { id:"s1_5", t:"S7.1 · Tiempos de espera y represamiento de más de 1.500 camiones pesados en vía pública" },
-        { id:"s1_6", t:"S7.2 · Estacionamiento informal sobre calzadas de la Av. Ciudad de Cali y Cra 80" },
-        { id:"s1_7", t:"S7.3 · Reducción de la capacidad operativa y caída de velocidad en arterias principales" },
-      ],
-      rel: [
-        { from:"s1_1", to:"s1_5", pol:"+" }, { from:"s1_2", to:"s1_5", pol:"+" }, { from:"s1_3", to:"s1_5", pol:"+" },
-        { from:"s1_4", to:"s1_7", pol:"+" }, { from:"s1_5", to:"s1_6", pol:"+" }, { from:"s1_6", to:"s1_7", pol:"+" },
-        { from:"s1_7", to:"s1_5", loop:true, pol:"+" },
-      ],
-      loopNote: "La llegada nocturna y los portones a 90° crean represamiento, ocupando carriles e interrumpiendo el tráfico principal.",
-      loopType: "R",
-    },
-    n2: {
-      nodes: [
-        { id:"s2_1", t:"C3.1 · Conexiones erradas y puntos de vertimiento sin tratamiento previo (puntos/km²)" },
-        { id:"s2_2", t:"C3.2 · Aporte de lixiviados, grasas y aceites de la operación comercial (mg/L)" },
-        { id:"s2_3", t:"K3.1 · Caudal de entrada al humedal y profundidad de lámina de agua" },
-        { id:"s2_4", t:"K3.2 · Sólidos suspendidos totales (SST) y turbiedad (11–13 UNT)" },
-        { id:"s2_5", t:"S3.1 · Carga contaminante diaria (concentración × caudal, kg/día)" },
-        { id:"s2_6", t:"S3.2 · DBO₅ y DQO (106–197 mg/L, relación 0,17–0,27)" },
-        { id:"s2_7", t:"S3.3 · Eutrofización (DBO₅ + DQO + nitrógeno + fósforo)" },
-        { id:"s2_8", t:"S3.4 · Agotamiento del oxígeno disuelto (OD) y pérdida de dinamismo ecológico" },
-      ],
-      rel: [
-        { from:"s2_1", to:"s2_5", pol:"+" }, { from:"s2_2", to:"s2_5", pol:"+" }, { from:"s2_3", to:"s2_5", pol:"+" },
-        { from:"s2_4", to:"s2_5", pol:"+" }, { from:"s2_5", to:"s2_6", pol:"+" }, { from:"s2_6", to:"s2_7", pol:"+" },
-        { from:"s2_7", to:"s2_8", pol:"-" }, { from:"s2_8", to:"s2_7", loop:true, pol:"+" },
-      ],
-      loopNote: "La proliferación de biomasa agota el oxígeno disuelto (OD), acelerando la descomposición hídrica.",
-      loopType: "R",
-    },
-    n3: {
-      nodes: [
-        { id:"s3_1", t:"C1.1 · Asignación de la función de acopio alimentario regional a un predio urbano continuo de 42 hectáreas" },
-        { id:"s3_2", t:"C1.2 · Entrada de alimentos movilizados (5,41 a 5,77 millones de toneladas/año)" },
-        { id:"s3_3", t:"K1.2 · Entrada de vehículos comerciales (3,86 millones de veh/año)" },
-        { id:"s3_4", t:"K1.1 · Carga media por vehículo de transporte comercial (1,40 t/veh)" },
-        { id:"s3_5", t:"S1.1 · Formación de economías de aglomeración e hipercomercialización perimetral" },
-        { id:"s3_6", t:"S1.2 · Atracción de viajes de abastecimiento urbano e intermunicipal y saturación de la trama barrial" },
-      ],
-      rel: [
-        { from:"s3_1", to:"s3_2", pol:"+" }, { from:"s3_2", to:"s3_3", pol:"+" }, { from:"s3_3", to:"s3_4", pol:"+" },
-        { from:"s3_2", to:"s3_5", pol:"+" }, { from:"s3_5", to:"s3_6", pol:"+" }, { from:"s3_6", to:"s3_2", loop:true, pol:"+" },
-      ],
-      loopNote: "A mayor volumen de alimentos, mayor atracción de viajes comerciales, lo que refuerza la concentración en la central.",
-      loopType: "R",
-    },
-    n4: {
-      nodes: [
-        { id:"s4_1", t:"C4.1 · Ritmo acelerado de edificación de vivienda colectiva en altura (VIS)" },
-        { id:"s4_2", t:"C4.2 · Presión sobre las redes matrices de acueducto y alcantarillado sin ampliación proporcional" },
-        { id:"s4_3", t:"K4.1 · Capacidad instalada de la infraestructura sanitaria y trazado vial barrial" },
-        { id:"s4_4", t:"K4.2 · Contaminación microbiológica (coliformes fecales y totales, NMP/100 ml)" },
-        { id:"s4_5", t:"S4.1 · Aumento de la densidad poblacional en sectores residenciales aledaños" },
-        { id:"s4_6", t:"S4.2 · Fricción entre el tráfico vehicular residencial y el transporte pesado de carga" },
-      ],
-      rel: [
-        { from:"s4_1", to:"s4_5", pol:"+" }, { from:"s4_5", to:"s4_2", pol:"+" }, { from:"s4_3", to:"s4_2", pol:"+" },
-        { from:"s4_2", to:"s4_4", pol:"+" }, { from:"s4_5", to:"s4_6", pol:"+" },
-      ],
-      loopNote: "La edificación en altura incrementa la densidad de habitantes, saturando las redes sanitarias y generando fricción vial con la carga pesada.",
-      loopType: "R",
-    },
-    n5: {
-      nodes: [
-        { id:"s5_1", t:"C6.1 · Saturación de la capacidad de parqueo e infraestructura interna en la central mayorista" },
-        { id:"s5_2", t:"C6.2 · Traslado de maniobras de transferencia de mercancías y empaque hacia las calles del barrio" },
-        { id:"s5_3", t:"K6.1 · Franjas peatonales reducidas (andenes inferiores a 1,5 m de ancho)" },
-        { id:"s5_4", t:"K6.2 · Elevado flujo de peatones (más de 207.000 peatones semanales)" },
-        { id:"s5_5", t:"S6.1 · Proliferación de ventas informales y acopio temporal de guacales (\"pucheros\") en vía pública" },
-        { id:"s5_6", t:"S6.2 · Reducción de la franja efectiva de circulación y conflicto de uso entre peatones y carga pesada" },
-      ],
-      rel: [
-        { from:"s5_1", to:"s5_2", pol:"+" }, { from:"s5_2", to:"s5_5", pol:"+" }, { from:"s5_3", to:"s5_6", pol:"+" },
-        { from:"s5_4", to:"s5_6", pol:"+" }, { from:"s5_5", to:"s5_6", pol:"+" }, { from:"s5_6", to:"s5_2", loop:true, pol:"+" },
-      ],
-      loopNote: "Al llenarse los parqueaderos internos, la carga sale a las aceras, atrayendo informales y obligando al peatón a caminar por la calle.",
-      loopType: "R",
-    },
-    n6: {
-      nodes: [
-        { id:"s6_1", t:"C2.1 · Generación de residuos sólidos no aprovechables (5.440 a 5.796 t/año)" },
-        { id:"s6_2", t:"C2.2 · Intensidad de generación de residuo por tonelada de alimento (0,001004 t residuo/t alimento)" },
-        { id:"s6_3", t:"K2.1 · Colindancia física entre el predio comercial y la franja de amortiguación del humedal" },
-        { id:"s6_4", t:"K2.2 · Profundidad del nivel freático que mantiene el suelo saturado" },
-        { id:"s6_5", t:"S2.1 · Disposición no controlada de residuos sólidos y escombros en bordes ambientales" },
-        { id:"s6_6", t:"S2.2 · Compactación de suelos biológicos adyacentes a cuerpos de agua" },
-        { id:"s6_7", t:"S2.3 · Deterioro de la cobertura vegetal nativa y pérdida de la capacidad de absorción natural" },
-      ],
-      rel: [
-        { from:"s6_2", to:"s6_1", pol:"+" }, { from:"s6_1", to:"s6_5", pol:"+" }, { from:"s6_3", to:"s6_5", pol:"+" },
-        { from:"s6_5", to:"s6_6", pol:"+" }, { from:"s6_4", to:"s6_6", pol:"+" }, { from:"s6_6", to:"s6_7", pol:"+" },
-        { from:"s6_7", to:"s6_6", loop:true, pol:"+" },
-      ],
-      loopNote: "La pérdida de vegetación favorece la invasión vehicular, destruyendo la porosidad de la tierra.",
-      loopType: "R",
-    },
-    n7: {
-      nodes: [
-        { id:"s7_1", t:"C5.1 · Brecha entre las determinantes del POT y las dinámicas reales de uso del suelo comercial" },
-        { id:"s7_2", t:"C5.2 · Coexistencia de regímenes normativos entre regulación pública distrital y administración privada" },
-        { id:"s7_3", t:"K5.1 · Rigidez de los instrumentos normativos distritales frente a la autoorganización local" },
-        { id:"s7_4", t:"K5.2 · Delimitación física mediante muro perimetral opaco" },
-        { id:"s7_5", t:"S5.1 · Consolidación de dinámicas informales al margen de controles institucionales" },
-        { id:"s7_6", t:"S5.2 · Pérdida de eficacia en los mecanismos institucionales de regulación territorial" },
-      ],
-      rel: [
-        { from:"s7_1", to:"s7_2", pol:"+" }, { from:"s7_3", to:"s7_2", pol:"+" }, { from:"s7_4", to:"s7_5", pol:"+" },
-        { from:"s7_2", to:"s7_5", pol:"+" }, { from:"s7_5", to:"s7_6", pol:"+" }, { from:"s7_6", to:"s7_1", loop:true, pol:"+" },
-      ],
-      loopNote: "La distancia entre el POT y la norma privada fomenta la informalidad, reduciendo la autoridad pública.",
-      loopType: "R",
-    },
+  const SRC_COR = "https://corabastos.com.co/inicio/wp-content/uploads/2024/04/INFORME-DE-GESTION-2023_compressed.pdf";
+  const SRC_MOV = "https://www.movilidadbogota.gov.co/web/sites/default/files/Paginas/25-06-2025/informe_de_gestion_2024_localidad_kennedy.pdf";
+  const SRC_VACA = "https://www.ambientebogota.gov.co/documents/10184/7130467/RDH%2BLa%2BVaca%2BInforme%2Bde%2Bgestion%2B2022.pdf/03775be0-7904-4bb2-9ea0-1293983886e5";
+  const SRC_PAL = "https://www.ambientebogota.gov.co/documents/10184/677279/PAL%2BKennedy%2B2013-2016.pdf/6f33795f-6627-420f-8ba1-d4625a5e98de?version=1.0";
+  const SRC_IPES = "https://ipes.gov.co/index.php/informacion-de-interes/noticias/nuevas-medidas-para-los-vendedores-informales-en-bogota/806";
+  const SRC_APROV = "https://www.ipes.gov.co/index.php/informacion-de-interes/protocolos-aprovechamiento-economico/protocolos-de-aprovechamiento-economico-del-espacio-publico";
+
+  // Cada causa: id, causa, indicador, valor (si hay cifra) o nota (dato pendiente), unidad, año, ámbito, fuente, estado
+  const CAUSES = {
+    n1: [
+      { id:"P1-C1", causa:"Alta entrada de alimentos a Corabastos", indicador:"Alimentos ingresados a Corabastos", valor:5418123, unidad:"t/año", anio:"2023", ambito:"Corabastos", fuente:SRC_COR, estado:"Cuantificado" },
+      { id:"P1-C2", causa:"Alta entrada anual de vehículos a la central mayorista", indicador:"Vehículos ingresados a Corabastos", valor:3867945, unidad:"veh/año", anio:"2023", ambito:"Corabastos", fuente:SRC_COR, estado:"Cuantificado" },
+      { id:"P1-C3", causa:"Alta carga promedio movilizada por vehículo", indicador:"Carga media por vehículo", valor:1.4, unidad:"t/veh", anio:"2023", ambito:"Corabastos", fuente:SRC_COR, estado:"Cuantificado" },
+      { id:"P1-C4", causa:"Concentración de bodegas y locales de abastecimiento en un mismo recinto", indicador:"Número de bodegas/locales activos", nota:"Dato a extraer del inventario oficial", unidad:"n.º establecimientos", anio:"Vigente", ambito:"Corabastos", fuente:"https://corabastos.com.co/", estado:"Requiere extracción puntual" },
+      { id:"P1-C5", causa:"Concentración de usos comerciales e industriales alrededor de Corabastos", indicador:"Área construida con uso comercial/industrial", nota:"Dato a calcular con Catastro", unidad:"m²", anio:"Último disponible", ambito:"Kennedy / entorno Corabastos", fuente:"https://www.catastrobogota.gov.co/", estado:"Calculable con base oficial" },
+      { id:"P1-C6", causa:"Concentración de actividad económica en María Paz y El Amparo", indicador:"Número de establecimientos económicos por sector", nota:"Dato a consultar en registro/directorio económico", unidad:"establecimientos/ha", anio:"Último disponible", ambito:"María Paz y El Amparo", fuente:"https://observatorio.desarrolloeconomico.gov.co/", estado:"Requiere extracción puntual" },
+    ],
+    n2: [
+      { id:"P2-C1", causa:"Alto número de viajes diarios generados por habitantes de Kennedy", indicador:"Viajes diarios", valor:1872000, unidad:"viajes/día", anio:"2023", ambito:"Kennedy", fuente:SRC_MOV, estado:"Cuantificado" },
+      { id:"P2-C2", causa:"Largos tiempos promedio de desplazamiento", indicador:"Duración promedio del viaje", valor:54, unidad:"min/viaje", anio:"2023", ambito:"Kennedy", fuente:SRC_MOV, estado:"Cuantificado" },
+      { id:"P2-C3", causa:"Alta concentración de viajes por trabajo", indicador:"Viajes cuyo motivo principal es trabajar", valor:41, unidad:"%", anio:"2023", ambito:"Kennedy", fuente:SRC_MOV, estado:"Cuantificado" },
+      { id:"P2-C4", causa:"Alta demanda de movilidad en modos sostenibles", indicador:"Viajes en modos sostenibles", valor:73, unidad:"%", anio:"2023", ambito:"Kennedy", fuente:SRC_MOV, estado:"Cuantificado" },
+      { id:"P2-C5", causa:"Concentración de viajes en moto originados en el suroccidente", indicador:"Viajes en moto en hora de máxima demanda en Bogotá-Región; Kennedy aparece entre los principales orígenes", valor:161019, unidad:"viajes/hora máxima (Bogotá-Región)", anio:"2023", ambito:"Bogotá-Región; Kennedy entre zonas de origen", fuente:"https://observatorio.movilidadbogota.gov.co/sites/default/files/2025-09/Cartilla%20Encuesta%20de%20Movilidad%202023.pdf", estado:"Cifra regional; no atribuir total a Kennedy" },
+      { id:"P2-C6", causa:"Alta densidad poblacional y residencial en Kennedy", indicador:"Densidad poblacional de Kennedy", nota:"Dato a calcular con población / área urbana", unidad:"hab/ha", anio:"Último disponible", ambito:"Kennedy", fuente:"https://www.sdp.gov.co/", estado:"Indicador territorial; requiere cálculo con base oficial" },
+    ],
+    n3: [
+      { id:"P3-C1", causa:"Conexiones erradas que descargan aguas residuales hacia el sistema hídrico", indicador:"Conexiones erradas corregidas en La Vaca", valor:11, unidad:"conexiones", anio:"2022", ambito:"Humedal La Vaca", fuente:SRC_VACA, estado:"Cuantificado" },
+      { id:"P3-C2", causa:"Persistencia de conexiones erradas identificadas para intervención", indicador:"Conexiones erradas diseñadas en La Vaca", valor:9, unidad:"conexiones", anio:"2022", ambito:"Humedal La Vaca", fuente:SRC_VACA, estado:"Cuantificado" },
+      { id:"P3-C3", causa:"Vertimientos industriales hacia la red hídrica", indicador:"Número de vertimientos industriales identificados", nota:"Fuente oficial confirma la problemática; falta conteo comparable", unidad:"vertimientos", anio:"Diagnóstico PAL", ambito:"Kennedy", fuente:SRC_PAL, estado:"Fenómeno documentado; cifra pendiente" },
+      { id:"P3-C4", causa:"Descargas clandestinas en humedales y rondas", indicador:"Número de puntos de descarga clandestina identificados", nota:"Fuente oficial confirma la problemática; falta conteo comparable", unidad:"puntos", anio:"Diagnóstico PAL", ambito:"Kennedy", fuente:SRC_PAL, estado:"Fenómeno documentado; cifra pendiente" },
+      { id:"P3-C5", causa:"Disposición inadecuada de residuos sólidos cerca de humedales", indicador:"Residuos retirados de humedales/rondas", nota:"Fuente OAB documenta manejo inadecuado de basuras; buscar toneladas por humedal", unidad:"kg o t/año", anio:"2025", ambito:"La Vaca, El Burro y Techo", fuente:"https://oab.ambientebogota.gov.co/kennedy-territorio-de-biodiversidad/", estado:"Fenómeno documentado; cifra pendiente" },
+      { id:"P3-C6", causa:"Aporte de materia orgánica que altera la calidad del agua", indicador:"DBO/DQO u oxígeno disuelto", nota:"Dato a extraer de monitoreo de calidad de agua", unidad:"mg/L", anio:"Último monitoreo", ambito:"La Vaca, El Burro y Techo", fuente:"https://oab.ambientebogota.gov.co/kennedy/", estado:"Indicador correcto; valor pendiente" },
+    ],
+    n4: [
+      { id:"P4-C1", causa:"Alta presencia de venta informal en el espacio público", indicador:"Vendedores informales caracterizados", nota:"Dato local a extraer de IPES", unidad:"personas", anio:"Último disponible", ambito:"Kennedy", fuente:"https://www.ipes.gov.co/", estado:"Requiere cifra local actual" },
+      { id:"P4-C2", causa:"Concentración de venta informal en María Paz", indicador:"Puntos/puestos de venta informal", nota:"María Paz está identificada por IPES como sector de intervención", unidad:"puestos o vendedores", anio:"2020+", ambito:"María Paz", fuente:SRC_IPES, estado:"Fenómeno localizado; cifra pendiente" },
+      { id:"P4-C3", causa:"Concentración de venta informal en El Amparo", indicador:"Puntos/puestos de venta informal", nota:"El Amparo está identificado por IPES como sector de intervención", unidad:"puestos o vendedores", anio:"2020+", ambito:"El Amparo", fuente:SRC_IPES, estado:"Fenómeno localizado; cifra pendiente" },
+      { id:"P4-C4", causa:"Ocupación de andenes por actividades económicas", indicador:"Área de andén ocupada por actividad económica", nota:"Dato a levantar o consultar en inventario de aprovechamiento", unidad:"m² o %", anio:"Actual", ambito:"Entorno Corabastos", fuente:SRC_APROV, estado:"Indicador tangible; medición pendiente" },
+      { id:"P4-C5", causa:"Uso de la vía para cargue y descargue", indicador:"Operaciones de cargue/descargue realizadas en vía", nota:"Dato a obtener mediante aforo/SDM", unidad:"operaciones/h", anio:"Actual", ambito:"Entorno Corabastos", fuente:"https://www.movilidadbogota.gov.co/", estado:"Indicador tangible; medición pendiente" },
+      { id:"P4-C6", causa:"Estacionamiento de vehículos fuera de zonas autorizadas", indicador:"Vehículos estacionados sobre vía/andén", nota:"Dato a obtener mediante aforo o registros de control", unidad:"vehículos/h", anio:"Actual", ambito:"Entorno Corabastos", fuente:"https://www.movilidadbogota.gov.co/", estado:"Indicador tangible; medición pendiente" },
+    ],
   };
+  // Cada causa se muestra como burbuja (sin relaciones internas: la matriz no las define)
+  const SUBNETS = {};
+  Object.keys(CAUSES).forEach(mId => {
+    SUBNETS[mId] = { nodes: CAUSES[mId].map(c => ({ ...c, id: c.id.toLowerCase().replace("-", "_"), cid: c.id, corto: c.causa, t: c.id + " · " + c.causa })), rel: [], loopType: "R" };
+  });
   const macroById = {}; MACRO.forEach(m => macroById[m.id] = m);
 
   const allNodesById = {};
@@ -423,19 +345,8 @@
       allNodesById[n.id] = copy;
       allNodesList.push(copy);
     });
-    SUBNETS[mId].rel.forEach(r => {
-      allInternalRel.push(r);
-    });
   });
-
-  const INTER_NETWORK_REL = [
-    { from:"s3_5", to:"s1_1", pol:"+", verbo:"Nivel 1 (P1→P7): el volumen de más de 5,4 millones de toneladas de alimentos al año presiona la capacidad vial", inter:true },
-    { from:"s1_5", to:"s5_2", pol:"+", verbo:"Nivel 1 (P7→P6): el represamiento de más de 1.500 camiones desplaza la operación hacia vías y andenes", inter:true },
-    { from:"s5_5", to:"s6_5", pol:"+", verbo:"Nivel 1 (P6→P2): el parqueo en vía y el acopio informal deterioran la zona de amortiguación", inter:true },
-    { from:"s6_7", to:"s2_2", pol:"+", verbo:"Nivel 1 (P2→P3): la pérdida de absorción en el suelo canaliza lixiviados y escorrentía hacia el humedal", inter:true },
-    { from:"s2_7", to:"s4_1", pol:"-", verbo:"Nivel 1 (P3→P4): la pérdida de calidad ambiental degrada el entorno habitacional", inter:true },
-    { from:"s7_6", to:"s3_1", pol:"+", verbo:"Nivel 1 (P5→P1): la falta de regulación integrada perpetúa el crecimiento del mercado sin mitigación", inter:true },
-  ];
+  const INTER_NETWORK_REL = [];
 
   const gooLayer = document.getElementById("gooLayer");
   const labelLayer = document.getElementById("labelLayer");
@@ -753,54 +664,16 @@
     });
   }
 
-  const SAVED_FULL_POSITIONS = {
-    "s1_1": { x: 76.4, y: 173.3, r: 43.8 },
-    "s1_2": { x: 64.0, y: 410.7, r: 62.4 },
-    "s1_3": { x: 446.2, y: 110.2, r: 54.3 },
-    "s1_4": { x: 343.1, y: 311.1, r: 54.3 },
-    "s1_5": { x: 753.8, y: 213.3, r: 54.3 },
-    "s1_6": { x: 597.3, y: 150.2, r: 43.8 },
-    "s2_1": { x: 995.6, y: 153.8, r: 62.4 },
-    "s2_2": { x: 1235.6, y: 107.6, r: 43.8 },
-    "s2_3": { x: 1458.7, y: 195.6, r: 62.4 },
-    "s2_4": { x: 1239.1, y: 404.4, r: 43.8 },
-    "s2_5": { x: 524.4, y: 700.4, r: 54.3 },
-    "s3_1": { x: 1294.2, y: 505.8, r: 54.3 },
-    "s3_2": { x: 832.0, y: 495.1, r: 54.3 },
-    "s3_3": { x: 1128.9, y: 262.2, r: 54.3 },
-    "s3_4": { x: 640.9, y: 344.0, r: 54.3 },
-    "s3_5": { x: 228.4, y: 146.7, r: 43.8 },
-    "s4_1": { x: 1560.0, y: 458.7, r: 62.4 },
-    "s4_2": { x: 1483.6, y: 858.7, r: 54.3 },
-    "s4_3": { x: 1425.8, y: 733.3, r: 34.5 },
-    "s4_4": { x: 1272.0, y: 770.7, r: 62.4 },
-    "s4_5": { x: 1309.3, y: 635.6, r: 34.5 },
-    "s5_1": { x: 1060.4, y: 845.3, r: 43.8 },
-    "s5_2": { x: 887.1, y: 787.6, r: 62.4 },
-    "s5_3": { x: 1058.7, y: 543.1, r: 54.3 },
-    "s5_4": { x: 1204.4, y: 624.0, r: 43.8 },
-    "s5_5": { x: 1137.8, y: 741.3, r: 43.8 },
-    "s6_1": { x: 656.0, y: 787.6, r: 43.8 },
-    "s6_2": { x: 215.1, y: 784.9, r: 62.4 },
-    "s6_3": { x: 48.9, y: 584.9, r: 43.8 },
-    "s6_4": { x: 94.2, y: 892.4, r: 54.3 },
-    "s6_5": { x: 531.6, y: 865.8, r: 54.3 },
-    "s7_1": { x: 989.3, y: 912.9, r: 43.8 },
-    "s7_2": { x: 824.0, y: 910.2, r: 54.3 },
-    "s7_3": { x: 525.3, y: 438.2, r: 54.3 },
-    "s7_4": { x: 836.4, y: 648.0, r: 43.8 },
-    "s7_5": { x: 1217.8, y: 909.3, r: 43.8 }
-  };
-
-  const SAVED_MACRO_POSITIONS = {
-    "n1": { x: 1105.8, y: 485.3, r: 124.4, t: "Colapso de la red vial local y arterial" },
-    "n2": { x: 136.9, y: 534.2, r: 116.4, t: "Contaminación de la red hídrica" },
-    "n3": { x: 678.2, y: 301.3, r: 176.9, t: "Concentración del mercado mayorista" },
-    "n4": { x: 467.6, y: 774.2, r: 132.4, t: "Sobrecarga por densificación en altura" },
-    "n5": { x: 1407.1, y: 264.9, r: 140.4, t: "Interferencia en el espacio público" },
-    "n6": { x: 178.7, y: 248.9, r: 108.4, t: "Acumulación de residuos y transporte pesado" },
-    "n7": { x: 1180.4, y: 789.3, r: 140.4, t: "Inoperancia del ordenamiento oficial" },
-  };
+  // Posiciones de los 4 problemas, proporcionales al área visible
+  function macroPositions() {
+    const w = mainW(), h = mainH(), m = Math.min(w, h);
+    return {
+      n1: { x: w * 0.40, y: h * 0.38, r: m * 0.19 },
+      n2: { x: w * 0.72, y: h * 0.27, r: m * 0.15 },
+      n4: { x: w * 0.74, y: h * 0.74, r: m * 0.16 },
+      n3: { x: w * 0.30, y: h * 0.80, r: m * 0.13 },
+    };
+  }
 
   function resizeIndividualNode(id, delta) {
     if (!nodeRadiusMap[id]) return;
@@ -974,6 +847,7 @@
           if (r.to === n.id) connectedNodes.add(r.from);
         });
 
+        if (connectedNodes.size === 1) return;
         activeNodes.forEach(other => {
           if (!connectedNodes.has(other.id)) {
             if (nodeBlobs[other.id]) nodeBlobs[other.id].style.opacity = "0.2";
@@ -996,121 +870,41 @@
     renderEdges();
   }
 
-  const fullNetBtn = document.getElementById("fullNetBtn");
-
-  const SAVED_DETAIL_POSITIONS = {
-    // n3 (Rojo)
-    "s3_1": { x: 260.4, y: 543.1, r: 126.9 },
-    "s3_2": { x: 681.8, y: 208.9, r: 114.9 },
-    "s3_3": { x: 1058.7, y: 264.9, r: 114.9 },
-    "s3_4": { x: 1064.0, y: 651.6, r: 172.9 },
-    "s3_5": { x: 651.6, y: 784.9, r: 79.7 },
-
-    // n5 (Verde)
-    "s5_1": { x: 272.9, y: 463.8, r: 67.7 },
-    "s5_2": { x: 450.7, y: 228.2, r: 142.9 },
-    "s5_3": { x: 973.3, y: 194.4, r: 96.9 },
-    "s5_4": { x: 1120.0, y: 524.2, r: 90.9 },
-    "s5_5": { x: 731.6, y: 573.1, r: 90.9 },
-
-    // n1 (Azul Oscuro)
-    "s1_1": { x: 244.4, y: 475.3, r: 55.7 },
-    "s1_2": { x: 402.7, y: 222.9, r: 84.9 },
-    "s1_3": { x: 864.9, y: 319.8, r: 130.9 },
-    "s1_4": { x: 1426.7, y: 234.4, r: 84.9 },
-    "s1_5": { x: 1235.6, y: 631.8, r: 84.9 },
-    "s1_6": { x: 496.0, y: 590.0, r: 84.9 },
-
-    // n7 (Verde Menta)
-    "s7_1": { x: 417.8, y: 529.6, r: 84.9 },
-    "s7_2": { x: 648.9, y: 163.3, r: 84.9 },
-    "s7_3": { x: 1237.3, y: 255.8, r: 84.9 },
-    "s7_4": { x: 775.1, y: 389.1, r: 84.9 },
-    "s7_5": { x: 1155.6, y: 676.2, r: 84.9 },
-
-    // n4 (Morado)
-    "s4_1": { x: 320.9, y: 371.3, r: 101.4 },
-    "s4_2": { x: 749.3, y: 199.8, r: 101.4 },
-    "s4_3": { x: 1091.6, y: 233.6, r: 66.8 },
-    "s4_4": { x: 1139.6, y: 566.9, r: 144.3 },
-    "s4_5": { x: 632.0, y: 641.6, r: 72.8 },
-
-    // n2 (Rosa)
-    "s2_1": { x: 327.4, y: 203.4, r: 90.9 },
-    "s2_2": { x: 1133.3, y: 388.2, r: 61.7 },
-    "s2_3": { x: 833.3, y: 227.6, r: 136.9 },
-    "s2_4": { x: 1019.6, y: 584.7, r: 90.9 },
-    "s2_5": { x: 553.8, y: 574.9, r: 90.9 },
-
-    // n6 (Amarillo)
-    "s6_1": { x: 1355.6, y: 328.7, r: 55.7 },
-    "s6_2": { x: 1042.7, y: 190.0, r: 90.9 },
-    "s6_3": { x: 468.4, y: 227.3, r: 90.9 },
-    "s6_4": { x: 940.4, y: 569.6, r: 142.9 },
-    "s6_5": { x: 308.4, y: 602.4, r: 90.9 }
-  };
-
   function showMacro() {
     level = "macro"; currentDetailId = null;
     buildNetwork(MACRO, MACRO_REL, macroById, {
       maxR: 78,
       wFrac: 0.1,
-      savedPositions: SAVED_MACRO_POSITIONS,
+      savedPositions: macroPositions(),
       colorOf: (id) => macroById[id].color
     });
     intro.style.opacity = "0";
     levelTitle.classList.add("show");
     levelTitleText.textContent = "El colapso operativo y logístico del modelo de ocupación de Kennedy frente a la capacidad de soporte del territorio";
-    levelSubText.textContent = "Toca un problema para ver sus relaciones, o una flecha para ver el mecanismo causal";
+    levelSubText.textContent = "Toca un problema para ver sus causas e indicadores, o una flecha para ver el mecanismo causal";
     backBtn.classList.remove("show");
     centerBlob.style.opacity = "0"; centerLabel.style.opacity = "0"; hitCenter.style.pointerEvents = "none";
+    document.getElementById("panel").classList.remove("open");
+  }
+
+  function detailOpts(macroId) {
+    const macroColor = macroById[macroId].color;
+    return { maxR: 80, wFrac: 0.1, colorOf: () => macroColor, loopType: SUBNETS[macroId].loopType };
   }
 
   function showDetail(macroId) {
     level = "detail"; currentDetailId = macroId;
     const sub = SUBNETS[macroId];
     const byId = {}; sub.nodes.forEach(n => byId[n.id] = n);
-    const macroColor = macroById[macroId].color;
-    buildNetwork(sub.nodes, sub.rel, byId, {
-      maxR: 66,
-      wFrac: 0.09,
-      savedPositions: SAVED_DETAIL_POSITIONS,
-      colorOf: () => macroColor,
-      loopType: sub.loopType
-    });
+    buildNetwork(sub.nodes, sub.rel, byId, detailOpts(macroId));
     levelTitleText.textContent = macroById[macroId].full;
-    levelSubText.textContent = "Variables causales internas — toca una para ver más, o el bucle para ver el mecanismo reforzador";
-    backBtn.textContent = "← Volver a Ver Red Completa (35 Sub-Problemas)";
+    levelSubText.textContent = "Causas del problema — toca una burbuja para ver su indicador, valor y fuente";
+    backBtn.textContent = "← Volver a los 4 problemas";
     backBtn.classList.add("show");
     document.getElementById("panel").classList.remove("open");
   }
 
-  function showFullNetwork() {
-    level = "full"; currentDetailId = null;
-    const allRelCombined = [...allInternalRel, ...INTER_NETWORK_REL];
-    buildNetwork(allNodesList, allRelCombined, allNodesById, {
-      maxR: 35,
-      wFrac: 0.042,
-      savedPositions: SAVED_FULL_POSITIONS,
-      colorOf: (id) => macroById[allNodesById[id].macroId].color
-    });
-    intro.style.opacity = "0";
-    levelTitle.classList.add("show");
-    levelTitleText.textContent = "🌐 Red Interconectada de Sub-Problemas Causales";
-    levelSubText.textContent = "Visualizando los 35 sub-problemas territoriales de Kennedy y sus 13 relaciones inter-red";
-    backBtn.classList.remove("show");
-    centerBlob.style.opacity = "0"; centerLabel.style.opacity = "0"; hitCenter.style.pointerEvents = "none";
-    document.getElementById("panel").classList.remove("open");
-  }
-
-  if (fullNetBtn) {
-    fullNetBtn.addEventListener("click", showFullNetwork);
-  }
-
-  function backAction() {
-    showFullNetwork();
-  }
-  backBtn.addEventListener("click", backAction);
+  backBtn.addEventListener("click", showMacro);
 
   place(centerBlob, mainW() / 2, mainH() / 2 + 10); size(centerBlob, CENTER_R);
   place(centerLabel, mainW() / 2, mainH() / 2 + 10);
@@ -1198,77 +992,26 @@
     panel.classList.add("open");
   }
 
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+
   function openPanel(id) {
     const panel = document.getElementById("panel"), body = document.getElementById("panelBody");
-    if (level === "macro") {
-      const n = macroById[id];
-      const vieneDe = MACRO_REL.filter(r => r.to === id).map(r => ({ n: macroById[r.from], pol: r.pol, loopLabel: r.loopLabel }));
-      const alimentaA = MACRO_REL.filter(r => r.from === id).map(r => ({ n: macroById[r.to], pol: r.pol, loopLabel: r.loopLabel }));
-      body.innerHTML = `
-        <p class="panel-kind">Problema de fondo</p>
-        <h2>${n.full}</h2>
-        ${vieneDe.length ? `<div class="block"><b>Es causado por</b>${vieneDe.map(x => `<div class="rel-chip" data-goto="${x.n.id}">${x.n.corto} <b>(${x.pol})</b>${x.loopLabel ? ` — bucle ${x.loopLabel}` : ""}</div>`).join("")}</div>` : ""}
-        ${alimentaA.length ? `<div class="block"><b>Provoca o intensifica</b>${alimentaA.map(x => `<div class="rel-chip" data-goto="${x.n.id}">${x.n.corto} <b>(${x.pol})</b>${x.loopLabel ? ` — bucle ${x.loopLabel}` : ""}</div>`).join("")}</div>` : ""}
-        <div class="block" style="margin-top:16px;">
-          <b>Tamaño de la bola</b>
-          <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
-            <button type="button" id="sizeDecBtn" style="flex:1; padding:7px 10px; border-radius:6px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff; font-weight:700; cursor:pointer;">🔍– Disminuir</button>
-            <button type="button" id="sizeIncBtn" style="flex:1; padding:7px 10px; border-radius:6px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff; font-weight:700; cursor:pointer;">🔍+ Aumentar</button>
-          </div>
-        </div>
-        <button class="drill-btn" id="drillBtn" style="margin-top:12px;">Ver variables causales internas →</button>
-      `;
-      body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(elm.dataset.goto); }));
-      document.getElementById("drillBtn").addEventListener("click", (e) => { e.stopPropagation(); showDetail(id); });
-      document.getElementById("sizeDecBtn").addEventListener("click", (e) => { e.stopPropagation(); resizeIndividualNode(id, -8); });
-      document.getElementById("sizeIncBtn").addEventListener("click", (e) => { e.stopPropagation(); resizeIndividualNode(id, 8); });
-    } else if (level === "detail") {
-      const sub = SUBNETS[currentDetailId];
-      const byId = {}; sub.nodes.forEach(n => byId[n.id] = n);
-      const n = byId[id];
-      const vieneDe = sub.rel.filter(r => r.to === id).map(r => byId[r.from]);
-      const alimentaA = sub.rel.filter(r => r.from === id).map(r => byId[r.to]);
-      const esLoop = sub.rel.some(r => r.loop && (r.from === id || r.to === id));
-      body.innerHTML = `
-        <p class="panel-kind">Causa (${macroById[currentDetailId].corto})</p>
-        <h2>${n.t}</h2>
-        ${vieneDe.length ? `<div class="block"><b>Viene de</b>${vieneDe.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.t}</div>`).join("")}</div>` : ""}
-        ${alimentaA.length ? `<div class="block"><b>Alimenta a</b>${alimentaA.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.t}</div>`).join("")}</div>` : ""}
-        ${esLoop ? `<div class="block"><b>Bucle de retroalimentación</b><p style="font-size:12.5px;color:var(--ink-dark);margin:0;font-style:italic;">${sub.loopNote}</p></div>` : ""}
-        <div class="block" style="margin-top:16px;">
-          <b>Tamaño de la bola</b>
-          <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
-            <button type="button" id="sizeDecBtn" style="flex:1; padding:7px 10px; border-radius:6px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff; font-weight:700; cursor:pointer;">🔍– Disminuir</button>
-            <button type="button" id="sizeIncBtn" style="flex:1; padding:7px 10px; border-radius:6px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff; font-weight:700; cursor:pointer;">🔍+ Aumentar</button>
-          </div>
-        </div>
-      `;
-      body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(elm.dataset.goto); }));
-      document.getElementById("sizeDecBtn").addEventListener("click", (e) => { e.stopPropagation(); resizeIndividualNode(id, -6); });
-      document.getElementById("sizeIncBtn").addEventListener("click", (e) => { e.stopPropagation(); resizeIndividualNode(id, 6); });
-    } else if (level === "full") {
-      const n = allNodesById[id];
-      const parentMacro = macroById[n.macroId];
-      const allRelCombined = [...allInternalRel, ...INTER_NETWORK_REL];
-      const vieneDe = allRelCombined.filter(r => r.to === id).map(r => ({ ...allNodesById[r.from], pol: r.pol, inter: r.inter }));
-      const alimentaA = allRelCombined.filter(r => r.from === id).map(r => ({ ...allNodesById[r.to], pol: r.pol, inter: r.inter }));
-      body.innerHTML = `
-        <p class="panel-kind" style="color:${parentMacro.color};">Causa de: ${parentMacro.corto}</p>
-        <h2>${n.t}</h2>
-        ${vieneDe.length ? `<div class="block"><b>Viene de</b>${vieneDe.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.inter ? "⚡ " : ""}${x.t} <b>(${x.pol})</b></div>`).join("")}</div>` : ""}
-        ${alimentaA.length ? `<div class="block"><b>Alimenta a</b>${alimentaA.map(x => `<div class="rel-chip" data-goto="${x.id}">${x.inter ? "⚡ " : ""}${x.t} <b>(${x.pol})</b></div>`).join("")}</div>` : ""}
-        <div class="block" style="margin-top:16px;">
-          <b>Tamaño de la bola</b>
-          <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
-            <button type="button" id="sizeDecBtn" style="flex:1; padding:7px 10px; border-radius:6px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff; font-weight:700; cursor:pointer;">🔍– Disminuir</button>
-            <button type="button" id="sizeIncBtn" style="flex:1; padding:7px 10px; border-radius:6px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:#fff; font-weight:700; cursor:pointer;">🔍+ Aumentar</button>
-          </div>
-        </div>
-      `;
-      body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(elm.dataset.goto); }));
-      document.getElementById("sizeDecBtn").addEventListener("click", (e) => { e.stopPropagation(); resizeIndividualNode(id, -4); });
-      document.getElementById("sizeIncBtn").addEventListener("click", (e) => { e.stopPropagation(); resizeIndividualNode(id, 4); });
-    }
+    if (level === "macro") { showDetail(id); return; }
+    if (level !== "detail") return;
+    const n = SUBNETS[currentDetailId].nodes.find(x => x.id === id);
+    if (!n) return;
+    const valor = n.valor !== undefined
+      ? `<b style="display:inline;font-size:20px;text-transform:none;letter-spacing:0;color:#0f172a;">${n.valor.toLocaleString("es-CO")}</b> ${esc(n.unidad)}`
+      : `${esc(n.nota)} <span style="color:var(--ink-dim);">(${esc(n.unidad)})</span>`;
+    body.innerHTML = `
+      <p class="panel-kind">Causa ${esc(n.cid)} · ${esc(macroById[currentDetailId].corto)}</p>
+      <h2>${esc(n.causa)}</h2>
+      <div class="block"><b>Indicador tangible</b><p style="font-size:12.5px;margin:0;">${esc(n.indicador)}</p></div>
+      <div class="block"><b>Valor / evidencia disponible</b><p style="font-size:13px;margin:0;line-height:1.5;">${valor}</p></div>
+      <div class="block"><b>Año · Ámbito</b><p style="font-size:12.5px;margin:0;">${esc(n.anio)} · ${esc(n.ambito)}</p></div>
+      <div class="block"><b>Estado del dato</b><p style="font-size:12.5px;margin:0;">${esc(n.estado)}</p></div>
+      <div class="block"><b>Fuente</b><a href="${esc(n.fuente)}" target="_blank" rel="noopener" style="font-size:12px;color:#4f46e5;word-break:break-all;">${esc(n.fuente)}</a></div>
+    `;
     panel.classList.add("open");
   }
   document.getElementById("panelClose").addEventListener("click", () => document.getElementById("panel").classList.remove("open"));
@@ -1277,9 +1020,8 @@
     place(centerBlob, mainW() / 2, mainH() / 2 + 10);
     place(centerLabel, mainW() / 2, mainH() / 2 + 10);
     place(hitCenter, mainW() / 2, mainH() / 2 + 10);
-    if (level === "macro") buildNetwork(MACRO, MACRO_REL, macroById, { maxR: 78, wFrac: 0.1, colorOf: (id) => macroById[id].color });
-    else if (level === "detail") { const sub = SUBNETS[currentDetailId]; const byId = {}; sub.nodes.forEach(n => byId[n.id] = n); const macroColor = macroById[currentDetailId].color; buildNetwork(sub.nodes, sub.rel, byId, { maxR: 66, wFrac: 0.09, colorOf: () => macroColor, loopType: sub.loopType }); }
-    else if (level === "full") showFullNetwork();
+    if (level === "macro") buildNetwork(MACRO, MACRO_REL, macroById, { maxR: 78, wFrac: 0.1, savedPositions: macroPositions(), colorOf: (id) => macroById[id].color });
+    else if (level === "detail") { const sub = SUBNETS[currentDetailId]; const byId = {}; sub.nodes.forEach(n => byId[n.id] = n); buildNetwork(sub.nodes, sub.rel, byId, detailOpts(currentDetailId)); }
   });
 })();
 </script>
