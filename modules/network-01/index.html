@@ -243,33 +243,16 @@
     ],
   };
 
-  // Más relaciones para que cada problema forme una red tejida y no una cadena (propuesta de lectura causal)
-  const CAUSE_REL_EXTRA = {
-    n1: [
-      ["P1-C5", "P1-C1", "+", "Los usos comerciales e industriales alrededor atraen más volumen de alimentos hacia la central."],
-      ["P1-C6", "P1-C4", "+", "La concentración de actividad económica en María Paz y El Amparo refuerza la concentración de bodegas y locales."],
-      ["P1-C2", "P1-C6", "+", "El flujo de vehículos de carga dinamiza la actividad económica de María Paz y El Amparo."],
-    ],
-    n2: [
-      ["P2-C6", "P2-C5", "+", "Una alta densidad residencial en el suroccidente concentra los viajes en moto."],
-      ["P2-C5", "P2-C2", "+", "La concentración de viajes en moto añade presión a las vías y alarga los desplazamientos."],
-      ["P2-C3", "P2-C2", "+", "Los viajes por trabajo se concentran en horas pico y alargan el tiempo de desplazamiento."],
-      ["P2-C6", "P2-C4", "+", "Una alta densidad residencial favorece la demanda de modos sostenibles (relación por verificar)."],
-    ],
-    n3: [
-      ["P3-C2", "P3-C6", "+", "Las conexiones erradas pendientes de intervención siguen aportando materia orgánica."],
-      ["P3-C3", "P3-C4", "+", "Parte de los vertimientos industriales se canaliza por puntos de descarga clandestina."],
-      ["P3-C5", "P3-C4", "+", "Los residuos sólidos acumulados obstruyen y favorecen descargas clandestinas en rondas."],
-      ["P3-C1", "P3-C4", "+", "Las conexiones erradas generan puntos de descarga no autorizados hacia humedales y rondas."],
-    ],
-    n4: [
-      ["P4-C1", "P4-C4", "+", "Más venta informal en general ocupa más andenes."],
-      ["P4-C2", "P4-C3", "+", "La presión de venta informal en María Paz se extiende hacia El Amparo."],
-      ["P4-C1", "P4-C5", "+", "La venta informal atrae el cargue y descargue de mercancías en la vía."],
-    ],
+  // Una sola relación adicional para cerrar un triángulo en P3 (sin telarañas)
+  CAUSE_REL.n3.push(["P3-C5", "P3-C4", "+", "Los residuos sólidos acumulados obstruyen y favorecen descargas clandestinas en rondas."]);
+
+  // Nombres cortos para la vista general
+  const SHORT = {
+    "P1-C1": "Entrada de alimentos", "P1-C2": "Entrada de vehículos", "P1-C3": "Carga por vehículo", "P1-C4": "Concentración de bodegas", "P1-C5": "Usos comerciales e industriales", "P1-C6": "Actividad en María Paz y El Amparo",
+    "P2-C1": "Viajes diarios", "P2-C2": "Tiempos de desplazamiento", "P2-C3": "Viajes por trabajo", "P2-C4": "Modos sostenibles", "P2-C5": "Viajes en moto", "P2-C6": "Densidad poblacional",
+    "P3-C1": "Conexiones erradas", "P3-C2": "Conexiones por intervenir", "P3-C3": "Vertimientos industriales", "P3-C4": "Descargas clandestinas", "P3-C5": "Residuos cerca de humedales", "P3-C6": "Materia orgánica en el agua",
+    "P4-C1": "Venta informal", "P4-C2": "Venta en María Paz", "P4-C3": "Venta en El Amparo", "P4-C4": "Ocupación de andenes", "P4-C5": "Cargue y descargue en vía", "P4-C6": "Estacionamiento indebido",
   };
-  Object.keys(CAUSE_REL_EXTRA).forEach(k => CAUSE_REL[k].push(...CAUSE_REL_EXTRA[k]));
-  const QUAD = { n1: [0, 0], n2: [1, 0], n3: [0, 1], n4: [1, 1] };
 
   const toId = cid => cid.toLowerCase().replace("-", "_");
   const nodes = [], byId = {}, rels = [];
@@ -408,13 +391,34 @@
       Object.assign(pos, bestLayout(nodes.filter(n => n.macroId === view.macroId), rels, area, Math.min(W, H) * 0.14, 7));
       return;
     }
-    const QUAD = { n1: [0, 0], n2: [1, 0], n3: [0, 1], n4: [1, 1] };
-    const qw = W / 2, qh = (H - top - bottom) / 2;
-    MACRO.forEach((m, i) => {
-      const [qx, qy] = QUAD[m.id];
-      const area = { x0: qx * qw + 16, y0: top + qy * qh + 24, x1: (qx + 1) * qw - 16, y1: top + (qy + 1) * qh - 6 };
-      Object.assign(pos, bestLayout(nodes.filter(n => n.macroId === m.id), rels, area, Math.min(qw / 6.2, qh / 4.4), 11 + i));
-      caps[m.id] = { x: area.x0, y: top + qy * qh - 2 };
+    // Vista general: una sola red. Los 4 problemas son nodos centrales unidos a sus causas.
+    const areaAll = { x0: 50, y0: 100, x1: W - 50, y1: H - 70 };
+    const U = Math.min(W, H);
+    const HUB = { n1: [0.46, 0.50], n2: [0.80, 0.24], n4: [0.80, 0.80], n3: [0.12, 0.72] };
+    const hubR = U * 0.075, satR = U * 0.056, ring = U * 0.15;
+    const hubXY = k => [areaAll.x0 + (areaAll.x1 - areaAll.x0) * HUB[k][0], areaAll.y0 + (areaAll.y1 - areaAll.y0) * (HUB[k][1] - 0.04)];
+    Object.keys(HUB).forEach(k => {
+      const [hx, hy] = hubXY(k);
+      pos[k] = { x: hx, y: hy, r: hubR };
+      // ángulos hacia los otros problemas conectados: las causas se reparten fuera de esas direcciones
+      const dirs = macroRels.filter(r => r.from === k || r.to === k).map(r => {
+        const [ox, oy] = hubXY(r.from === k ? r.to : r.from);
+        return Math.atan2(oy - hy, ox - hx);
+      });
+      const mine = nodes.filter(n => n.macroId === k);
+      const step = Math.PI * 2 / mine.length;
+      const angDist = (a, b) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b)));
+      let bestOff = 0, bestGap = -1;
+      for (let o = 0; o < 60; o++) {
+        const off = (o / 60) * step;
+        let gap = Infinity;
+        for (let i = 0; i < mine.length; i++) dirs.forEach(d => { gap = Math.min(gap, angDist(off + i * step, d)); });
+        if (gap > bestGap) { bestGap = gap; bestOff = off; }
+      }
+      mine.forEach((n, i) => {
+        const a = bestOff + i * step;
+        pos[n.nid] = { x: hx + Math.cos(a) * ring, y: hy + Math.sin(a) * ring, r: satR };
+      });
     });
     Object.keys(SAVED_POSITIONS).forEach(k => { if (pos[k]) pos[k] = { ...pos[k], ...SAVED_POSITIONS[k] }; });
   }
@@ -457,9 +461,12 @@
     // las lineas nuevas se agregan al final del svg
     if (view.mode === "macro") { curNodes = macroNodes; curRels = macroRels; }
     else if (view.mode === "detail") { curNodes = nodes.filter(n => n.macroId === view.macroId); curRels = rels.filter(r => byId[r.from].macroId === view.macroId); }
-    else { curNodes = nodes; curRels = rels; }
+    else {
+      const spokes = nodes.map(n => ({ from: n.macroId, to: n.nid, pol: "+", spoke: true, verbo: n.id + " es una de las causas de " + byId[n.macroId].id + "." }));
+      curNodes = macroNodes.concat(nodes); curRels = macroRels.concat(spokes);
+    }
     defaultLayout();
-    (view.mode === "all" ? MACRO : []).forEach(m => {
+    [].forEach(m => {
       const c = document.createElement("div"); c.className = "cap"; c.textContent = m.corto;
       c.style.left = caps[m.id].x + "px"; c.style.top = caps[m.id].y + "px"; c.style.color = m.ink;
       stage.appendChild(c); capEls.push(c);
@@ -479,7 +486,7 @@
     curNodes.forEach(n => {
       const el = document.createElement("div"); el.className = "node";
       const lbl = document.createElement("div"); lbl.className = "lbl";
-      lbl.innerHTML = `<small>${n.id}</small>${esc(n.causa)}`;
+      lbl.innerHTML = `<small>${n.id}</small>${esc(view.mode === "all" && !n.isMacro ? SHORT[n.id] : n.causa)}`;
       el.appendChild(lbl);
       stage.appendChild(el); nodeEls[n.nid] = el;
       styleNode(n);
