@@ -384,16 +384,8 @@
       allNodesList.push(copy);
     });
   });
-  // Relaciones entre causas de problemas distintos (propuesta, derivada de la hoja "Relaciones entre P")
-  const INTER_CAUSE_REL = [
-    ["P1-C2", "P2-C1", "+", "Los vehículos que ingresan a la central mayorista se suman a los viajes diarios de la localidad."],
-    ["P1-C2", "P2-C2", "+", "El alto ingreso de vehículos de carga congestiona las vías y alarga los tiempos de desplazamiento."],
-    ["P1-C6", "P4-C1", "+", "La concentración de actividad económica en María Paz y El Amparo atrae venta informal al espacio público."],
-    ["P1-C5", "P4-C4", "+", "Los usos comerciales e industriales alrededor de Corabastos ocupan los andenes con actividad económica."],
-    ["P2-C1", "P4-C5", "+", "Más viajes y sobrecarga vial aumentan el cargue y descargue en vía (requiere aforo local)."],
-    ["P2-C2", "P4-C6", "+", "La sobrecarga vial aumenta el estacionamiento fuera de zonas autorizadas (requiere aforo local)."],
-    ["P1-C1", "P3-C5", "+", "Mayor volumen de alimentos puede generar más residuos sólidos cerca de humedales. Mecanismo por demostrar: no asumir causalidad directa."],
-  ];
+  // Sin conexiones entre causas de problemas distintos
+  const INTER_CAUSE_REL = [];
   const INTER_NETWORK_REL = INTER_CAUSE_REL.map(([a, b, pol, verbo]) => ({ from: toNodeId(a), to: toNodeId(b), pol, verbo: a + "→" + b + ": " + verbo, inter: true }));
 
   // Vista de un problema: sus causas + las causas de otros problemas con las que se conecta
@@ -957,7 +949,7 @@
     const w = mainW(), h = mainH();
     const own = SUBNETS[macroId].nodes, ext = v.nodes.slice(own.length);
     const cols = 3, rows = Math.ceil(own.length / cols);
-    const cellW = (w * 0.66) / cols, cellH = (h * 0.8) / rows;
+    const cellW = (w * (ext.length ? 0.66 : 0.92)) / cols, cellH = (h * 0.8) / rows;
     const rOwn = Math.max(30, Math.min(cellW * 0.42, cellH * 0.42, 95));
     const pos = {};
     own.forEach((n, i) => {
@@ -972,7 +964,7 @@
     level = "detail"; currentDetailId = macroId;
     buildDetail(macroId);
     levelTitleText.textContent = macroById[macroId].full;
-    levelSubText.textContent = "Causas del problema (y las causas de otros problemas conectadas, con flecha punteada) — toca una burbuja para ver su indicador, valor y fuente";
+    levelSubText.textContent = "Causas del problema — toca una burbuja para ver su indicador, valor y fuente";
     backBtn.textContent = "← Volver a los 4 problemas";
     backBtn.classList.add("show");
     document.getElementById("panel").classList.remove("open");
