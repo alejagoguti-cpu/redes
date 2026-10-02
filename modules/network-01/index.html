@@ -88,7 +88,8 @@
   .nav-btn:hover{ background:var(--line); color:#fff; border-color:var(--line); }
   .nav-btn.show{ display:block; }
   #backBtn{ bottom:36px; left:50%; transform:translateX(-50%); }
-  #allBtn{ top:14px; right:18px; }
+  #allBtn{ top:16px; right:20px; background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 4px 14px rgba(176,138,91,.35); padding:10px 20px; font-weight:500; }
+  #allBtn:hover{ background:#9a774b; border-color:#9a774b; }
   #netEditorPanel{
     position:absolute; top:14px; left:14px; z-index:10; background:rgba(255,255,255,.85);
     border:1px solid #e8e2d9; border-radius:14px; padding:8px 14px; display:flex; align-items:center; gap:12px;
@@ -136,7 +137,7 @@
 </div>
 <button type="button" class="nav-btn" id="allBtn"><i class="fa-solid fa-network-wired"></i> Ver todas las causas juntas</button>
 <button type="button" class="nav-btn" id="backBtn">← Volver a los 4 problemas</button>
-<div class="legend"><b>+</b> si la causa aumenta, el efecto también aumenta &nbsp;·&nbsp; <b>–</b> si la causa aumenta, el efecto disminuye</div>
+<div class="legend">Cada línea es una relación causal — tócala para ver su mecanismo y si es positiva (+) o negativa (–)</div>
 
 <div class="stage" id="stage">
   <svg class="edges-svg" id="edgesSvg">
@@ -242,13 +243,32 @@
     ],
   };
 
-  // Orden en cuadrícula 3x2 de cada problema (para que las flechas crucen lo menos posible)
-  const ORDER = {
-    n1: ["P1-C4", "P1-C1", "P1-C2", "P1-C5", "P1-C6", "P1-C3"],
-    n2: ["P2-C6", "P2-C1", "P2-C2", "P2-C3", "P2-C5", "P2-C4"],
-    n3: ["P3-C1", "P3-C6", "P3-C3", "P3-C2", "P3-C4", "P3-C5"],
-    n4: ["P4-C1", "P4-C2", "P4-C4", "P4-C3", "P4-C5", "P4-C6"],
+  // Más relaciones para que cada problema forme una red tejida y no una cadena (propuesta de lectura causal)
+  const CAUSE_REL_EXTRA = {
+    n1: [
+      ["P1-C5", "P1-C1", "+", "Los usos comerciales e industriales alrededor atraen más volumen de alimentos hacia la central."],
+      ["P1-C6", "P1-C4", "+", "La concentración de actividad económica en María Paz y El Amparo refuerza la concentración de bodegas y locales."],
+      ["P1-C2", "P1-C6", "+", "El flujo de vehículos de carga dinamiza la actividad económica de María Paz y El Amparo."],
+    ],
+    n2: [
+      ["P2-C6", "P2-C5", "+", "Una alta densidad residencial en el suroccidente concentra los viajes en moto."],
+      ["P2-C5", "P2-C2", "+", "La concentración de viajes en moto añade presión a las vías y alarga los desplazamientos."],
+      ["P2-C3", "P2-C2", "+", "Los viajes por trabajo se concentran en horas pico y alargan el tiempo de desplazamiento."],
+      ["P2-C6", "P2-C4", "+", "Una alta densidad residencial favorece la demanda de modos sostenibles (relación por verificar)."],
+    ],
+    n3: [
+      ["P3-C2", "P3-C6", "+", "Las conexiones erradas pendientes de intervención siguen aportando materia orgánica."],
+      ["P3-C3", "P3-C4", "+", "Parte de los vertimientos industriales se canaliza por puntos de descarga clandestina."],
+      ["P3-C5", "P3-C4", "+", "Los residuos sólidos acumulados obstruyen y favorecen descargas clandestinas en rondas."],
+      ["P3-C1", "P3-C4", "+", "Las conexiones erradas generan puntos de descarga no autorizados hacia humedales y rondas."],
+    ],
+    n4: [
+      ["P4-C1", "P4-C4", "+", "Más venta informal en general ocupa más andenes."],
+      ["P4-C2", "P4-C3", "+", "La presión de venta informal en María Paz se extiende hacia El Amparo."],
+      ["P4-C1", "P4-C5", "+", "La venta informal atrae el cargue y descargue de mercancías en la vía."],
+    ],
   };
+  Object.keys(CAUSE_REL_EXTRA).forEach(k => CAUSE_REL[k].push(...CAUSE_REL_EXTRA[k]));
   const QUAD = { n1: [0, 0], n2: [1, 0], n3: [0, 1], n4: [1, 1] };
 
   const toId = cid => cid.toLowerCase().replace("-", "_");
@@ -285,6 +305,95 @@
   let pos = {}, caps = {}, scale = 1;
   let nodeEls = {}, edgeEls = [], capEls = [];
 
+  // Distribución orgánica tipo red: tamaño según nº de conexiones, atracción por flechas y repulsión entre burbujas.
+  // Es determinista (misma semilla = mismo dibujo en cada carga).
+  function forceLayout(list, allRels, area, rMax, seed) {
+    let s = seed * 9301 + 49297;
+    const rnd = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+    const ids = list.map(n => n.nid), set = new Set(ids);
+    const es = allRels.filter(r => set.has(r.from) && set.has(r.to));
+    const deg = {}; ids.forEach(i => deg[i] = 0);
+    es.forEach(e => { deg[e.from]++; deg[e.to]++; });
+    const dMax = Math.max(1, ...Object.values(deg)), dMin = Math.min(...Object.values(deg));
+    const R = {}; ids.forEach(i => R[i] = rMax * (0.55 + 0.45 * ((deg[i] - dMin) / Math.max(1, dMax - dMin))));
+    const cx = (area.x0 + area.x1) / 2, cy = (area.y0 + area.y1) / 2;
+    const P = {};
+    ids.forEach((i, k) => {
+      const a = (k / ids.length) * Math.PI * 2 + rnd() * 0.8;
+      P[i] = { x: cx + Math.cos(a) * (area.x1 - area.x0) * 0.3 * (0.6 + rnd() * 0.4), y: cy + Math.sin(a) * (area.y1 - area.y0) * 0.3 * (0.6 + rnd() * 0.4) };
+    });
+    const clamp = i => {
+      const m = R[i] * 1.3;
+      P[i].x = Math.max(area.x0 + m, Math.min(area.x1 - m, P[i].x));
+      P[i].y = Math.max(area.y0 + m, Math.min(area.y1 - m, P[i].y));
+    };
+    for (let it = 0; it < 500; it++) {
+      const k = 1 - it / 500;
+      const F = {}; ids.forEach(i => F[i] = { x: 0, y: 0 });
+      for (let a = 0; a < ids.length; a++) for (let b = a + 1; b < ids.length; b++) {
+        const A = P[ids[a]], B = P[ids[b]];
+        let dx = A.x - B.x, dy = A.y - B.y, d = Math.hypot(dx, dy) || 0.01;
+        const min = (R[ids[a]] + R[ids[b]]) * 1.45;
+        const push = d < min ? (min - d) * 0.5 : (min * 3.2 > d ? (min * 3.2 - d) * 0.025 : 0);
+        F[ids[a]].x += dx / d * push; F[ids[a]].y += dy / d * push;
+        F[ids[b]].x -= dx / d * push; F[ids[b]].y -= dy / d * push;
+      }
+      es.forEach(e => {
+        const A = P[e.from], B = P[e.to];
+        const dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) || 0.01;
+        const target = (R[e.from] + R[e.to]) * 2.5;
+        const pull = (d - target) * 0.04 * k;
+        F[e.from].x += dx / d * pull; F[e.from].y += dy / d * pull;
+        F[e.to].x -= dx / d * pull; F[e.to].y -= dy / d * pull;
+      });
+      // que ninguna línea pase por detrás de una burbuja que no es de sus extremos
+      es.forEach(e => {
+        const A = P[e.from], B = P[e.to], vx = B.x - A.x, vy = B.y - A.y, L2 = vx * vx + vy * vy || 1;
+        ids.forEach(i => {
+          if (i === e.from || i === e.to) return;
+          const t = Math.max(0, Math.min(1, ((P[i].x - A.x) * vx + (P[i].y - A.y) * vy) / L2));
+          const qx = A.x + vx * t, qy = A.y + vy * t;
+          let dx = P[i].x - qx, dy = P[i].y - qy; const d = Math.hypot(dx, dy) || 0.01, need = R[i] * 1.5;
+          if (d < need) { const f = (need - d) * 0.35; F[i].x += dx / d * f; F[i].y += dy / d * f; F[e.from].x -= dx / d * f * 0.25; F[e.from].y -= dy / d * f * 0.25; F[e.to].x -= dx / d * f * 0.25; F[e.to].y -= dy / d * f * 0.25; }
+        });
+      });
+      ids.forEach(i => {
+        P[i].x += F[i].x + (cx - P[i].x) * 0.004; P[i].y += F[i].y + (cy - P[i].y) * 0.004; clamp(i);
+      });
+    }
+    // penalización: cruces entre líneas + líneas que tocan burbujas ajenas
+    let score = 0;
+    const seg = e => [P[e.from], P[e.to]];
+    for (let a = 0; a < es.length; a++) for (let b = a + 1; b < es.length; b++) {
+      if (es[a].from === es[b].from || es[a].from === es[b].to || es[a].to === es[b].from || es[a].to === es[b].to) continue;
+      const [p1, p2] = seg(es[a]), [p3, p4] = seg(es[b]);
+      const d1x = p2.x - p1.x, d1y = p2.y - p1.y, d2x = p4.x - p3.x, d2y = p4.y - p3.y, den = d1x * d2y - d1y * d2x;
+      if (Math.abs(den) < 1e-9) continue;
+      const t = ((p3.x - p1.x) * d2y - (p3.y - p1.y) * d2x) / den, u = ((p3.x - p1.x) * d1y - (p3.y - p1.y) * d1x) / den;
+      if (t > 0 && t < 1 && u > 0 && u < 1) score += 10;
+    }
+    es.forEach(e => {
+      const A = P[e.from], B = P[e.to], vx = B.x - A.x, vy = B.y - A.y, L2 = vx * vx + vy * vy || 1;
+      ids.forEach(i => {
+        if (i === e.from || i === e.to) return;
+        const t = Math.max(0, Math.min(1, ((P[i].x - A.x) * vx + (P[i].y - A.y) * vy) / L2));
+        if (Math.hypot(P[i].x - (A.x + vx * t), P[i].y - (A.y + vy * t)) < R[i] * 1.2) score += 30;
+      });
+    });
+    const out = {}; ids.forEach(i => out[i] = { x: P[i].x, y: P[i].y, r: R[i] });
+    return { out, score };
+  }
+  // Prueba varias semillas y se queda con el dibujo de menos cruces
+  function bestLayout(list, allRels, area, rMax, seed) {
+    let best = null;
+    for (let k = 0; k < 14; k++) {
+      const res = forceLayout(list, allRels, area, rMax, seed * 31 + k * 7 + 1);
+      if (!best || res.score < best.score) best = res;
+      if (best.score === 0) break;
+    }
+    return best.out;
+  }
+
   function defaultLayout() {
     const W = mainW(), H = mainH(), top = 100, bottom = 50;
     pos = {}; caps = {};
@@ -295,22 +404,17 @@
       return;
     }
     if (view.mode === "detail") {
-      const cw = (W * 0.86) / 3, ch = (H - 190) / 2, x0 = W * 0.07, y0 = 110;
-      const r = Math.max(40, Math.min(cw, ch) / 2 * 0.8);
-      ORDER[view.macroId].forEach((cid, i) => {
-        pos[toId(cid)] = { x: x0 + cw * (i % 3 + 0.5), y: y0 + ch * (Math.floor(i / 3) + 0.5), r };
-      });
+      const area = { x0: 50, y0: 110, x1: W - 50, y1: H - 80 };
+      Object.assign(pos, bestLayout(nodes.filter(n => n.macroId === view.macroId), rels, area, Math.min(W, H) * 0.14, 7));
       return;
     }
+    const QUAD = { n1: [0, 0], n2: [1, 0], n3: [0, 1], n4: [1, 1] };
     const qw = W / 2, qh = (H - top - bottom) / 2;
-    MACRO.forEach(m => {
+    MACRO.forEach((m, i) => {
       const [qx, qy] = QUAD[m.id];
-      const x0 = qx * qw + 24, y0 = top + qy * qh + 22, cw = (qw - 48) / 3, ch = (qh - 30) / 2;
-      const r = Math.max(34, Math.min(cw, ch) / 2 * 0.8);
-      ORDER[m.id].forEach((cid, i) => {
-        pos[toId(cid)] = { x: x0 + cw * (i % 3 + 0.5), y: y0 + ch * (Math.floor(i / 3) + 0.5), r };
-      });
-      caps[m.id] = { x: x0, y: top + qy * qh - 2 };
+      const area = { x0: qx * qw + 16, y0: top + qy * qh + 24, x1: (qx + 1) * qw - 16, y1: top + (qy + 1) * qh - 6 };
+      Object.assign(pos, bestLayout(nodes.filter(n => n.macroId === m.id), rels, area, Math.min(qw / 6.2, qh / 4.4), 11 + i));
+      caps[m.id] = { x: area.x0, y: top + qy * qh - 2 };
     });
     Object.keys(SAVED_POSITIONS).forEach(k => { if (pos[k]) pos[k] = { ...pos[k], ...SAVED_POSITIONS[k] }; });
   }
@@ -336,14 +440,13 @@
   function edgeGeom(r) {
     const a = pos[r.from], b = pos[r.to];
     const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1, ux = dx / d, uy = dy / d;
-    const ra = rad(r.from) * 1.28, rb = rad(r.to) * 1.28 + 4;
+    const ra = rad(r.from) * 1.2, rb = rad(r.to) * 1.2;
     return { x1: a.x + ux * ra, y1: a.y + uy * ra, x2: b.x - ux * rb, y2: b.y - uy * rb };
   }
   function updateEdges() {
-    edgeEls.forEach(({ r, line, badge }) => {
+    edgeEls.forEach(({ r, line, hit }) => {
       const g = edgeGeom(r);
-      line.setAttribute("x1", g.x1); line.setAttribute("y1", g.y1); line.setAttribute("x2", g.x2); line.setAttribute("y2", g.y2);
-      badge.style.left = (g.x1 + (g.x2 - g.x1) * 0.5) + "px"; badge.style.top = (g.y1 + (g.y2 - g.y1) * 0.5) + "px";
+      [line, hit].forEach(l => { l.setAttribute("x1", g.x1); l.setAttribute("y1", g.y1); l.setAttribute("x2", g.x2); l.setAttribute("y2", g.y2); });
     });
   }
 
@@ -351,6 +454,7 @@
     nodeEls = {}; edgeEls = []; capEls = [];
     stage.querySelectorAll(".node,.badge,.cap").forEach(e => e.remove());
     svg.querySelectorAll("line").forEach(e => e.remove());
+    // las lineas nuevas se agregan al final del svg
     if (view.mode === "macro") { curNodes = macroNodes; curRels = macroRels; }
     else if (view.mode === "detail") { curNodes = nodes.filter(n => n.macroId === view.macroId); curRels = rels.filter(r => byId[r.from].macroId === view.macroId); }
     else { curNodes = nodes; curRels = rels; }
@@ -362,12 +466,15 @@
     });
     curRels.forEach(r => {
       const line = document.createElementNS(SVGNS, "line");
-      line.setAttribute("stroke", "#d8b48a"); line.setAttribute("stroke-width", "1.2"); line.setAttribute("marker-end", "url(#arr)");
+      line.setAttribute("stroke", "#d8b48a"); line.setAttribute("stroke-width", "1.3"); line.setAttribute("stroke-linecap", "round");
       svg.appendChild(line);
-      const badge = document.createElement("div"); badge.className = "badge"; badge.textContent = r.pol === "-" ? "–" : "+";
-      badge.addEventListener("click", e => { e.stopPropagation(); openRel(r); });
-      stage.appendChild(badge);
-      edgeEls.push({ r, line, badge });
+      const hit = document.createElementNS(SVGNS, "line");
+      hit.setAttribute("stroke", "transparent"); hit.setAttribute("stroke-width", "14"); hit.style.pointerEvents = "stroke"; hit.style.cursor = "pointer";
+      hit.addEventListener("mouseenter", () => { line.setAttribute("stroke-width", "3"); });
+      hit.addEventListener("mouseleave", () => { line.setAttribute("stroke-width", "1.3"); });
+      hit.addEventListener("click", e => { e.stopPropagation(); openRel(r); });
+      svg.appendChild(hit);
+      edgeEls.push({ r, line, hit });
     });
     curNodes.forEach(n => {
       const el = document.createElement("div"); el.className = "node";
@@ -387,9 +494,9 @@
     const keep = new Set();
     if (id) { keep.add(id); curRels.forEach(r => { if (r.from === id) keep.add(r.to); if (r.to === id) keep.add(r.from); }); }
     curNodes.forEach(n => nodeEls[n.nid].classList.toggle("dim", !!id && keep.size > 1 && !keep.has(n.nid)));
-    edgeEls.forEach(({ r, line, badge }) => {
+    edgeEls.forEach(({ r, line }) => {
       const dim = !!id && keep.size > 1 && !(r.from === id || r.to === id);
-      line.style.opacity = dim ? 0.12 : 1; badge.classList.toggle("dim", dim);
+      line.style.opacity = dim ? 0.12 : 1;
     });
   }
 
@@ -455,9 +562,9 @@
   });
 
   const INTRO_SUB = {
-    macro: "Toca un problema para ver sus causas, o el signo (+/–) de una línea para ver el mecanismo",
-    detail: "Causas del problema — toca una burbuja para ver su indicador, o el signo (+/–) para ver el mecanismo",
-    all: "Todas las causas de P1–P4 — toca una burbuja para ver su indicador, o el signo (+/–) para ver el mecanismo",
+    macro: "Toca un problema para ver sus causas, o una línea para ver el mecanismo",
+    detail: "Causas del problema — toca una burbuja para ver su indicador, o una línea para ver el mecanismo",
+    all: "Todas las causas de P1–P4 — toca una burbuja para ver su indicador, o una línea para ver el mecanismo",
   };
   const backBtn = document.getElementById("backBtn"), allBtn = document.getElementById("allBtn");
   function setView(mode, macroId) {
@@ -467,7 +574,7 @@
     document.getElementById("introTitle").textContent = mode === "detail" ? macroById[macroId].corto : "Colapso operativo y logístico del modelo de ocupación de Kennedy frente a la capacidad de soporte del territorio";
     document.getElementById("introSub").textContent = INTRO_SUB[mode];
     backBtn.classList.toggle("show", mode !== "macro");
-    allBtn.classList.toggle("show", mode === "detail");
+    allBtn.classList.toggle("show", mode !== "all");
     build();
   }
   function onNodeClick(n) { if (n.isMacro) setView("detail", n.nid); else openPanel(n.nid); }
