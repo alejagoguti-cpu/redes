@@ -329,10 +329,48 @@
       { id:"P4-C6", causa:"Estacionamiento de vehículos fuera de zonas autorizadas", indicador:"Vehículos estacionados sobre vía/andén", nota:"Dato a obtener mediante aforo o registros de control", unidad:"vehículos/h", anio:"Actual", ambito:"Entorno Corabastos", fuente:"https://www.movilidadbogota.gov.co/", estado:"Indicador tangible; medición pendiente" },
     ],
   };
-  // Cada causa se muestra como burbuja (sin relaciones internas: la matriz no las define)
+  // Relaciones entre causas de un mismo problema (propuesta de lectura causal; el Excel no las define)
+  const CAUSE_REL = {
+    n1: [
+      ["P1-C4", "P1-C1", "+", "Más bodegas y locales concentrados en un solo recinto atraen mayor volumen de alimentos."],
+      ["P1-C1", "P1-C2", "+", "Más toneladas de alimentos requieren más vehículos de carga."],
+      ["P1-C1", "P1-C3", "+", "Más volumen de alimentos aumenta la carga que se moviliza por vehículo."],
+      ["P1-C3", "P1-C2", "-", "Si cada vehículo lleva más carga, se necesitan menos vehículos para el mismo volumen."],
+      ["P1-C4", "P1-C5", "+", "La concentración de bodegas atrae usos comerciales e industriales alrededor."],
+      ["P1-C5", "P1-C6", "+", "Más usos comerciales/industriales en el entorno concentran la actividad económica de María Paz y El Amparo."],
+    ],
+    n2: [
+      ["P2-C6", "P2-C1", "+", "Más habitantes por hectárea generan más viajes diarios."],
+      ["P2-C3", "P2-C1", "+", "Un alto motivo de viaje por trabajo concentra y multiplica los viajes diarios."],
+      ["P2-C5", "P2-C1", "+", "Los viajes en moto desde el suroccidente se suman a la demanda total de viajes."],
+      ["P2-C1", "P2-C2", "+", "Más viajes saturan las vías y alargan el tiempo de desplazamiento."],
+      ["P2-C4", "P2-C2", "-", "Una mayor oferta de modos sostenibles tiende a reducir el tiempo de viaje (relación por verificar)."],
+    ],
+    n3: [
+      ["P3-C1", "P3-C6", "+", "Las conexiones erradas descargan aguas residuales con materia orgánica."],
+      ["P3-C2", "P3-C1", "+", "Las conexiones identificadas pero sin corregir mantienen activas las descargas erradas."],
+      ["P3-C3", "P3-C6", "+", "Los vertimientos industriales aportan carga orgánica a la red hídrica."],
+      ["P3-C4", "P3-C6", "+", "Las descargas clandestinas aportan materia orgánica a humedales y rondas."],
+      ["P3-C5", "P3-C6", "+", "Los residuos sólidos cerca de humedales se descomponen y aportan materia orgánica al agua."],
+    ],
+    n4: [
+      ["P4-C1", "P4-C2", "+", "Más venta informal en general se concentra en sectores como María Paz."],
+      ["P4-C1", "P4-C3", "+", "Más venta informal en general se concentra en sectores como El Amparo."],
+      ["P4-C2", "P4-C4", "+", "La venta informal concentrada en María Paz ocupa andenes."],
+      ["P4-C3", "P4-C4", "+", "La venta informal concentrada en El Amparo ocupa andenes."],
+      ["P4-C5", "P4-C4", "+", "El cargue y descargue en vía invade los andenes con actividad económica."],
+      ["P4-C6", "P4-C4", "+", "Los vehículos estacionados fuera de zonas autorizadas ocupan andén y vía."],
+      ["P4-C5", "P4-C6", "+", "Las operaciones de cargue y descargue en vía llevan a estacionar fuera de zonas autorizadas."],
+    ],
+  };
+  const toNodeId = cid => cid.toLowerCase().replace("-", "_");
   const SUBNETS = {};
   Object.keys(CAUSES).forEach(mId => {
-    SUBNETS[mId] = { nodes: CAUSES[mId].map(c => ({ ...c, id: c.id.toLowerCase().replace("-", "_"), cid: c.id, corto: c.causa, t: c.id + " · " + c.causa })), rel: [], loopType: "R" };
+    SUBNETS[mId] = {
+      nodes: CAUSES[mId].map(c => ({ ...c, id: toNodeId(c.id), cid: c.id, corto: c.causa, t: c.id + " · " + c.causa })),
+      rel: (CAUSE_REL[mId] || []).map(([a, b, pol, verbo]) => ({ from: toNodeId(a), to: toNodeId(b), pol, verbo: a + "→" + b + ": " + verbo })),
+      loopType: "R"
+    };
   });
   const macroById = {}; MACRO.forEach(m => macroById[m.id] = m);
 
@@ -717,7 +755,7 @@
       if (degree[r.to] !== undefined) degree[r.to]++;
     });
     const degValues = Object.values(degree);
-    const degMin = Math.min(...degValues), degMax = Math.max(...degValues);
+    const degMin = opts.uniform ? 0 : Math.min(...degValues), degMax = opts.uniform ? 0 : Math.max(...degValues);
     NODE_R = Math.max(20, Math.min(opts.maxR, mainW() * opts.wFrac));
     const R_MIN = Math.max(15, NODE_R * 0.48);
     const R_MAX = NODE_R * 1.62;
@@ -889,7 +927,7 @@
 
   function detailOpts(macroId) {
     const macroColor = macroById[macroId].color;
-    return { maxR: 80, wFrac: 0.1, colorOf: () => macroColor, loopType: SUBNETS[macroId].loopType };
+    return { maxR: 80, wFrac: 0.1, uniform: true, colorOf: () => macroColor, loopType: SUBNETS[macroId].loopType };
   }
 
   function showDetail(macroId) {
@@ -1000,6 +1038,9 @@
     if (level !== "detail") return;
     const n = SUBNETS[currentDetailId].nodes.find(x => x.id === id);
     if (!n) return;
+    const rel = SUBNETS[currentDetailId].rel;
+    const byId = {}; SUBNETS[currentDetailId].nodes.forEach(x => byId[x.id] = x);
+    const chips = (title, items) => items.length ? `<div class="block"><b>${title}</b>${items.map(([k, pol]) => `<div class="rel-chip" data-goto="${k}">${esc(byId[k].cid)} · ${esc(byId[k].causa)} <b>(${pol})</b></div>`).join("")}</div>` : "";
     const valor = n.valor !== undefined
       ? `<b style="display:inline;font-size:20px;text-transform:none;letter-spacing:0;color:#0f172a;">${n.valor.toLocaleString("es-CO")}</b> ${esc(n.unidad)}`
       : `${esc(n.nota)} <span style="color:var(--ink-dim);">(${esc(n.unidad)})</span>`;
@@ -1010,8 +1051,11 @@
       <div class="block"><b>Valor / evidencia disponible</b><p style="font-size:13px;margin:0;line-height:1.5;">${valor}</p></div>
       <div class="block"><b>Año · Ámbito</b><p style="font-size:12.5px;margin:0;">${esc(n.anio)} · ${esc(n.ambito)}</p></div>
       <div class="block"><b>Estado del dato</b><p style="font-size:12.5px;margin:0;">${esc(n.estado)}</p></div>
+      ${chips("Es causada por", rel.filter(r => r.to === id).map(r => [r.from, r.pol]))}
+      ${chips("Provoca o intensifica", rel.filter(r => r.from === id).map(r => [r.to, r.pol]))}
       <div class="block"><b>Fuente</b><a href="${esc(n.fuente)}" target="_blank" rel="noopener" style="font-size:12px;color:#4f46e5;word-break:break-all;">${esc(n.fuente)}</a></div>
     `;
+    body.querySelectorAll("[data-goto]").forEach(elm => elm.addEventListener("click", (e) => { e.stopPropagation(); openPanel(elm.dataset.goto); }));
     panel.classList.add("open");
   }
   document.getElementById("panelClose").addEventListener("click", () => document.getElementById("panel").classList.remove("open"));
