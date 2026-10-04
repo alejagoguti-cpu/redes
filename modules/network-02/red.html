@@ -70,6 +70,17 @@ body.storymode{background:#050806;color:#eef6ef}
 body.storymode #swarm{background:radial-gradient(circle at 50% 50%,#101a13 0,#071009 48%,#020403 100%)}
 body.storymode .legend{background:rgba(5,9,6,.78);border-color:rgba(255,255,255,.08);color:#c9d5cb}
 body.storymode .legend .label,body.storymode .legend .small{color:#aebbb1}
+
+.analysis{right:18px;top:96px;width:300px;padding:14px;border-radius:18px;max-height:calc(100vh - 114px);overflow:auto;transform:translateX(calc(100% + 36px));opacity:0;pointer-events:none;transition:.28s ease}
+.analysis.open{transform:none;opacity:1;pointer-events:auto}
+.analysis h3{font-size:12px;margin:0 0 4px}.analysis .introcopy{font-size:8px;line-height:1.45;color:#6d756c;margin:0 0 10px}
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.analysis-card{background:#f0f3ec;border-radius:10px;padding:8px}.analysis-card b{display:block;font-size:15px}.analysis-card span{font-size:7px;color:#747d73}
+.analysis .section-title{font-size:7px;text-transform:uppercase;letter-spacing:.11em;color:#8a9088;margin:12px 0 6px}
+.analysis-actions{display:flex;gap:5px;flex-wrap:wrap}.analysis-btn{border:1px solid var(--hair);background:#fff;border-radius:999px;padding:6px 8px;font-size:7.5px;cursor:pointer}.analysis-btn.active{background:#1c2a20;color:#fff;border-color:#1c2a20}
+.analysis-btn.danger.active{background:#874d47;border-color:#874d47}.analysis-result{margin-top:9px;border:1px solid var(--hair);background:#fff;border-radius:11px;padding:9px;font-size:8px;line-height:1.5;color:#596158}
+.analysis-list{margin:6px 0 0;padding:0;list-style:none}.analysis-list li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid #edf0ea;font-size:7.5px}.analysis-list li:last-child{border-bottom:0}.analysis-list em{font-style:normal;color:#8a9088}
+.analysis-note{background:#f5f0df;color:#695c37;border-radius:10px;padding:8px;font-size:7.5px;line-height:1.45;margin-top:9px}
+body.embed .analysis{display:none!important}
 </style>
 </head>
 <body><div class="app">
@@ -93,7 +104,7 @@ body.storymode .legend .label,body.storymode .legend .small{color:#aebbb1}
 <div class="viewbar">
   <button id="autoRotate" class="active"><i class="fa-solid fa-rotate"></i> Giro</button>
   <button id="fitView"><i class="fa-solid fa-expand"></i> Centrar</button>
-  <button id="labels"><i class="fa-solid fa-tag"></i> Etiquetas</button>
+  <button id="labels"><i class="fa-solid fa-tag"></i> Etiquetas</button><button id="analysisToggle"><i class="fa-solid fa-diagram-project"></i> Analizar</button>
 </div>
 
 <aside class="panel filters">
@@ -141,6 +152,47 @@ body.storymode .legend .label,body.storymode .legend .small{color:#aebbb1}
 <button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>
 <h2>Selecciona un elemento</h2>
 <p>Arrastra para rotar el enjambre. Usa la rueda para acercar o alejar. Haz clic en un nodo o en una conexión para consultar su evidencia.</p>
+</aside>
+
+<aside id="analysisPanel" class="panel analysis">
+  <h3>Análisis de arquitectura</h3>
+  <p class="introcopy">Aísla categorías, remueve soportes y observa qué nodos pierden conectividad. Las métricas se recalculan con la red visible.</p>
+
+  <div class="analysis-grid">
+    <div class="analysis-card"><b id="mComponents">0</b><span>componentes</span></div>
+    <div class="analysis-card"><b id="mDangling">0</b><span>colgantes (grado ≤ 1)</span></div>
+    <div class="analysis-card"><b id="mBridges">0</b><span>nodos puente</span></div>
+    <div class="analysis-card"><b id="mBirdLoss">0%</b><span>avifauna desconectada</span></div>
+  </div>
+
+  <div class="section-title">Organización visual</div>
+  <div class="analysis-actions">
+    <button class="analysis-btn active" id="layoutSwarm">Enjambre</button>
+    <button class="analysis-btn" id="layoutGroups">Agrupar categorías</button>
+  </div>
+
+  <div class="section-title">Aislar interacciones</div>
+  <div class="analysis-actions" id="analysisInteractions"></div>
+
+  <div class="section-title">Leer arquitectura</div>
+  <div class="analysis-actions">
+    <button class="analysis-btn" data-highlight="hubs">Hubs</button>
+    <button class="analysis-btn" data-highlight="bridges">Puentes</button>
+    <button class="analysis-btn" data-highlight="dangling">Colgantes</button>
+  </div>
+
+  <div class="section-title">Experimento de remoción</div>
+  <div class="analysis-actions">
+    <button class="analysis-btn danger" id="removePlants">Remover vegetación</button>
+    <button class="analysis-btn danger" id="removeHubs">Remover 3 hubs</button>
+    <button class="analysis-btn" id="restoreAnalysis">Restaurar</button>
+  </div>
+  <div class="analysis-result" id="analysisResult">Red base sin remociones. Ejecuta un escenario para comparar conectividad.</div>
+
+  <div class="section-title">Nodos estructurales</div>
+  <ul class="analysis-list" id="analysisTop"></ul>
+
+  <div class="analysis-note">Las presiones urbanas (ruido, impermeabilización, residuos) se representan aquí como <b>escenarios de remoción/fragmentación</b>. No se convierten en interacciones observadas sin evidencia espacial que las vincule a taxones concretos.</div>
 </aside>
 
 <div class="hint">Arrastra = rotar · rueda = zoom · nodo = especie · línea = evidencia</div>
@@ -197,6 +249,15 @@ const state={
 const sceneAnim={alpha:1,targetAlpha:1,zoomBoost:0,targetZoomBoost:0,spin:0,targetSpin:0,morph:1,targetMorph:1,burst:0,targetBurst:0,flash:0,targetFlash:0,busy:false,pending:null,lastApplied:null};
 const neonState={groups:new Set(),interaction:null,interactions:new Set(),strength:0,targetStrength:0};
 const storyState={scene:null,records:null,nodeIds:null,featured:new Set(),caption:""};
+const analysisState={
+  open:false,cluster:false,clusterStrength:0,targetClusterStrength:0,
+  interactionSet:new Set(),removedGroups:new Set(),removedNodes:new Set(),
+  highlight:"none",highlightNodes:new Set(),baselineBirds:new Set(),baselineMetrics:null
+};
+const CLUSTER_ANCHORS={
+  micro:{x:-.62,y:-.48},fungi:{x:.58,y:.48},plants:{x:.18,y:.52},
+  invert:{x:.18,y:-.50},birds:{x:-.55,y:-.10},vertebrates:{x:-.55,y:.44}
+};
 
 let DATA=null,visible=[],nodes=[],nodeMap=new Map(),edgeScreen=[];
 let canvas=document.querySelector("#swarm"),ctx=canvas.getContext("2d"),tooltip=document.querySelector("#tooltip");
@@ -248,10 +309,19 @@ function project(n){
   const morph=Math.max(.02,sceneAnim.morph);
   const burst=sceneAnim.burst;
   const radial=scale*morph*(1+burst*.72);
+  let x=cx+p.x*radial,y=cy+p.y*radial;
+  if(analysisState.clusterStrength>.001&&!storyState.scene){
+    const a=CLUSTER_ANCHORS[ecoGroup(n.id)]||{x:0,y:0};
+    const jitter=(hash(n.id+"cluster")%1000)/1000;
+    const ang=jitter*Math.PI*2;
+    const rr=Math.min(W,H)*(.055+((hash(n.id+"rr")%1000)/1000)*.10);
+    const tx=cx+a.x*Math.min(W,H)*.48+Math.cos(ang)*rr;
+    const ty=cy+a.y*Math.min(W,H)*.40+Math.sin(ang)*rr;
+    const k=analysisState.clusterStrength;
+    x=x*(1-k)+tx*k;y=y*(1-k)+ty*k;
+  }
   return {
-    x:cx+p.x*radial,
-    y:cy+p.y*radial,
-    z:p.z,
+    x,y,z:p.z,
     scale:Math.max(.22,Math.min(2.8,(1.15/depth*2.3)*(0.45+0.55*morph)*(1+burst*.28)))
   };
 }
@@ -281,6 +351,9 @@ function ecoGroup(name){
 }
 
 function match(r){
+  if(analysisState.removedNodes.has(r.s)||analysisState.removedNodes.has(r.t))return false;
+  if(analysisState.removedGroups.has(ecoGroup(r.s))||analysisState.removedGroups.has(ecoGroup(r.t)))return false;
+  if(analysisState.interactionSet.size&&!analysisState.interactionSet.has(r.title))return false;
   if(!activeEco.has(ecoGroup(r.s))||!activeEco.has(ecoGroup(r.t)))return false;
   if(state.district!=="ALL"&&r.district!==state.district)return false;
   if(state.interactionSet&&state.interactionSet.size&&!state.interactionSet.has(r.title))return false;
@@ -330,6 +403,7 @@ function rebuild(){
   document.querySelector("#nodes").textContent=nodes.length.toLocaleString("es-CO");
   document.querySelector("#edges").textContent=visible.length.toLocaleString("es-CO");
   queueImages();
+  if(analysisState.open)setTimeout(updateAnalysis,0);
 }
 
 function queueImages(){
@@ -498,7 +572,8 @@ function draw(){
 
     ctx.globalAlpha=(dim?.08:1)*sceneAnim.alpha;
     const storyHot=storyState.featured.has(n.id);
-    const nodeNeon=storyHot||neonState.groups.has(ecoGroup(n.id));
+    const analysisHot=analysisState.highlightNodes.has(n.id);
+    const nodeNeon=analysisHot||storyHot||neonState.groups.has(ecoGroup(n.id));
     if((nodeNeon||neonState.interactions.size)&&sceneAnim.burst>.04){
       ctx.save();
       ctx.globalAlpha=Math.min(.42,sceneAnim.burst*.5)*sceneAnim.alpha;
@@ -509,7 +584,7 @@ function draw(){
       ctx.restore();
     }
     ctx.strokeStyle=hot?"#1f3d25":(ECO_COLORS[ecoGroup(n.id)]||"rgba(255,255,255,.96)");
-    ctx.shadowColor=nodeNeon?(storyHot?"#b7ffca":(ECO_COLORS[ecoGroup(n.id)]||"#8fd3a8")):"transparent";
+    ctx.shadowColor=nodeNeon?(analysisHot?"#fff3a6":(storyHot?"#b7ffca":(ECO_COLORS[ecoGroup(n.id)]||"#8fd3a8"))):"transparent";
     ctx.shadowBlur=nodeNeon?34*neonState.strength:0;
     const pulse=nodeNeon?(1+Math.sin(performance.now()*.004+(hash(n.id)%100)/10)*.10*neonState.strength):1;
     ctx.lineWidth=nodeNeon?Math.max(2.8,4.8*neonState.strength):(hot?3:Math.max(1,1.2*p.scale));
@@ -545,6 +620,7 @@ function animate(now){
   sceneAnim.burst+=(sceneAnim.targetBurst-sceneAnim.burst)*ease;
   sceneAnim.flash+=(sceneAnim.targetFlash-sceneAnim.flash)*Math.min(1,dt*.024);
   neonState.strength+=(neonState.targetStrength-neonState.strength)*ease;
+  analysisState.clusterStrength+=(analysisState.targetClusterStrength-analysisState.clusterStrength)*Math.min(1,dt*.012);
   state.yaw+=sceneAnim.spin*dt*.0005;
   draw();
   raf=requestAnimationFrame(animate);
@@ -830,6 +906,47 @@ document.querySelectorAll("#ecoGroups .eco-btn").forEach(btn=>{
 });
 
 
+document.querySelector("#analysisToggle").addEventListener("click",e=>{
+  analysisState.open=!analysisState.open;
+  document.querySelector("#analysisPanel").classList.toggle("open",analysisState.open);
+  e.currentTarget.classList.toggle("active",analysisState.open);
+  if(analysisState.open)captureAnalysisBaseline();
+});
+document.querySelector("#layoutSwarm").onclick=()=>{
+  analysisState.targetClusterStrength=0;
+  document.querySelector("#layoutSwarm").classList.add("active");document.querySelector("#layoutGroups").classList.remove("active");
+};
+document.querySelector("#layoutGroups").onclick=()=>{
+  analysisState.targetClusterStrength=1;
+  document.querySelector("#layoutGroups").classList.add("active");document.querySelector("#layoutSwarm").classList.remove("active");
+};
+document.querySelectorAll("[data-highlight]").forEach(b=>b.onclick=()=>{
+  const m=b.dataset.highlight;
+  analysisState.highlight=analysisState.highlight===m?"none":m;
+  document.querySelectorAll("[data-highlight]").forEach(x=>x.classList.toggle("active",analysisState.highlight===x.dataset.highlight));
+  updateAnalysis();
+});
+document.querySelector("#removePlants").onclick=e=>{
+  const on=!analysisState.removedGroups.has("plants");
+  if(on)analysisState.removedGroups.add("plants");else analysisState.removedGroups.delete("plants");
+  e.currentTarget.classList.toggle("active",on);applyAnalysisScenario();
+};
+document.querySelector("#removeHubs").onclick=e=>{
+  const on=!e.currentTarget.classList.contains("active");
+  if(on){
+    const snap=graphSnapshot(visible);
+    snap.hubs.slice(0,3).forEach(([id])=>analysisState.removedNodes.add(id));
+  }else analysisState.removedNodes.clear();
+  e.currentTarget.classList.toggle("active",on);applyAnalysisScenario();
+};
+document.querySelector("#restoreAnalysis").onclick=()=>{
+  analysisState.removedGroups.clear();analysisState.removedNodes.clear();analysisState.interactionSet.clear();analysisState.highlight="none";analysisState.highlightNodes.clear();
+  document.querySelectorAll("#analysisPanel .analysis-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelector("#layoutSwarm").classList.add("active");analysisState.targetClusterStrength=0;
+  document.querySelectorAll("[data-highlight]").forEach(b=>b.classList.remove("active"));
+  applyAnalysisScenario();captureAnalysisBaseline();
+};
+
 function syncEcoButtons(){
   document.querySelectorAll("#ecoGroups .eco-btn").forEach(btn=>btn.classList.toggle("active",activeEco.has(btn.dataset.eco)));
 }
@@ -881,6 +998,81 @@ function applyEcoSet(list){
   if(!activeEco.size)Object.keys(ECO_LABELS).forEach(k=>activeEco.add(k));
   syncEcoButtons();state.focus=null;closeSubnetwork();rebuild();
 }
+function graphSnapshot(records=visible){
+  const adj=new Map();
+  for(const r of records){
+    if(!adj.has(r.s))adj.set(r.s,new Set());
+    if(!adj.has(r.t))adj.set(r.t,new Set());
+    adj.get(r.s).add(r.t);adj.get(r.t).add(r.s);
+  }
+  const degree=new Map([...adj].map(([k,v])=>[k,v.size]));
+  const comps=[];const seen=new Set();
+  for(const id of adj.keys()){
+    if(seen.has(id))continue;
+    const comp=[];const q=[id];seen.add(id);
+    while(q.length){const u=q.shift();comp.push(u);for(const v of adj.get(u)||[]){if(!seen.has(v)){seen.add(v);q.push(v)}}}
+    comps.push(comp);
+  }
+  comps.sort((a,b)=>b.length-a.length);
+
+  // articulation points (undirected Tarjan)
+  let time=0;const disc=new Map(),low=new Map(),parent=new Map(),arts=new Set();
+  function dfs(u){
+    disc.set(u,++time);low.set(u,disc.get(u));let children=0;
+    for(const v of adj.get(u)||[]){
+      if(!disc.has(v)){children++;parent.set(v,u);dfs(v);low.set(u,Math.min(low.get(u),low.get(v)));
+        if(!parent.has(u)&&children>1)arts.add(u);
+        if(parent.has(u)&&low.get(v)>=disc.get(u))arts.add(u);
+      }else if(parent.get(u)!==v){low.set(u,Math.min(low.get(u),disc.get(v)))}
+    }
+  }
+  for(const u of adj.keys())if(!disc.has(u))dfs(u);
+  const dangling=[...degree].filter(([,d])=>d<=1).map(([id])=>id);
+  const hubs=[...degree].sort((a,b)=>b[1]-a[1]).slice(0,8);
+  return {adj,degree,components:comps,articulation:[...arts],dangling,hubs};
+}
+
+function updateAnalysis(){
+  if(!DATA)return;
+  const snap=graphSnapshot(visible);
+  const birdsNow=new Set([...snap.degree.keys()].filter(id=>ecoGroup(id)==="birds"));
+  const base=analysisState.baselineBirds;
+  const lost=base.size?[...base].filter(id=>!birdsNow.has(id)).length:0;
+  const lossPct=base.size?Math.round(lost/base.size*100):0;
+
+  document.querySelector("#mComponents").textContent=snap.components.length.toLocaleString("es-CO");
+  document.querySelector("#mDangling").textContent=snap.dangling.length.toLocaleString("es-CO");
+  document.querySelector("#mBridges").textContent=snap.articulation.length.toLocaleString("es-CO");
+  document.querySelector("#mBirdLoss").textContent=lossPct+"%";
+
+  let set=new Set();
+  if(analysisState.highlight==="hubs")set=new Set(snap.hubs.map(x=>x[0]));
+  if(analysisState.highlight==="bridges")set=new Set(snap.articulation);
+  if(analysisState.highlight==="dangling")set=new Set(snap.dangling);
+  analysisState.highlightNodes=set;
+
+  const list=document.querySelector("#analysisTop");
+  list.innerHTML=snap.hubs.slice(0,6).map(([id,d])=>'<li><span>'+id+'</span><em>grado '+d+'</em></li>').join("");
+
+  const removed=analysisState.removedGroups.size+analysisState.removedNodes.size;
+  const largest=snap.components[0]?.length||0;
+  document.querySelector("#analysisResult").innerHTML=removed
+    ? '<b>Escenario activo.</b> '+lossPct+'% de la avifauna de la red base dejó de aparecer conectada. Componente mayor: '+largest+' nodos. Nodos colgantes: '+snap.dangling.length+'.'
+    : 'Red base: '+snap.components.length+' componente(s), '+snap.articulation.length+' nodo(s) puente y '+snap.dangling.length+' nodo(s) colgante(s).';
+}
+
+function captureAnalysisBaseline(){
+  const snap=graphSnapshot(visible);
+  analysisState.baselineMetrics=snap;
+  analysisState.baselineBirds=new Set([...snap.degree.keys()].filter(id=>ecoGroup(id)==="birds"));
+  updateAnalysis();
+}
+
+function applyAnalysisScenario(){
+  storyState.scene=null;storyState.records=null;storyState.nodeIds=null;storyState.featured.clear();
+  rebuild();updateAnalysis();
+}
+
 function resetNetworkState(){
   activeEco.clear();Object.keys(ECO_LABELS).forEach(k=>activeEco.add(k));syncEcoButtons();
   state.interaction="ALL";state.quality="ALL";state.origin="ALL";state.search="";state.focus=null;
@@ -1025,6 +1217,16 @@ async function init(){
     Object.keys(DATA.meta.interactionTypes||{}).sort().forEach(k=>{
       const o=document.createElement("option");o.value=k;o.textContent=k+" ("+DATA.meta.interactionTypes[k]+")";sel.appendChild(o);
     });
+    const interactionBox=document.querySelector("#analysisInteractions");
+    Object.keys(DATA.meta.interactionTypes||{}).sort((a,b)=>(DATA.meta.interactionTypes[b]||0)-(DATA.meta.interactionTypes[a]||0)).slice(0,8).forEach(k=>{
+      const b=document.createElement("button");b.className="analysis-btn";b.textContent=k;b.dataset.type=k;
+      b.onclick=()=>{
+        if(analysisState.interactionSet.has(k)){analysisState.interactionSet.delete(k);b.classList.remove("active")}
+        else{analysisState.interactionSet.add(k);b.classList.add("active")}
+        applyAnalysisScenario();
+      };
+      interactionBox.appendChild(b);
+    });
     document.querySelector("#meta").textContent=
       "Base: "+DATA.meta.totalRecords.toLocaleString("es-CO")+" registros · "+
       DATA.meta.districtRecords.toLocaleString("es-CO")+" reportados en el Distrito.";
@@ -1034,6 +1236,7 @@ async function init(){
     document.querySelector("#reset").onclick=()=>location.reload();
     bindClose();
     rebuild();
+    captureAnalysisBaseline();
     networkDataReady=true;
     pendingNetworkMessages.splice(0).forEach(handleNetworkMessage);
     try{parent.postMessage({type:"networkReady"},"*")}catch(e){}
