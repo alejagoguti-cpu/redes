@@ -190,6 +190,7 @@ const state={
   district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:"",
   focus:null, yaw:0.35,pitch:-0.16,zoom:1,auto:true,labels:false
 };
+const sceneAnim={alpha:1,targetAlpha:1,zoomBoost:0,targetZoomBoost:0,spin:0,targetSpin:0,busy:false,pending:null,lastApplied:null};
 
 let DATA=null,visible=[],nodes=[],nodeMap=new Map(),edgeScreen=[];
 let canvas=document.querySelector("#swarm"),ctx=canvas.getContext("2d"),tooltip=document.querySelector("#tooltip");
@@ -236,7 +237,7 @@ function rotatePoint(p){
 function project(n){
   const p=rotatePoint(n.base);
   const depth=2.8-p.z;
-  const scale=state.zoom*(Math.min(W,H)*0.38)/depth;
+  const scale=(state.zoom+sceneAnim.zoomBoost)*(Math.min(W,H)*0.38)/depth;
   return {
     x:W*0.52+p.x*scale,
     y:H*0.53+p.y*scale,
@@ -374,6 +375,8 @@ function linePattern(q){
 
 function draw(){
   ctx.clearRect(0,0,W,H);
+  ctx.save();
+  ctx.globalAlpha=sceneAnim.alpha;
   edgeScreen=[];
 
   const projected=new Map();
@@ -446,11 +449,17 @@ function draw(){
     }
   }
   ctx.globalAlpha=1;
+  ctx.restore();
 }
 
 function animate(now){
   const dt=Math.min(32,now-lastFrame);lastFrame=now;
   if(state.auto&&!drag)state.yaw+=dt*.00008;
+  const ease=Math.min(1,dt*.012);
+  sceneAnim.alpha+=(sceneAnim.targetAlpha-sceneAnim.alpha)*ease;
+  sceneAnim.zoomBoost+=(sceneAnim.targetZoomBoost-sceneAnim.zoomBoost)*ease;
+  sceneAnim.spin+=(sceneAnim.targetSpin-sceneAnim.spin)*ease;
+  state.yaw+=sceneAnim.spin*dt*.0005;
   draw();
   raf=requestAnimationFrame(animate);
 }
@@ -738,6 +747,28 @@ document.querySelectorAll("#ecoGroups .eco-btn").forEach(btn=>{
 function syncEcoButtons(){
   document.querySelectorAll("#ecoGroups .eco-btn").forEach(btn=>btn.classList.toggle("active",activeEco.has(btn.dataset.eco)));
 }
+function animateSceneChange(applyFn,key){
+  sceneAnim.pending={applyFn,key};
+  if(sceneAnim.busy)return;
+  sceneAnim.busy=true;
+  const phaseOut=()=>{
+    sceneAnim.targetAlpha=.08;
+    sceneAnim.targetZoomBoost=.12;
+    sceneAnim.targetSpin=1;
+    setTimeout(()=>{
+      const p=sceneAnim.pending;sceneAnim.pending=null;
+      if(p){p.applyFn();sceneAnim.lastApplied=p.key}
+      sceneAnim.targetAlpha=1;
+      sceneAnim.targetZoomBoost=0;
+      sceneAnim.targetSpin=0;
+      setTimeout(()=>{
+        sceneAnim.busy=false;
+        if(sceneAnim.pending)animateSceneChange(sceneAnim.pending.applyFn,sceneAnim.pending.key);
+      },420);
+    },260);
+  };
+  phaseOut();
+}
 function applyEcoSet(list){
   activeEco.clear();
   (list||[]).forEach(k=>{if(ECO_LABELS[k])activeEco.add(k)});
@@ -756,10 +787,10 @@ const pendingNetworkMessages=[];
 function handleNetworkMessage(m){
   if(!m||typeof m!=="object")return;
   if(!networkDataReady){pendingNetworkMessages.push(m);return}
-  if(m.type==="setEco")applyEcoSet(m.groups);
-  if(m.type==="setInteraction"){state.interaction=m.value||"ALL";const sel=document.querySelector("#interaction");if(sel)sel.value=state.interaction;state.focus=null;rebuild()}
-  if(m.type==="setQuality"){state.quality=m.value||"ALL";state.focus=null;rebuild()}
-  if(m.type==="resetNetwork")resetNetworkState();
+  if(m.type==="setEco")animateSceneChange(()=>applyEcoSet(m.groups),"eco:"+JSON.stringify(m.groups));
+  if(m.type==="setInteraction"){const v=m.value||"ALL";animateSceneChange(()=>{state.interaction=v;const sel=document.querySelector("#interaction");if(sel)sel.value=state.interaction;state.focus=null;rebuild()},"interaction:"+v)}
+  if(m.type==="setQuality"){const v=m.value||"ALL";animateSceneChange(()=>{state.quality=v;state.focus=null;rebuild()},"quality:"+v)}
+  if(m.type==="resetNetwork")animateSceneChange(()=>resetNetworkState(),"reset");
   if(m.type==="focusTaxon"||m.type==="openTaxon"){
     const n=nodeMap.get(m.taxon)||DATA?.nodeById?.get(m.taxon);
     if(n){state.focus=n.id;if(m.type==="openTaxon")openNode(n);else draw()}
@@ -769,6 +800,9 @@ window.addEventListener("message",e=>handleNetworkMessage(e.data||{}));
 
 async function init(){
   try{
+    if(matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches){
+      sceneAnim.alpha=sceneAnim.targetAlpha=1;sceneAnim.zoomBoost=sceneAnim.targetZoomBoost=0;
+    }
     if(new URLSearchParams(location.search).get("embed")==="1")document.body.classList.add("embed");
     resize();
     const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());
