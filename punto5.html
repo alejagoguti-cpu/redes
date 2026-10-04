@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Módulo 05 · Navegador Multiescalar & Red Biótica Kennedy</title>
+  <title>Módulo 05 · Navegador Multiescalar & Red Biótica Circular</title>
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -36,30 +36,31 @@
   <style>
     #mynetwork {
       width: 100%;
-      height: 650px;
-      background-color: #0D1B2A;
+      height: 720px;
+      background-color: #000000;
       transition: background-color 0.5s ease;
       border-radius: 0.75rem;
+      border: 1px solid #1E293B;
     }
     #mynetwork.isolated {
       background-color: #000000 !important;
-      box-shadow: inset 0 0 50px rgba(168, 85, 247, 0.25);
+      box-shadow: inset 0 0 80px rgba(168, 85, 247, 0.35);
     }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans leading-relaxed">
 
   <!-- CABECERA NARRATIVA -->
-  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur px-6 py-8">
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur px-6 py-6">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <a href="index.html" class="inline-flex items-center text-xs font-semibold text-emerald-400 hover:underline mb-2">
+        <a href="index.html" class="inline-flex items-center text-xs font-semibold text-emerald-400 hover:underline mb-1">
           <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Inicio de Redes
         </a>
         <span class="block text-xs uppercase tracking-widest text-emerald-400 font-semibold">Punto 5 | Modelamiento Dinámico y Simulación (Corte II)</span>
-        <h1 class="text-3xl font-extrabold text-white mt-1">De la Ruptura Urbana a la Regeneración Biótica en Kennedy</h1>
-        <p class="text-slate-400 text-sm mt-2 max-w-4xl">
-          Una experiencia interactiva basada en la metodología de síntesis del Jardín Botánico de Bogotá (Del Risco et al., 2022). Exploración del territorio, perturbaciones abióticas, subredes bioluminiscentes en fondo negro y reglas para simulación de enjambres (ABM).
+        <h1 class="text-2xl md:text-3xl font-extrabold text-white mt-1">De la Ruptura Urbana a la Regeneración Biótica en Kennedy</h1>
+        <p class="text-slate-400 text-xs md:text-sm mt-1 max-w-4xl">
+          Visualización de Anillo Circular (Chord layout) con imágenes reales por espécimen, subredes bioluminiscentes en fondo negro (#000000) y simulación de enjambres (ABM).
         </p>
       </div>
       <div class="flex items-center gap-2">
@@ -72,10 +73,10 @@
 
   <!-- NAVEGACIÓN DE ACTOS -->
   <nav class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 px-6 py-3">
-    <div class="max-w-7xl mx-auto flex space-x-4 text-sm font-medium overflow-x-auto">
+    <div class="max-w-7xl mx-auto flex space-x-3 text-xs md:text-sm font-medium overflow-x-auto">
       <button onclick="scrollToAct('acto1')" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 whitespace-nowrap">Acto I: Donas & Censo</button>
       <button onclick="scrollToAct('acto2')" class="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 whitespace-nowrap">Acto II: Choque Urbano</button>
-      <button onclick="scrollToAct('acto3')" class="px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 whitespace-nowrap">Acto III: Subred & Knock-Out</button>
+      <button onclick="scrollToAct('acto3')" class="px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 whitespace-nowrap">Acto III: Anillo Circular & Subred</button>
       <button onclick="scrollToAct('acto4')" class="px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 whitespace-nowrap">Acto IV: Reglas ABM</button>
     </div>
   </nav>
@@ -110,21 +111,23 @@
     <section id="acto3" class="space-y-6">
       <div class="border-l-4 border-purple-500 pl-4">
         <span class="text-xs font-bold text-purple-400 uppercase">Acto II & III</span>
-        <h2 class="text-2xl font-bold text-white">Visor de Subred Bioluminiscente & Experimento Knock-Out</h2>
-        <p class="text-slate-400 text-sm">Haz clic en cualquier nodo para encender el fondo negro (#000000), aislar sus conexiones e inspeccionar la foto real del espécimen.</p>
+        <h2 class="text-2xl font-bold text-white">Red Biótica Circular (Anillo Perimetral & Arcos Neón)</h2>
+        <p class="text-slate-400 text-sm">Nodos dispuestos en anillo con imágenes y arcos multi-color cruzados. Haz clic en un nodo para aislar su subred en fondo negro absoluto (#000000).</p>
       </div>
 
       <!-- CONTROLES Y FILTROS -->
       <div class="flex flex-wrap gap-3 bg-slate-900 p-4 rounded-xl border border-slate-800 items-center justify-between">
         <div class="flex flex-wrap gap-2">
+          <button onclick="setLayout('circular')" id="btnCircular" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow">⭕ Vista Anillo Circular</button>
+          <button onclick="setLayout('organic')" id="btnOrganic" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">🌌 Vista Orgánica ABM</button>
+          <span class="text-slate-600">|</span>
           <button onclick="filterLayer('all')" class="px-3 py-1.5 text-xs rounded-lg bg-slate-800 text-white hover:bg-slate-700">Ver Todo</button>
-          <button onclick="filterLayer('Plantae')" class="px-3 py-1.5 text-xs rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-800">Solo Flora Nativa</button>
-          <button onclick="filterLayer('Animalia')" class="px-3 py-1.5 text-xs rounded-lg bg-blue-950 text-blue-300 border border-blue-800">Solo Avifauna</button>
-          <button onclick="filterLayer('Microorganismos')" class="px-3 py-1.5 text-xs rounded-lg bg-teal-950 text-teal-300 border border-teal-800">Microbiología Hídrica</button>
-          <button onclick="filterLayer('Abiotico')" class="px-3 py-1.5 text-xs rounded-lg bg-rose-950 text-rose-300 border border-rose-800">Perturbación Urbana (>75dB)</button>
+          <button onclick="filterLayer('Plantae')" class="px-3 py-1.5 text-xs rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-800">Flora Nativa</button>
+          <button onclick="filterLayer('Animalia')" class="px-3 py-1.5 text-xs rounded-lg bg-blue-950 text-blue-300 border border-blue-800">Avifauna</button>
+          <button onclick="filterLayer('Abiotico')" class="px-3 py-1.5 text-xs rounded-lg bg-rose-950 text-rose-300 border border-rose-800">Perturbación (>75dB)</button>
         </div>
         <div>
-          <button onclick="runKnockout()" class="px-4 py-1.5 text-xs font-bold rounded-lg bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/30">🔥 Simular Knock-Out de Saúco/Capulí</button>
+          <button onclick="runKnockout()" class="px-4 py-1.5 text-xs font-bold rounded-lg bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/30">🔥 Knock-Out (Saúco)</button>
           <button onclick="resetIsolation()" class="px-3 py-1.5 text-xs rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 ml-2">Restablecer Fondo</button>
         </div>
       </div>
@@ -140,9 +143,12 @@
 
         <!-- TARJETA LATERAL DE ESPÉCIMEN -->
         <div id="nodeDetailCard" class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-4">
-          <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2">Ficha Técnica del Espécimen</h3>
+          <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2 flex items-center justify-between">
+            <span>Ficha del Espécimen</span>
+            <i class="fa-solid fa-leaf text-emerald-400"></i>
+          </h3>
           <div id="cardContent" class="text-xs text-slate-400 space-y-3">
-            <p class="italic">Selecciona un nodo del mapa para ver la foto real en vivo, su nombre científico, rol en Kennedy y reglas condicionales ABM.</p>
+            <p class="italic">Haz clic en cualquier nodo del anillo para desplegar la foto real en vivo, su nombre científico y su rol ecológico en Kennedy.</p>
           </div>
         </div>
       </div>
@@ -201,6 +207,16 @@
     let nodesDataset = null;
     let edgesDataset = null;
     let fullData = null;
+    let currentLayout = 'circular';
+
+    const defaultImages = {
+      'Plantae': 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=150',
+      'Animalia': 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=150',
+      'Abiotico': 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=150',
+      'Microorganismos': 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=150'
+    };
+
+    const edgeColors = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#F97316'];
 
     fetch('data-red-kennedy.json')
       .then(res => res.json())
@@ -263,25 +279,45 @@
 
     function initNetwork(nodes, edges) {
       const container = document.getElementById('mynetwork');
-      
-      const formattedNodes = nodes.map(n => ({
-        id: n.id,
-        label: n.label,
-        group: n.group,
-        shape: n.image_url ? 'circularImage' : 'dot',
-        image: n.image_url || undefined,
-        size: n.is_hub ? 35 : 22,
-        color: { border: n.is_hub ? '#10B981' : (n.color || '#3B82F6'), background: '#0D1B2A' },
-        font: { color: '#FFFFFF', size: 11 }
+      const radius = 340;
+      const total = nodes.length;
+
+      const formattedNodes = nodes.map((n, i) => {
+        const angle = (2 * Math.PI * i) / total;
+        const x = radius * Math.cos(angle);
+        const y = radius * Math.sin(angle);
+
+        const imgUrl = n.image_url || defaultImages[n.group] || defaultImages['Plantae'];
+
+        return {
+          id: n.id,
+          label: n.label,
+          group: n.group,
+          shape: 'circularImage',
+          image: imgUrl,
+          x: x,
+          y: y,
+          size: n.is_hub ? 32 : 20,
+          color: { border: n.color || (n.is_hub ? '#10B981' : '#3B82F6'), background: '#0D1B2A' },
+          font: { color: '#F1F5F9', size: 10, face: 'Inter', background: '#0F172AEE' }
+        };
+      });
+
+      const formattedEdges = edges.map((e, idx) => ({
+        ...e,
+        smooth: { type: 'curvedCW', roundness: 0.25 },
+        width: e.weight ? Math.min(e.weight, 4) : 1.5,
+        color: e.color || edgeColors[idx % edgeColors.length]
       }));
 
       nodesDataset = new vis.DataSet(formattedNodes);
-      edgesDataset = new vis.DataSet(edges);
+      edgesDataset = new vis.DataSet(formattedEdges);
 
       const options = {
-        nodes: { borderWidth: 2 },
-        edges: { width: 1.5, smooth: { type: 'continuous' } },
-        physics: { forceAtlas2Based: { gravitationalConstant: -50, centralGravity: 0.01, springLength: 100 } }
+        nodes: { borderWidth: 2, shadow: true },
+        edges: { smooth: { type: 'curvedCW', roundness: 0.25 } },
+        physics: { enabled: false },
+        interaction: { hover: true, zoomView: true, dragView: true, dragNodes: true }
       };
 
       network = new vis.Network(container, { nodes: nodesDataset, edges: edgesDataset }, options);
@@ -297,6 +333,43 @@
       });
     }
 
+    function setLayout(mode) {
+      currentLayout = mode;
+      const btnCirc = document.getElementById('btnCircular');
+      const btnOrg = document.getElementById('btnOrganic');
+
+      if (mode === 'circular') {
+        btnCirc.className = 'px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow';
+        btnOrg.className = 'px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700';
+
+        const radius = 340;
+        const allNodes = nodesDataset.get();
+        const total = allNodes.length;
+
+        const updatedNodes = allNodes.map((n, i) => {
+          const angle = (2 * Math.PI * i) / total;
+          return {
+            id: n.id,
+            x: radius * Math.cos(angle),
+            y: radius * Math.sin(angle)
+          };
+        });
+
+        nodesDataset.update(updatedNodes);
+        network.setOptions({ physics: { enabled: false } });
+      } else {
+        btnOrg.className = 'px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow';
+        btnCirc.className = 'px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700';
+
+        network.setOptions({
+          physics: {
+            enabled: true,
+            forceAtlas2Based: { gravitationalConstant: -50, centralGravity: 0.01, springLength: 120 }
+          }
+        });
+      }
+    }
+
     function isolateSubnetwork(nodeId) {
       const container = document.getElementById('mynetwork');
       container.classList.add('isolated');
@@ -307,9 +380,9 @@
       const allNodes = nodesDataset.get();
       const updatedNodes = allNodes.map(n => {
         if (connectedNodes.includes(n.id)) {
-          return { ...n, opacity: 1, font: { color: '#A855F7', size: 13 } };
+          return { ...n, opacity: 1, font: { color: '#A855F7', size: 12 } };
         } else {
-          return { ...n, opacity: 0.1, font: { color: '#334155', size: 9 } };
+          return { ...n, opacity: 0.1, font: { color: '#334155', size: 8 } };
         }
       });
 
@@ -324,7 +397,7 @@
       const allNodes = nodesDataset.get().map(n => ({
         ...n,
         opacity: 1,
-        font: { color: '#FFFFFF', size: 11 }
+        font: { color: '#F1F5F9', size: 10 }
       }));
       nodesDataset.update(allNodes);
     }
@@ -334,16 +407,16 @@
       if (!nodeObj) return;
 
       const card = document.getElementById('cardContent');
-      const imgHtml = nodeObj.image_url ? `<img src="${nodeObj.image_url}" alt="${nodeObj.label}" class="w-full h-40 object-cover rounded-lg border border-slate-700 shadow-lg">` : '';
+      const imgUrl = nodeObj.image_url || defaultImages[nodeObj.group] || defaultImages['Plantae'];
       card.innerHTML = `
-        ${imgHtml}
+        <img src="${imgUrl}" alt="${nodeObj.label}" class="w-full h-40 object-cover rounded-lg border border-slate-700 shadow-lg">
         <div>
           <h4 class="text-base font-bold text-white">${nodeObj.label}</h4>
-          <p class="text-xs text-emerald-400 italic">${nodeObj.scientific_name || ''}</p>
+          <p class="text-xs text-emerald-400 italic">${nodeObj.scientific_name || nodeObj.category || ''}</p>
         </div>
         <div class="bg-slate-800/60 p-2.5 rounded border border-slate-700 space-y-1">
           <p><span class="font-bold text-slate-300">Grupo:</span> ${nodeObj.group || ''}</p>
-          <p><span class="font-bold text-slate-300">Ubicación en Kennedy:</span> ${nodeObj.location || 'Humedales El Burro, La Vaca y Techo'}</p>
+          <p><span class="font-bold text-slate-300">Ubicación:</span> ${nodeObj.location || 'Humedales El Burro, La Vaca y Techo'}</p>
           <p><span class="font-bold text-slate-300">Función Biótica:</span> ${nodeObj.ecosystem_role || nodeObj.description || 'Elemento clave en la matriz hídrica y trófica.'}</p>
         </div>
       `;
