@@ -1163,15 +1163,37 @@ function buildSourceScene(source){
       .slice(0,180);
     const ids=new Set(birdNodes.map(n=>n.id));
     const birdEdges=DATA.records.filter(r=>ids.has(r.s)&&ids.has(r.t)).slice(0,260);
-    return {
-      records:birdEdges,
-      nodeIds:ids,
-      featured:new Set(birdNodes.slice(0,40).map(n=>n.id)),
-      caption:"eBird · vista de avifauna"
-    };
+    return {records:birdEdges,nodeIds:ids,featured:new Set(birdNodes.slice(0,40).map(n=>n.id)),caption:"eBird · vista de avifauna"};
   }
-  // Until occurrence datasets are integrated record-by-record, the other
-  // source buttons return to the general georeferenced-presence scene.
+
+  if(source==="inat"){
+    // Identification-oriented view: a compact, image-rich sample of the network.
+    const ranked=[...DATA.nodes].sort((a,b)=>(b.n||0)-(a.n||0)).slice(0,120);
+    const ids=new Set(ranked.map(n=>n.id));
+    const edges=DATA.records.filter(r=>ids.has(r.s)&&ids.has(r.t)).slice(0,320);
+    return {records:edges,nodeIds:ids,featured:new Set(ranked.slice(0,50).map(n=>n.id)),caption:"iNaturalist · taxones priorizados para identificación fotográfica"};
+  }
+
+  if(source==="sib"){
+    // Biodiversity-oriented view: prioritize native taxa where origin metadata exists.
+    let ranked=[...DATA.nodes].filter(n=>(n.origin||"").toLowerCase().startsWith("nativa"));
+    if(ranked.length<30)ranked=[...DATA.nodes];
+    ranked.sort((a,b)=>(b.n||0)-(a.n||0));
+    const ids=new Set(ranked.slice(0,150).map(n=>n.id));
+    const edges=DATA.records.filter(r=>ids.has(r.s)&&ids.has(r.t)).slice(0,380);
+    return {records:edges,nodeIds:ids,featured:new Set([...ids].slice(0,35)),caption:"SiB · vista de biodiversidad y origen reportado"};
+  }
+
+  if(source==="gbif"){
+    // Broad occurrence contrast view: preserve the widest connected sample.
+    const degree=new Map();
+    DATA.records.forEach(r=>{degree.set(r.s,(degree.get(r.s)||0)+1);degree.set(r.t,(degree.get(r.t)||0)+1)});
+    const ranked=[...DATA.nodes].sort((a,b)=>(degree.get(b.id)||0)-(degree.get(a.id)||0)).slice(0,180);
+    const ids=new Set(ranked.map(n=>n.id));
+    const edges=DATA.records.filter(r=>ids.has(r.s)&&ids.has(r.t)).slice(0,500);
+    return {records:edges,nodeIds:ids,featured:new Set(ranked.slice(0,30).map(n=>n.id)),caption:"GBIF · muestra amplia para contraste de ocurrencias"};
+  }
+
   return buildStoryScene("records");
 }
 
