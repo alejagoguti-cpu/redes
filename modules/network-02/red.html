@@ -750,8 +750,12 @@ function resetNetworkState(){
   const sel=document.querySelector("#interaction");if(sel)sel.value="ALL";
   closeSubnetwork();rebuild();
 }
-window.addEventListener("message",e=>{
-  const m=e.data||{};if(!m||typeof m!=="object")return;
+let networkDataReady=false;
+const pendingNetworkMessages=[];
+
+function handleNetworkMessage(m){
+  if(!m||typeof m!=="object")return;
+  if(!networkDataReady){pendingNetworkMessages.push(m);return}
   if(m.type==="setEco")applyEcoSet(m.groups);
   if(m.type==="setInteraction"){state.interaction=m.value||"ALL";const sel=document.querySelector("#interaction");if(sel)sel.value=state.interaction;state.focus=null;rebuild()}
   if(m.type==="setQuality"){state.quality=m.value||"ALL";state.focus=null;rebuild()}
@@ -760,7 +764,9 @@ window.addEventListener("message",e=>{
     const n=nodeMap.get(m.taxon)||DATA?.nodeById?.get(m.taxon);
     if(n){state.focus=n.id;if(m.type==="openTaxon")openNode(n);else draw()}
   }
-});
+}
+window.addEventListener("message",e=>handleNetworkMessage(e.data||{}));
+
 async function init(){
   try{
     if(new URLSearchParams(location.search).get("embed")==="1")document.body.classList.add("embed");
@@ -782,6 +788,9 @@ async function init(){
     document.querySelector("#reset").onclick=()=>location.reload();
     bindClose();
     rebuild();
+    networkDataReady=true;
+    pendingNetworkMessages.splice(0).forEach(handleNetworkMessage);
+    try{parent.postMessage({type:"networkReady"},"*")}catch(e){}
     document.querySelector("#loading").remove();
     lastFrame=performance.now();
     raf=requestAnimationFrame(animate);
