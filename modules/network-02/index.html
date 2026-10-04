@@ -44,9 +44,9 @@
 <section class="story" id="story">
  <div class="copy">
   <article class="step active" data-scene="territory"><div class="step-card"><div class="step-no">01 · TERRITORIO</div><h2>Primero ubicamos dónde buscar.</h2><p>Selecciona un sector. La red todavía no afirma presencia: solo plantea el contexto espacial que luego debe comprobarse.</p><div class="chips"><button class="active" data-place="vaca">La Vaca</button><button data-place="burro">El Burro</button><button data-place="techo">Techo</button><button data-place="matriz">Corabastos · María Paz · Patio Bonito</button></div></div></article>
-  <article class="step" data-scene="gis"><div class="step-card"><div class="step-no">02 · GIS</div><h2>La vegetación define condiciones de nicho.</h2><p>Activa y desactiva capas. Arbolado, humedales, matriz urbana y vías cambian la lectura del mismo conjunto de especies.</p><div class="chips"><button class="active" data-layer="plants">Arbolado</button><button class="active" data-layer="water">Humedales</button><button class="active" data-layer="urban">Matriz urbana</button></div></div></article>
-  <article class="step" data-scene="records"><div class="step-card"><div class="step-no">03 · PRESENCIA</div><h2>Después comprobamos qué especies sí tienen evidencia territorial.</h2><p>eBird, iNaturalist, SiB y GBIF sirven para validar presencia mediante coordenadas, fecha, precisión e identificación.</p><div class="chips"><button class="active" data-source="ebird">eBird</button><button data-source="inat">iNaturalist</button><button data-source="sib">SiB</button><button data-source="gbif">GBIF</button></div></div></article>
-  <article class="step" data-scene="ribb"><div class="step-card"><div class="step-no">04 · RIBB</div><h2>Con presencia validada, buscamos relaciones.</h2><p>La red empieza a crecer: consume, poliniza, dispersa, parasita, oviposita, crece sobre. Haz clic en cualquier fotografía del escenario.</p><div class="chips"><button class="active" data-interaction="ALL">todas</button><button data-interaction="VISITA FLORAL">visita floral</button><button data-interaction="HERBIVORÍA">herbivoría</button><button data-interaction="DEPREDACIÓN">depredación</button><button data-interaction="DISPERSIÓN">dispersión</button></div></div></article>
+  <article class="step" data-scene="gis"><div class="step-card"><div class="step-no">02 · GIS</div><h2>Primero aislamos plantas y vegetación.</h2><p>Ahora sí: el resto de organismos se apaga y queda únicamente la base vegetal de la red. Esta capa representa recursos, hospederos, sustratos y soporte espacial que después se contrasta con arbolado, humedales y matriz urbana.</p><div class="chips"><button class="active" data-layer="plants">Arbolado</button><button class="active" data-layer="water">Humedales</button><button class="active" data-layer="urban">Matriz urbana</button></div></div></article>
+  <article class="step" data-scene="records"><div class="step-card"><div class="step-no">03 · PRESENCIA</div><h2>Luego aparecen los organismos que visitan, consumen y parasitan.</h2><p>En vez de encender toda la red, mostramos tres procesos concretos: <b>visita floral</b>, <b>herbivoría</b> y <b>parasitismo</b>. Se ven únicamente los organismos y vínculos que participan en esas relaciones.</p><div class="chips"><button class="active" data-source="ebird">eBird</button><button data-source="inat">iNaturalist</button><button data-source="sib">SiB</button><button data-source="gbif">GBIF</button></div></div></article>
+  <article class="step" data-scene="ribb"><div class="step-card"><div class="step-no">04 · RIBB</div><h2>La red gana profundidad trófica.</h2><p>A la base planta–invertebrado entran <b>aves y otros vertebrados</b>. Esos nuevos niveles se encienden en neón para mostrar dónde la relación deja de ser de dos grupos y empieza a formar cadenas ecológicas más profundas.</p><div class="chips"><button class="active" data-interaction="ALL">todas</button><button data-interaction="VISITA FLORAL">visita floral</button><button data-interaction="HERBIVORÍA">herbivoría</button><button data-interaction="DEPREDACIÓN">depredación</button><button data-interaction="DISPERSIÓN">dispersión</button></div></div></article>
   <article class="step" data-scene="evidence"><div class="step-card"><div class="step-no">05 · EVIDENCIA</div><h2>No todas las conexiones pesan igual.</h2><p>La calidad de cada vínculo cambia según fuente, fecha, coordenada y soporte documental. Filtra el escenario.</p><div class="chips"><button class="active" data-quality="ALL">todas</button><button data-quality="Alta">alta</button><button data-quality="Media">media</button><button data-quality="Baja">baja</button></div></div></article>
   <article class="step" data-scene="hyp"><div class="step-card"><div class="step-no">06 · HIPÓTESIS</div><h2>La red no termina en la visualización.</h2><p>Termina en preguntas verificables sobre humedales, conectividad, matriz urbana y presión. El escenario mantiene la red como base.</p></div></article>
  </div>
@@ -104,12 +104,12 @@ window.addEventListener("message",e=>{
 });
 
 const scenes={
- territory:{groups:["micro","fungi","plants","invert","birds","vertebrates"],neon:[],label:"Territorio · Kennedy",note:"La red completa permanece visible como sistema de referencia."},
- gis:{groups:["plants"],neon:["plants"],label:"GIS · vegetación",note:"Plantas y vegetación quedan encendidas en neón; el resto de capas se apaga."},
- records:{groups:["plants","invert","birds","vertebrates"],neon:["invert","birds","vertebrates"],label:"Presencia · registros",note:"Se incorporan grupos con registros georreferenciados y se resaltan los organismos móviles."},
- ribb:{groups:["micro","fungi","plants","invert","birds","vertebrates"],neon:["plants","invert","birds","vertebrates"],label:"RIBB · interacciones",note:"La red vuelve a crecer y se encienden las capas biológicas que participan en las relaciones."},
- evidence:{groups:["micro","fungi","plants","invert","birds","vertebrates"],neon:[],label:"Evidencia · calidad",note:"La estructura permanece completa; ahora el filtro actúa sobre la calidad de los vínculos."},
- hyp:{groups:["micro","fungi","plants","invert","birds","vertebrates"],neon:["micro","fungi","plants","invert","birds","vertebrates"],label:"Hipótesis · sistema",note:"Todas las capas se vuelven a encender para leer el sistema como conjunto."}
+ territory:{groups:["micro","fungi","plants","invert","birds","vertebrates"],interactions:[],neonGroups:[],neonInteractions:[],label:"Territorio · Kennedy",note:"Sistema completo como punto de partida."},
+ gis:{groups:["plants"],interactions:[],neonGroups:["plants"],neonInteractions:[],label:"01 · Solo plantas y vegetación",note:"AISLAMIENTO: todos los demás grupos están apagados."},
+ records:{groups:["plants","invert","micro","fungi"],interactions:["VISITA FLORAL","HERBIVORÍA","PARASITISMO"],neonGroups:["invert","micro","fungi"],neonInteractions:["VISITA FLORAL","HERBIVORÍA","PARASITISMO"],label:"02 · Visitan · consumen · parasitan",note:"Solo 3 relaciones: visita floral, herbivoría y parasitismo."},
+ ribb:{groups:["plants","invert","birds","vertebrates"],interactions:["VISITA FLORAL","HERBIVORÍA","DEPREDACIÓN","DISPERSIÓN"],neonGroups:["birds","vertebrates"],neonInteractions:["DEPREDACIÓN","DISPERSIÓN"],label:"03 · Profundidad trófica",note:"ENTRAN AVES Y VERTEBRADOS: depredación y dispersión marcan el nuevo nivel."},
+ evidence:{groups:["micro","fungi","plants","invert","birds","vertebrates"],interactions:[],neonGroups:[],neonInteractions:[],label:"Evidencia · calidad",note:"La red vuelve a estar completa; aquí el filtro actúa sobre la calidad documental."},
+ hyp:{groups:["micro","fungi","plants","invert","birds","vertebrates"],interactions:[],neonGroups:["micro","fungi","plants","invert","birds","vertebrates"],neonInteractions:[],label:"Hipótesis · sistema",note:"Todas las capas se encienden de nuevo para leer el sistema completo."}
 };
 
 let current=null;
@@ -118,10 +118,7 @@ function applyScene(scene){
   current=scene;
   document.querySelector("#sceneTag").textContent=c.label;
   document.querySelector("#sceneNote").textContent=c.note;
-  send(storyFrame,{type:"setEco",groups:c.groups});
-  send(storyFrame,{type:"setNeon",groups:c.neon});
-  if(scene!=="ribb")send(storyFrame,{type:"setInteraction",value:"ALL"});
-  if(scene!=="evidence")send(storyFrame,{type:"setQuality",value:"ALL"});
+  send(storyFrame,{type:"setScene",groups:c.groups,interactions:c.interactions,neonGroups:c.neonGroups,neonInteractions:c.neonInteractions,quality:"ALL"});
 }
 
 const observed=[...document.querySelectorAll(".step")];
@@ -142,8 +139,8 @@ document.querySelector("#start").onclick=()=>document.querySelector("#story").sc
 document.querySelectorAll("[data-interaction]").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("[data-interaction]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
   const v=b.dataset.interaction;
-  send(storyFrame,{type:"setInteraction",value:v});
-  send(storyFrame,{type:"setNeon",groups:[],interaction:v==="ALL"?null:v});
+  const base=scenes.ribb;
+  send(storyFrame,{type:"setScene",groups:base.groups,interactions:v==="ALL"?base.interactions:[v],neonGroups:v==="ALL"?base.neonGroups:[],neonInteractions:v==="ALL"?base.neonInteractions:[v],quality:"ALL"});
 });
 document.querySelectorAll("[data-quality]").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("[data-quality]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
