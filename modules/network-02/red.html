@@ -91,6 +91,14 @@ body.embed .analysis{display:none!important}
 .sub-node .pic.photo-loading:after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(110deg,#172019 20%,#314437 45%,#172019 70%);background-size:200% 100%;animation:photoShimmer 1s linear infinite}.sub-node .pic img{position:relative;z-index:2}
 .sub-node .pic.representative-photo:after{content:"";position:absolute;right:2px;bottom:2px;background:rgba(0,0,0,.72);color:#fff;font-size:5px;letter-spacing:.08em;padding:2px 3px;border-radius:4px}
 @keyframes photoShimmer{to{background-position:-200% 0}}
+
+.scene-editor-toggle{position:absolute;right:68px;top:18px;z-index:14;border:1px solid #ffffff26;background:#ffffff12;color:#fff;border-radius:999px;padding:10px 14px;font-size:8px;font-weight:700;cursor:pointer}
+.scene-editor{position:absolute;right:18px;top:68px;z-index:20;width:285px;max-height:calc(100% - 100px);overflow:auto;background:rgba(14,20,16,.96);border:1px solid #ffffff1f;border-radius:16px;padding:12px;color:#eef4ef;display:none;backdrop-filter:blur(14px)}
+.scene-editor.open{display:block}.scene-editor h3{margin:0 0 9px;font-size:12px}.scene-editor .field{display:grid;grid-template-columns:76px 1fr;gap:8px;align-items:center;margin:7px 0}.scene-editor label{font-size:7px;color:#9eaaa1;text-transform:uppercase;letter-spacing:.08em}
+.scene-editor input,.scene-editor select,.scene-editor textarea{width:100%;box-sizing:border-box;background:#07100a;color:#fff;border:1px solid #ffffff20;border-radius:8px;padding:7px;font:8px Inter,Arial}.scene-editor textarea{min-height:110px;resize:vertical}
+.scene-editor .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.scene-editor button{border:1px solid #ffffff22;background:#ffffff10;color:#fff;border-radius:999px;padding:7px 9px;font-size:7px;cursor:pointer}.scene-editor button.primary{background:#dff4e4;color:#17301f;border-color:#dff4e4;font-weight:700}
+.scene-editor .minihelp{display:block;color:#849288;font-size:7px;margin-top:7px;line-height:1.4}
+.sub-node.editable{cursor:grab}.sub-node.editable:active{cursor:grabbing}.sub-node.selected .pic{box-shadow:0 0 0 4px #f3e38b,0 10px 30px #000}.sub-edge-selected{filter:drop-shadow(0 0 5px currentColor)}
 </style>
 </head>
 <body><div class="app">
@@ -235,6 +243,23 @@ body.embed .analysis{display:none!important}
 <div class="subnet-modal" id="subnetModal" aria-hidden="true">
   <div class="subnet-shell" role="dialog" aria-modal="true" aria-labelledby="subnetTitle">
     <button class="subnet-close" id="subnetClose" aria-label="Cerrar subred"><i class="fa-solid fa-xmark"></i></button>
+    <button id="sceneEditorToggle" class="scene-editor-toggle"><i class="fa-solid fa-sliders"></i> editar escena</button>
+    <aside id="sceneEditor" class="scene-editor" aria-label="Editor de escena">
+      <h3>Editor de escena</h3>
+      <div class="field"><label>Nodo</label><select id="editNode"></select></div>
+      <div class="field"><label>X</label><input id="editX" type="number" min="2" max="98" step=".1"></div>
+      <div class="field"><label>Y</label><input id="editY" type="number" min="8" max="92" step=".1"></div>
+      <div class="field"><label>Vínculo</label><select id="editEdge"></select></div>
+      <div class="field"><label>Relación</label><select id="editRelation">
+        <option>VISITA FLORAL</option><option>HERBIVORÍA</option><option>DEPREDACIÓN</option><option>DISPERSIÓN</option><option>PARASITISMO</option><option>NIDIFICACIÓN</option><option>CONSUMO FAUNA/HONGOS</option><option>OTRAS INTERACCIONES</option>
+      </select></div>
+      <div class="field"><label>Línea</label><select id="editLineStyle"><option value="solid">continua</option><option value="dashed">segmentada</option><option value="dotted">punteada</option></select></div>
+      <div class="field"><label>Grosor</label><input id="editWidth" type="range" min=".6" max="5" step=".2" value="1.6"></div>
+      <div class="field"><label>Color</label><input id="editColor" type="color" value="#6f9569"></div>
+      <div class="row"><button id="saveScene" class="primary">guardar escena</button><button id="resetScene">restablecer</button><button id="exportScene">generar JSON</button></div>
+      <textarea id="sceneJSON" readonly placeholder="Aquí aparece el JSON para fijar la escena en el repositorio."></textarea>
+      <span class="minihelp">Arrastra nodos directamente. X/Y están en porcentaje del lienzo. Puedes editar relación, tipo de línea, grosor y color.</span>
+    </aside>
     <div class="subnet-head">
       <div class="ey">Subred de interacción directa</div>
       <h2 id="subnetTitle">Especie seleccionada</h2>
