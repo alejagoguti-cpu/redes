@@ -47,14 +47,14 @@ h3{font-size:11px;margin:0 0 9px}.label{display:block;font-size:7px;text-transfo
 .subnet-close{position:absolute;right:18px;top:18px;z-index:12;width:38px;height:38px;border:1px solid #ffffff26;border-radius:50%;background:#ffffff12;color:#fff;cursor:pointer;font-size:16px}
 .subnet-stage{position:absolute;inset:0}
 .subnet-svg{position:absolute;inset:0;width:100%;height:100%}
-.sub-ring{fill:none;stroke:#ffffff12;stroke-width:1;stroke-dasharray:4 7}
-.sub-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;z-index:5;width:108px;color:#fff}
-.sub-node .pic{width:62px;height:62px;border-radius:50%;overflow:hidden;border:2px solid #fff;background:#36443a;box-shadow:0 8px 24px #0008;display:grid;place-items:center;font-size:18px;font-weight:700;color:#dce5de}
-.sub-node.center .pic{width:92px;height:92px;border-width:3px}
+.sub-ring{display:none}.eco-zone-label{font:600 9px Inter,Arial;letter-spacing:.11em;text-transform:uppercase;opacity:.72}
+.sub-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;z-index:5;width:100px;color:#fff}
+.sub-node .pic{width:54px;height:54px;border-radius:50%;overflow:hidden;border:2px solid #fff;background:#36443a;box-shadow:0 8px 24px #0008;display:grid;place-items:center;font-size:18px;font-weight:700;color:#dce5de}
+.sub-node.center .pic{width:84px;height:84px;border-width:3px}
 .sub-node img{width:100%;height:100%;object-fit:cover;display:block}
-.sub-node .nm{font-size:9px;line-height:1.15;text-align:center;text-shadow:0 1px 4px #000;max-width:105px}
+.sub-node .nm{font-size:8px;line-height:1.15;text-align:center;text-shadow:0 1px 4px #000;max-width:105px}
 .sub-node.center .nm{font-size:12px;font-weight:700}
-.sub-node .rel{font-size:7px;line-height:1.1;text-transform:uppercase;letter-spacing:.05em;opacity:.78;text-align:center}
+.sub-node .rel{font-size:6px;line-height:1.1;text-transform:uppercase;letter-spacing:.05em;opacity:.78;text-align:center}
 .sub-node:hover .pic{box-shadow:0 0 0 4px #ffffff1f,0 8px 28px #000}
 .subnet-legend{position:absolute;left:24px;bottom:18px;z-index:8;display:flex;gap:11px;flex-wrap:wrap;color:#b7c1ba;font-size:8px}
 .subnet-legend span{display:flex;align-items:center;gap:5px}.subnet-legend i{width:18px;height:2px;border-radius:2px;display:block}
@@ -534,36 +534,78 @@ function closeSubnetwork(){
 
 function openSubnetwork(n){
   const modal=document.querySelector("#subnetModal"),svg=document.querySelector("#subnetSvg"),holder=document.querySelector("#subnetNodes");
-  const graph=deepSubgraph(n.id,4,34);
-  const nodes=graph.selected;
+  const graph=deepSubgraph(n.id,4,34), ids=graph.selected;
   document.querySelector("#subnetTitle").textContent=n.id;
-  document.querySelector("#subnetSubtitle").textContent=(nodes.length-1)+" organismos en una subred de hasta 4 niveles · "+graph.edges.length+" vínculos visibles. Color del borde = nivel ecológico.";
+  document.querySelector("#subnetSubtitle").textContent=(ids.length-1)+" organismos · "+graph.edges.length+" vínculos · red ecológica expandida hasta 4 grados.";
   svg.innerHTML='';holder.innerHTML='';
   const NS="http://www.w3.org/2000/svg";
-  const cx=500,cy=330;
-  [105,175,245,305].forEach((rad,i)=>{const c=document.createElementNS(NS,"circle");c.setAttribute("cx",cx);c.setAttribute("cy",cy);c.setAttribute("r",rad);c.setAttribute("class","sub-ring");svg.appendChild(c);const t=document.createElementNS(NS,"text");t.setAttribute("x",cx+rad-22);t.setAttribute("y",cy-5);t.setAttribute("fill","#6f8074");t.setAttribute("font-size","8");t.textContent="N"+(i+1);svg.appendChild(t)});
 
-  const groups={1:[],2:[],3:[],4:[]};
-  nodes.slice(1).forEach(id=>{const d=Math.min(4,graph.depth.get(id)||4);groups[d].push(id)});
-  const pos=new Map([[n.id,{x:50,y:50}]]);
-  Object.entries(groups).forEach(([ds,arr])=>{
-    const d=+ds,rad=[0,17,28,39,46][d],yr=rad*.72;
-    arr.forEach((id,i)=>{const eco=ecoGroup(id),ecoOrder={micro:0,fungi:1,plants:2,invert:3,birds:4,vertebrates:5}[eco]??2;const base=-Math.PI/2+(ecoOrder/6)*Math.PI*2;const spread=Math.min(Math.PI*.72,Math.max(.28,arr.length*.075));const same=arr.filter(x=>ecoGroup(x)===eco),k=same.indexOf(id),a=base+(same.length===1?0:(k/(same.length-1)-.5)*spread);pos.set(id,{x:50+Math.cos(a)*rad,y:51+Math.sin(a)*yr})});
+  // Ecological territories across the canvas, inspired by an ecosystem map rather than radial rings.
+  const anchors={
+    birds:{x:18,y:23}, vertebrates:{x:18,y:67}, invert:{x:48,y:24},
+    plants:{x:55,y:68}, fungi:{x:79,y:68}, micro:{x:82,y:30}
+  };
+  const labels={
+    birds:"AVES",vertebrates:"OTROS VERTEBRADOS",invert:"INVERTEBRADOS",
+    plants:"PLANTAS Y VEGETACIÓN",fungi:"HONGOS",micro:"MICROORGANISMOS"
+  };
+  Object.entries(anchors).forEach(([k,p])=>{
+    if(!activeEco.has(k))return;
+    const t=document.createElementNS(NS,"text");t.setAttribute("x",p.x*10);t.setAttribute("y",p.y*6.5-55);
+    t.setAttribute("text-anchor","middle");t.setAttribute("fill",ECO_COLORS[k]);t.setAttribute("class","eco-zone-label");t.textContent=labels[k];svg.appendChild(t);
   });
 
+  const pos=new Map();
+  const buckets={micro:[],fungi:[],plants:[],invert:[],birds:[],vertebrates:[]};
+  ids.forEach(id=>(buckets[ecoGroup(id)]||buckets.plants).push(id));
+
+  Object.entries(buckets).forEach(([eco,arr])=>{
+    const A=anchors[eco]; if(!A||!arr.length)return;
+    // deterministic sunflower cloud around each ecological anchor
+    arr.forEach((id,i)=>{
+      const h=(hash(id+"sub")%10000)/10000;
+      const ang=i*2.399963+h*.8;
+      const rr=Math.sqrt(i+.35)*3.8;
+      let x=A.x+Math.cos(ang)*rr, y=A.y+Math.sin(ang)*rr*.78;
+      x=Math.max(7,Math.min(93,x));y=Math.max(13,Math.min(88,y));
+      pos.set(id,{x,y});
+    });
+  });
+
+  // The selected organism remains identifiable, but inside its ecological territory.
+  const rootEco=ecoGroup(n.id),rootAnchor=anchors[rootEco]||{x:50,y:50};
+  pos.set(n.id,{x:rootAnchor.x,y:rootAnchor.y});
+
+  // Draw all cross-connections first.
   for(const r of graph.edges){
-    const a=pos.get(r.s),b=pos.get(r.t);if(!a||!b)continue;
-    const line=document.createElementNS(NS,"line");line.setAttribute("x1",a.x*10);line.setAttribute("y1",a.y*6.5);line.setAttribute("x2",b.x*10);line.setAttribute("y2",b.y*6.5);line.setAttribute("stroke",COLORS[r.title]||"#8c73a5");line.setAttribute("stroke-width","1.25");line.setAttribute("stroke-opacity",".72");if(r.q==="Media")line.setAttribute("stroke-dasharray","7 6");if(r.q==="Baja")line.setAttribute("stroke-dasharray","2 7");svg.appendChild(line);
+    const p1=pos.get(r.s),p2=pos.get(r.t);if(!p1||!p2)continue;
+    const line=document.createElementNS(NS,"line");
+    line.setAttribute("x1",p1.x*10);line.setAttribute("y1",p1.y*6.5);
+    line.setAttribute("x2",p2.x*10);line.setAttribute("y2",p2.y*6.5);
+    line.setAttribute("stroke",COLORS[r.title]||"#8c73a5");
+    line.setAttribute("stroke-width",r.s===n.id||r.t===n.id?"2":"1.15");
+    line.setAttribute("stroke-opacity",r.s===n.id||r.t===n.id?".9":".58");
+    if(r.q==="Media")line.setAttribute("stroke-dasharray","7 6");
+    if(r.q==="Baja")line.setAttribute("stroke-dasharray","2 7");
+    svg.appendChild(line);
   }
 
-  for(const id of nodes){
-    const p=pos.get(id);if(!p)continue;const nd=nodeMap.get(id)||DATA.nodeById.get(id)||{id,n:0,origin:""};const d=graph.depth.get(id)||0;const el=document.createElement("div");el.className="sub-node"+(id===n.id?" center":"");el.style.left=p.x+"%";el.style.top=p.y+"%";if(id!==n.id){el.style.width=d>=3?"82px":"96px";}
-    const rel=id===n.id?(nd.n||0)+" registros en RIBB":ECO_LABELS[ecoGroup(id)]+" · nivel "+d;
-    el.innerHTML='<div class="pic" style="border-color:'+(ECO_COLORS[ecoGroup(id)]||'#fff')+'">'+id.charAt(0).toUpperCase()+'</div><div class="nm">'+id+'</div><div class="rel">'+rel+'</div>';
+  for(const id of ids){
+    const p=pos.get(id);if(!p)continue;
+    const nd=nodeMap.get(id)||DATA.nodeById.get(id)||{id,n:0,origin:""};
+    const d=graph.depth.get(id)||0, eco=ecoGroup(id), el=document.createElement("div");
+    el.className="sub-node"+(id===n.id?" center":"");
+    el.style.left=p.x+"%";el.style.top=p.y+"%";
+    const degree=graph.edges.filter(e=>e.s===id||e.t===id).length;
+    if(id!==n.id){
+      const size=degree>=5?68:degree>=3?58:48;
+      el.querySelector?.(".pic");
+      el.style.setProperty("--node-size",size+"px");
+    }
+    el.innerHTML='<div class="pic" style="border-color:'+(ECO_COLORS[eco]||'#fff')+';'+(id!==n.id?'width:'+(degree>=5?68:degree>=3?58:48)+'px;height:'+(degree>=5?68:degree>=3?58:48)+'px;':'')+'">'+id.charAt(0).toUpperCase()+'</div><div class="nm">'+id+'</div><div class="rel">'+(id===n.id?"SELECCIONADO":ECO_LABELS[eco])+'</div>';
     el.addEventListener("click",()=>{if(id!==n.id){openSubnetwork(nd);openNode(nd,false)}});
     holder.appendChild(el);ensureNodePhoto(id,el.querySelector(".pic"));
   }
-
   modal.classList.add("open");modal.setAttribute("aria-hidden","false");
 }
 
