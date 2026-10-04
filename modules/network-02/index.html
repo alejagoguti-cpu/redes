@@ -123,7 +123,7 @@ try{
   scene.fog=new THREE.FogExp2(0xf3f2ed,.007);
 
   const camera=new THREE.PerspectiveCamera(43,1,.1,1000);
-  camera.position.set(0,6,150);
+  camera.position.set(0,6,125);
 
   const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
@@ -165,14 +165,14 @@ try{
 
   function positionFor(node){
     const p=(state.district==="SI"?node.positionDistrict:node.positionAll) || node.positionAll || node.positionDistrict || [0,0,0];
-    const scale=72;
+    const scale=54;
     return new THREE.Vector3(p[0]*scale,p[1]*scale,p[2]*scale);
   }
 
   function clearSelection(){
     if(selectionArrow){overlayGroup.remove(selectionArrow);selectionArrow=null}
     sprites.forEach(s=>s.material.opacity=.98);
-    if(lineObj)lineObj.material.opacity=.12;
+    if(lineObj)lineObj.material.opacity=.24;
   }
 
   function clearScene(){
@@ -222,7 +222,7 @@ try{
       const tex=textureCache.get(n.id)?.texture||makePlaceholderTexture(n.id,color);
       const mat=new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false,depthTest:true,opacity:.98});
       const sp=new THREE.Sprite(mat);sp.position.copy(n.pos);
-      const size=3.2+Math.min(5.8,Math.sqrt(n.n||1)*.21);
+      const size=2.5+Math.min(7.5,Math.pow(n.n||1,.38)*.42);
       sp.scale.set(size,size,1);sp.userData={type:"node",node:n};
       networkGroup.add(sp);sprites.push(sp);queueImage(n,sp);
     }
@@ -237,7 +237,7 @@ try{
     const g=new THREE.BufferGeometry();
     g.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));
     g.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));
-    lineObj=new THREE.LineSegments(g,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.12,depthWrite:false}));
+    lineObj=new THREE.LineSegments(g,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.24,depthWrite:false}));
     lineGroup.add(lineObj);
 
     document.querySelector("#nodes").textContent=nodeList.length.toLocaleString("es-CO");
@@ -293,7 +293,7 @@ try{
   function openNode(n,sp){
     clearSelection();
     sprites.forEach(s=>s.material.opacity=s===sp?1:.12);
-    if(lineObj)lineObj.material.opacity=.025;
+    if(lineObj)lineObj.material.opacity=.045;
 
     const d=document.querySelector("#detail"),im=textureCache.get(n.id);
     d.classList.add("open");
@@ -319,7 +319,7 @@ try{
 
   function openEdge(r){
     clearSelection();
-    if(lineObj)lineObj.material.opacity=.035;
+    if(lineObj)lineObj.material.opacity=.06;
     showDirectedArrow(r);
     const arrow=r.direction==="directed"?" → ":" ↔ ";
     const d=document.querySelector("#detail");d.classList.add("open");
@@ -379,7 +379,7 @@ try{
     });
   }
 
-  document.querySelector("#fitBtn").onclick=()=>{camera.position.set(0,6,150);controls.target.set(0,0,0);controls.update()};
+  document.querySelector("#fitBtn").onclick=()=>{camera.position.set(0,6,125);controls.target.set(0,0,0);controls.update()};
   document.querySelector("#rotateBtn").onclick=e=>{state.auto=!state.auto;controls.autoRotate=state.auto;e.currentTarget.classList.toggle("active",state.auto)};
 
   function resize(){
