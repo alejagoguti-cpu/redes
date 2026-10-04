@@ -1155,9 +1155,56 @@ function setStoryScene(name){
   state.interaction="ALL";state.interactionSet=null;state.quality="ALL";state.focus=null;
   rebuild();
 }
+function buildSourceScene(source){
+  if(source==="ebird"){
+    const birdNodes=[...DATA.nodes]
+      .filter(n=>ecoGroup(n.id)==="birds")
+      .sort((a,b)=>(b.n||0)-(a.n||0))
+      .slice(0,180);
+    const ids=new Set(birdNodes.map(n=>n.id));
+    const birdEdges=DATA.records.filter(r=>ids.has(r.s)&&ids.has(r.t)).slice(0,260);
+    return {
+      records:birdEdges,
+      nodeIds:ids,
+      featured:new Set(birdNodes.slice(0,40).map(n=>n.id)),
+      caption:"eBird · vista de avifauna"
+    };
+  }
+  // Until occurrence datasets are integrated record-by-record, the other
+  // source buttons return to the general georeferenced-presence scene.
+  return buildStoryScene("records");
+}
+
+function setSourceScene(source){
+  const scene=buildSourceScene(source);
+  storyState.scene="source:"+source;
+  storyState.records=scene.records;
+  storyState.nodeIds=scene.nodeIds;
+  storyState.featured=scene.featured;
+  storyState.caption=scene.caption;
+  state.includeIsolated=true;
+  state.interaction="ALL";state.interactionSet=null;state.quality="ALL";state.focus=null;
+  rebuild();
+}
+
 function handleNetworkMessage(m){
   if(!m||typeof m!=="object")return;
   if(!networkDataReady){pendingNetworkMessages.push(m);return}
+  if(m.type==="sourceScene"){
+    const src=m.source||"";
+    animateSceneChange(()=>{
+      setSourceScene(src);
+      neonState.groups.clear();
+      neonState.interaction=null;
+      neonState.interactions.clear();
+      if(src==="ebird"){
+        neonState.groups.add("birds");
+        neonState.targetStrength=1;
+      }else neonState.targetStrength=.55;
+      try{parent.postMessage({type:"sceneApplied",scene:"source:"+src,nodes:nodes.length,edges:visible.length},"*")}catch(e){}
+    },"source:"+src);
+    return;
+  }
   if(m.type==="storyScene"){
     animateSceneChange(()=>{
       setStoryScene(m.scene||null);
