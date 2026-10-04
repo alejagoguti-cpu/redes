@@ -1017,8 +1017,20 @@ async function init(){
     if(qs.get("embed")==="1")document.body.classList.add("embed");
     if(qs.get("story")==="1")document.body.classList.add("storymode");
     resize();
-    const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());
-    if(!res.ok)throw new Error("HTTP "+res.status);
+    let res;
+    const dataUrls=[
+      "../../assets/data/ribb_web.json?v=2024-12-30",
+      "/redes/assets/data/ribb_web.json?v=2024-12-30"
+    ];
+    let lastError=null;
+    for(const url of dataUrls){
+      try{
+        res=await fetch(url,{cache:"force-cache"});
+        if(res.ok)break;
+        lastError=new Error("HTTP "+res.status+" · "+url);
+      }catch(e){lastError=e}
+    }
+    if(!res||!res.ok)throw lastError||new Error("No fue posible cargar RIBB");
     DATA=await res.json();
     DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));
     const sel=document.querySelector("#interaction");
