@@ -87,7 +87,7 @@
 <aside id="detail" class="panel detail">
 <button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>
 <h2>Lectura de la red</h2>
-<p>La posición tridimensional agrupa especies según el tipo de interacción dominante. La profundidad organiza relaciones, no representa ubicación geográfica.</p>
+<p>La forma tridimensional emerge de la topología real de RIBB: nodos muy relacionados se aproximan, subredes se condensan y especies puente quedan entre comunidades. La posición no representa ubicación geográfica.</p>
 </aside>
 
 <div class="hint">Arrastra para orbitar · rueda para aproximar · selecciona un nodo o una relación</div>
@@ -97,7 +97,7 @@
 <span><i class="dot" style="background:#a68461"></i>Herbivoría</span>
 <span><i class="dot" style="background:#9b6663"></i>Depredación</span>
 <span><i class="dot" style="background:#6f879c"></i>Dispersión</span>
-<span class="sep"></span><span>posición = interacción dominante</span><span class="sep"></span><span>tamaño = frecuencia de registros</span>
+<span class="sep"></span><span>posición = proximidad relacional</span><span class="sep"></span><span>tamaño = frecuencia de registros</span>
 </div>
 </main>
 </div>
@@ -114,130 +114,309 @@ try{
     "OVIPOSICIÓN":0x8c7792,"PARASITISMO":0x806d83,"MUTUALISMO":0x668b84,"EPIBIOSIS":0x7d8991,
     "NIDIFICACIÓN":0x8b7a68,"ALELOPATÍA":0x7e8d70,"HEMATOFAGIA":0x906b68,"OTRAS INTERACCIONES":0x8c8d87
   };
-  const CLUSTERS={
-    "VISITA FLORAL":new THREE.Vector3(-38,24,10),
-    "HERBIVORÍA":new THREE.Vector3(34,22,4),
-    "DEPREDACIÓN":new THREE.Vector3(30,-27,-10),
-    "DISPERSIÓN":new THREE.Vector3(-34,-24,-6),
-    "OVIPOSICIÓN":new THREE.Vector3(4,34,-30),
-    "PARASITISMO":new THREE.Vector3(0,-34,30),
-    "OTRAS INTERACCIONES":new THREE.Vector3(0,0,0)
-  };
 
   const state={district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:"",auto:false};
-  let DATA=null,visible=[],nodeList=[],nodeMap=new Map(),sprites=[],edgeRecords=[],lineObj=null;
-  const scene=new THREE.Scene();scene.background=new THREE.Color(0xf3f2ed);scene.fog=new THREE.FogExp2(0xf3f2ed,.008);
-  const camera=new THREE.PerspectiveCamera(43,1,.1,1000);camera.position.set(0,8,145);
-  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:"high-performance"});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
+  let DATA=null,visible=[],nodeList=[],nodeMap=new Map(),sprites=[],edgeRecords=[],lineObj=null,selectionArrow=null;
+
+  const scene=new THREE.Scene();
+  scene.background=new THREE.Color(0xf3f2ed);
+  scene.fog=new THREE.FogExp2(0xf3f2ed,.007);
+
+  const camera=new THREE.PerspectiveCamera(43,1,.1,1000);
+  camera.position.set(0,6,150);
+
+  const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
   document.querySelector("#webgl").appendChild(renderer.domElement);
-  const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=42;controls.maxDistance=230;controls.autoRotate=false;controls.autoRotateSpeed=.25;
-  const networkGroup=new THREE.Group();scene.add(networkGroup);const lineGroup=new THREE.Group();scene.add(lineGroup);
-  const raycaster=new THREE.Raycaster();raycaster.params.Sprite={threshold:.35};raycaster.params.Line={threshold:.5};const pointer=new THREE.Vector2();
-  const textureCache=new Map();const queue=[];let active=0,loaded=0,failed=0;const MAX=5;
+
+  const controls=new OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true;controls.dampingFactor=.06;
+  controls.minDistance=38;controls.maxDistance=240;
+  controls.autoRotate=false;controls.autoRotateSpeed=.2;
+
+  const networkGroup=new THREE.Group();scene.add(networkGroup);
+  const lineGroup=new THREE.Group();scene.add(lineGroup);
+  const overlayGroup=new THREE.Group();scene.add(overlayGroup);
+
+  const raycaster=new THREE.Raycaster();
+  raycaster.params.Line.threshold=.55;
+  const pointer=new THREE.Vector2();
+
+  const textureCache=new Map(), queue=[];
+  let active=0,loaded=0,failed=0;
+  const MAX=5;
   const tooltip=document.querySelector("#tooltip");
 
-  function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
-  function dominantType(id){
-    const c={};for(const r of visible){if(r.s===id||r.t===id)c[r.title]=(c[r.title]||0)+1}
-    return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||"OTRAS INTERACCIONES";
-  }
-  function positionFor(id,dom){
-    const center=CLUSTERS[dom]||CLUSTERS["OTRAS INTERACCIONES"];
-    const h1=(hash(id)%10000)/10000,h2=(hash(id+"a")%10000)/10000,h3=(hash(id+"b")%10000)/10000;
-    const spread=17+22*h3;
-    const theta=h1*Math.PI*2,phi=Math.acos(2*h2-1);
-    return new THREE.Vector3(
-      center.x+spread*Math.sin(phi)*Math.cos(theta),
-      center.y+spread*.72*Math.cos(phi),
-      center.z+spread*Math.sin(phi)*Math.sin(theta)
-    );
-  }
   function matches(r){
     if(state.district!=="ALL"&&r.district!==state.district)return false;
-    if(state.interaction!=="ALL"&&r.title!==state.interaction)return false;
-    if(state.quality!=="ALL"&&r.q!==state.quality)return false;
-    if(state.search){const q=state.search.toLowerCase();if(!r.s.toLowerCase().includes(q)&&!r.t.toLowerCase().includes(q))return false}
-    if(state.origin!=="ALL"){const a=DATA.nodeById.get(r.s),b=DATA.nodeById.get(r.t);if(![(a?.origin||""),(b?.origin||"")].some(x=>x.toLowerCase().startsWith(state.origin.toLowerCase())))return false}
+    if(state.interaction!=="ALL"&&r.category!==state.interaction)return false;
+    if(state.quality!=="ALL"&&r.quality!==state.quality)return false;
+    if(state.search){
+      const q=state.search.toLowerCase();
+      if(!r.source.toLowerCase().includes(q)&&!r.target.toLowerCase().includes(q))return false;
+    }
+    if(state.origin!=="ALL"){
+      const a=DATA.nodeById.get(r.source),b=DATA.nodeById.get(r.target);
+      if(![(a?.origin||""),(b?.origin||"")].some(x=>x.toLowerCase().startsWith(state.origin.toLowerCase())))return false;
+    }
     return true;
   }
-  function disposeSprite(s){s.material?.map?.dispose();s.material?.dispose()}
-  function clearScene(){while(networkGroup.children.length)disposeSprite(networkGroup.children.pop());while(lineGroup.children.length){const o=lineGroup.children.pop();o.geometry?.dispose();o.material?.dispose()}sprites=[];edgeRecords=[]}
+
+  function positionFor(node){
+    const p=(state.district==="SI"?node.positionDistrict:node.positionAll) || node.positionAll || node.positionDistrict || [0,0,0];
+    const scale=72;
+    return new THREE.Vector3(p[0]*scale,p[1]*scale,p[2]*scale);
+  }
+
+  function clearSelection(){
+    if(selectionArrow){overlayGroup.remove(selectionArrow);selectionArrow=null}
+    sprites.forEach(s=>s.material.opacity=.98);
+    if(lineObj)lineObj.material.opacity=.12;
+  }
+
+  function clearScene(){
+    clearSelection();
+    while(networkGroup.children.length){
+      const o=networkGroup.children.pop();
+      o.material?.dispose();
+    }
+    while(lineGroup.children.length){
+      const o=lineGroup.children.pop();
+      o.geometry?.dispose();o.material?.dispose();
+    }
+    sprites=[];edgeRecords=[];
+  }
+
   function makePlaceholderTexture(name,color){
     const c=document.createElement("canvas");c.width=c.height=128;const x=c.getContext("2d");
-    x.clearRect(0,0,128,128);x.beginPath();x.arc(64,64,58,0,Math.PI*2);x.fillStyle="#f2f2ed";x.fill();x.lineWidth=5;x.strokeStyle="#ffffff";x.stroke();
-    x.beginPath();x.arc(64,64,50,0,Math.PI*2);x.fillStyle="#"+new THREE.Color(color).getHexString();x.globalAlpha=.28;x.fill();x.globalAlpha=1;
-    x.fillStyle="#344137";x.font="600 36px Arial";x.textAlign="center";x.textBaseline="middle";x.fillText((name||"?").charAt(0).toUpperCase(),64,65);
+    x.clearRect(0,0,128,128);
+    x.beginPath();x.arc(64,64,58,0,Math.PI*2);x.fillStyle="#f4f3ee";x.fill();
+    x.beginPath();x.arc(64,64,51,0,Math.PI*2);x.fillStyle="#"+new THREE.Color(color).getHexString();x.globalAlpha=.20;x.fill();x.globalAlpha=1;
+    x.beginPath();x.arc(64,64,58,0,Math.PI*2);x.lineWidth=4;x.strokeStyle="#fff";x.stroke();
+    x.fillStyle="#354039";x.font="600 34px Arial";x.textAlign="center";x.textBaseline="middle";x.fillText((name||"?").charAt(0).toUpperCase(),64,65);
     const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t;
   }
+
   function photoTexture(img){
     const c=document.createElement("canvas");c.width=c.height=192;const x=c.getContext("2d");
     x.clearRect(0,0,192,192);x.save();x.beginPath();x.arc(96,96,88,0,Math.PI*2);x.clip();
     const s=Math.min(img.naturalWidth,img.naturalHeight),sx=(img.naturalWidth-s)/2,sy=(img.naturalHeight-s)/2;
     x.drawImage(img,sx,sy,s,s,8,8,176,176);x.restore();
-    x.beginPath();x.arc(96,96,88,0,Math.PI*2);x.lineWidth=5;x.strokeStyle="#ffffff";x.stroke();
+    x.beginPath();x.arc(96,96,88,0,Math.PI*2);x.lineWidth=5;x.strokeStyle="#fff";x.stroke();
     const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t;
   }
+
   function build(){
-    clearScene();visible=DATA.records.filter(matches);const ids=new Set();visible.forEach(r=>{ids.add(r.s);ids.add(r.t)});
-    nodeList=[...ids].map(id=>{const src=DATA.nodeById.get(id)||{id,n:1,origin:""};const dom=dominantType(id);return {...src,id,dom,pos:positionFor(id,dom)}});
+    clearScene();
+    visible=DATA.records.filter(matches);
+    const ids=new Set();visible.forEach(r=>{ids.add(r.source);ids.add(r.target)});
+    nodeList=[...ids].map(id=>{
+      const src=DATA.nodeById.get(id)||{id,n:1,origin:"",dominantCategory:"OTRAS INTERACCIONES"};
+      return {...src,id,pos:positionFor(src)};
+    });
     nodeMap=new Map(nodeList.map(n=>[n.id,n]));
+
     for(const n of nodeList){
-      const color=PALETTE[n.dom]||0x8c8d87;const tex=textureCache.get(n.id)?.texture||makePlaceholderTexture(n.id,color);
+      const color=PALETTE[n.dominantCategory]||0x8c8d87;
+      const tex=textureCache.get(n.id)?.texture||makePlaceholderTexture(n.id,color);
       const mat=new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false,depthTest:true,opacity:.98});
-      const sp=new THREE.Sprite(mat);sp.position.copy(n.pos);const size=3.8+Math.min(6.5,Math.sqrt(n.n||1)*.23);sp.scale.set(size,size,1);sp.userData={type:"node",node:n};networkGroup.add(sp);sprites.push(sp);queueImage(n,sp);
+      const sp=new THREE.Sprite(mat);sp.position.copy(n.pos);
+      const size=3.2+Math.min(5.8,Math.sqrt(n.n||1)*.21);
+      sp.scale.set(size,size,1);sp.userData={type:"node",node:n};
+      networkGroup.add(sp);sprites.push(sp);queueImage(n,sp);
     }
-    const pos=[],cols=[];edgeRecords=[];
-    for(const r of visible){const a=nodeMap.get(r.s),b=nodeMap.get(r.t);if(!a||!b)continue;pos.push(a.pos.x,a.pos.y,a.pos.z,b.pos.x,b.pos.y,b.pos.z);const c=new THREE.Color(PALETTE[r.title]||0x8c8d87);cols.push(c.r,c.g,c.b,c.r,c.g,c.b);edgeRecords.push(r)}
-    const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));g.setAttribute("color",new THREE.Float32BufferAttribute(cols,3));
-    lineObj=new THREE.LineSegments(g,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.11,depthWrite:false}));lineGroup.add(lineObj);
-    document.querySelector("#nodes").textContent=nodeList.length.toLocaleString("es-CO");document.querySelector("#edges").textContent=visible.length.toLocaleString("es-CO");
+
+    const positions=[],colors=[];edgeRecords=[];
+    for(const r of visible){
+      const a=nodeMap.get(r.source),b=nodeMap.get(r.target);if(!a||!b)continue;
+      positions.push(a.pos.x,a.pos.y,a.pos.z,b.pos.x,b.pos.y,b.pos.z);
+      const c=new THREE.Color(PALETTE[r.category]||0x8c8d87);
+      colors.push(c.r,c.g,c.b,c.r,c.g,c.b);edgeRecords.push(r);
+    }
+    const g=new THREE.BufferGeometry();
+    g.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));
+    g.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));
+    lineObj=new THREE.LineSegments(g,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.12,depthWrite:false}));
+    lineGroup.add(lineObj);
+
+    document.querySelector("#nodes").textContent=nodeList.length.toLocaleString("es-CO");
+    document.querySelector("#edges").textContent=visible.length.toLocaleString("es-CO");
   }
-  async function imageUrl(name){try{const r=await fetch("https://api.inaturalist.org/v1/taxa/autocomplete?q="+encodeURIComponent(name)+"&per_page=5");if(!r.ok)return"";const j=await r.json();const t=(j.results||[]).find(x=>(x.name||"").toLowerCase()===name.toLowerCase())||(j.results||[])[0];return t?.default_photo?.medium_url||t?.default_photo?.square_url||""}catch{return""}}
+
+  async function imageUrl(name){
+    try{
+      const r=await fetch("https://api.inaturalist.org/v1/taxa/autocomplete?q="+encodeURIComponent(name)+"&per_page=5");
+      if(!r.ok)return"";
+      const j=await r.json();
+      const t=(j.results||[]).find(x=>(x.name||"").toLowerCase()===name.toLowerCase())||(j.results||[])[0];
+      return t?.default_photo?.medium_url||t?.default_photo?.square_url||"";
+    }catch{return""}
+  }
+
   function queueImage(n,sp){
-    const cached=textureCache.get(n.id);if(cached?.texture){sp.material.map=cached.texture;sp.material.needsUpdate=true;return}
-    if(cached?.status)return;textureCache.set(n.id,{status:"queued"});queue.push({n,sp});pump();
+    const cached=textureCache.get(n.id);
+    if(cached?.texture){sp.material.map=cached.texture;sp.material.needsUpdate=true;return}
+    if(cached?.status)return;
+    textureCache.set(n.id,{status:"queued"});queue.push({n,sp});pump();
   }
+
   function pump(){
     while(active<MAX&&queue.length){
-      const {n,sp}=queue.shift(),e=textureCache.get(n.id);if(!e||e.status!=="queued")continue;e.status="loading";active++;
+      const {n,sp}=queue.shift(),e=textureCache.get(n.id);
+      if(!e||e.status!=="queued")continue;
+      e.status="loading";active++;
       imageUrl(n.id).then(url=>{
         if(!url){e.status="failed";failed++;return}
         const img=new Image();img.crossOrigin="anonymous";
-        img.onload=()=>{const tex=photoTexture(img);e.status="loaded";e.texture=tex;e.url=url;loaded++;if(sp.material){sp.material.map=tex;sp.material.needsUpdate=true}updateImageState()};
-        img.onerror=()=>{e.status="failed";failed++;updateImageState()};img.src=url;
+        img.onload=()=>{
+          const tex=photoTexture(img);e.status="loaded";e.texture=tex;e.url=url;loaded++;
+          if(sp.material){sp.material.map=tex;sp.material.needsUpdate=true}
+          updateImageState();
+        };
+        img.onerror=()=>{e.status="failed";failed++;updateImageState()};
+        img.src=url;
       }).finally(()=>{active--;updateImageState();pump()});
     }
   }
-  function updateImageState(){document.querySelector("#imgState").textContent="Imágenes taxonómicas cargadas: "+loaded.toLocaleString("es-CO")+" · sin imagen validada: "+failed}
-  function setPointer(ev){const r=renderer.domElement.getBoundingClientRect();pointer.x=((ev.clientX-r.left)/r.width)*2-1;pointer.y=-((ev.clientY-r.top)/r.height)*2+1}
+
+  function updateImageState(){
+    document.querySelector("#imgState").textContent="Imágenes taxonómicas cargadas: "+loaded.toLocaleString("es-CO")+" · sin imagen validada: "+failed;
+  }
+
+  function setPointer(ev){
+    const r=renderer.domElement.getBoundingClientRect();
+    pointer.x=((ev.clientX-r.left)/r.width)*2-1;
+    pointer.y=-((ev.clientY-r.top)/r.height)*2+1;
+  }
+
   function openNode(n,sp){
-    sprites.forEach(s=>s.material.opacity=s===sp?1:.14);if(lineObj)lineObj.material.opacity=.025;
-    const d=document.querySelector("#detail"),im=textureCache.get(n.id);d.classList.add("open");
-    d.innerHTML='<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button><h2>'+n.id+'</h2><div class="hero" '+(im?.url?'style="background-image:url(\''+im.url+'\')"':'')+'></div><span class="badge">'+(n.origin||"Origen no indicado")+'</span><span class="badge">'+(n.n||0)+' registros</span><span class="badge">'+n.dom+'</span><h4>Lectura espacial</h4><p>La especie se ubica dentro del conjunto asociado a <b>'+n.dom.toLowerCase()+'</b>, su interacción dominante en la selección actual. La posición no representa coordenadas geográficas.</p>';bindClose();
+    clearSelection();
+    sprites.forEach(s=>s.material.opacity=s===sp?1:.12);
+    if(lineObj)lineObj.material.opacity=.025;
+
+    const d=document.querySelector("#detail"),im=textureCache.get(n.id);
+    d.classList.add("open");
+    d.innerHTML='<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>'+
+      '<h2>'+n.id+'</h2>'+
+      '<div class="hero" '+(im?.url?'style="background-image:url(\''+im.url+'\')"':'')+'></div>'+
+      '<span class="badge">'+(n.origin||"Origen no indicado")+'</span>'+
+      '<span class="badge">'+(n.n||0)+' registros</span>'+
+      '<span class="badge">'+(n.dominantCategory||"Sin categoría")+'</span>'+
+      '<h4>Posición en el enjambre</h4>'+
+      '<p>La posición se calcula a partir de la topología real de la red. Los taxones con patrones de conexión similares tienden a aproximarse y los nodos puente quedan entre subredes.</p>';
+    bindClose();
   }
-  function explain(r){if(r.i==="Consume")return "<i>"+r.s+"</i> consume "+(r.part?"<b>"+r.part+"</b> de ":"")+"<i>"+r.t+"</i>.";if(r.i==="Poliniza a")return "<i>"+r.s+"</i> participa en la polinización de <i>"+r.t+"</i>.";if(r.i==="Dispersa"||r.i==="Dispersa a")return "<i>"+r.s+"</i> participa en la dispersión de <i>"+r.t+"</i>.";return "<i>"+r.s+"</i> mantiene una interacción registrada con <i>"+r.t+"</i>."}
+
+  function showDirectedArrow(r){
+    if(r.direction!=="directed")return;
+    const a=nodeMap.get(r.source),b=nodeMap.get(r.target);if(!a||!b)return;
+    const dir=new THREE.Vector3().subVectors(b.pos,a.pos);
+    const len=dir.length();dir.normalize();
+    selectionArrow=new THREE.ArrowHelper(dir,a.pos,Math.max(1,len-1.5),PALETTE[r.category]||0x4a4f49,2.2,1.2);
+    overlayGroup.add(selectionArrow);
+  }
+
   function openEdge(r){
-    const d=document.querySelector("#detail");d.classList.add("open");d.innerHTML='<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button><h2>'+r.s+' ↔ '+r.t+'</h2><span class="badge">'+r.title+'</span><span class="badge">Calidad '+r.q+'</span><h4>¿Por qué están conectadas?</h4><p>'+explain(r)+'</p><div class="evidence"><h4>Evidencia</h4><p><b>Fecha:</b> '+(r.date||"No indicada")+'<br><b>Coordenadas:</b> '+(r.coord||"No indicadas")+'<br><b>Parte afectada:</b> '+(r.part||"No indicada")+'</p><h4>Fuente</h4><p>'+(r.ref||"Sin referencia visible")+'</p></div><div class="warning">Un registro en Bogotá no demuestra por sí solo presencia en Kennedy. La presencia local requiere evidencia espacial específica.</div>';bindClose();
+    clearSelection();
+    if(lineObj)lineObj.material.opacity=.035;
+    showDirectedArrow(r);
+    const arrow=r.direction==="directed"?" → ":" ↔ ";
+    const d=document.querySelector("#detail");d.classList.add("open");
+    d.innerHTML='<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>'+
+      '<h2>'+r.source+arrow+r.target+'</h2>'+
+      '<span class="badge">'+r.category+'</span>'+
+      '<span class="badge">'+r.verb+'</span>'+
+      '<span class="badge">Calidad '+r.quality+'</span>'+
+      '<h4>Relación registrada</h4><p>'+r.phrase+'</p>'+
+      '<div class="evidence"><h4>Evidencia</h4>'+
+      '<p><b>Dirección:</b> '+(r.direction==="directed"?"Taxón 1 → Taxón 2":r.direction==="symmetric"?"Relación simétrica":"Dependiente del contexto")+
+      '<br><b>Parte afectada:</b> '+(r.part||"No indicada")+
+      '<br><b>Fecha:</b> '+(r.date||"No indicada")+
+      '<br><b>Coordenadas:</b> '+(r.coord||"No indicadas")+
+      '<br><b>Referencias asociadas:</b> '+(r.referenceCount||0)+'</p>'+
+      '<h4>Fuente</h4><p>'+(r.reference||"Sin referencia visible")+'</p></div>'+
+      '<div class="warning">La categoría ecológica describe el tipo general de interacción; el verbo conserva la relación puntual registrada entre Taxón 1 y Taxón 2.</div>';
+    bindClose();
   }
-  function bindClose(){const b=document.querySelector("#close");if(b)b.onclick=()=>{document.querySelector("#detail").classList.remove("open");sprites.forEach(s=>s.material.opacity=.98);if(lineObj)lineObj.material.opacity=.11}}
-  renderer.domElement.addEventListener("pointermove",ev=>{setPointer(ev);raycaster.setFromCamera(pointer,camera);const hit=raycaster.intersectObjects(sprites,false)[0];if(hit){const r=renderer.domElement.getBoundingClientRect(),n=hit.object.userData.node;tooltip.style.display="block";tooltip.style.left=(ev.clientX-r.left+14)+"px";tooltip.style.top=(ev.clientY-r.top+14)+"px";tooltip.textContent=n.id+" · "+n.dom}else tooltip.style.display="none"});
-  renderer.domElement.addEventListener("click",ev=>{setPointer(ev);raycaster.setFromCamera(pointer,camera);const h=raycaster.intersectObjects(sprites,false);if(h.length)return openNode(h[0].object.userData.node,h[0].object);if(lineObj){const lh=raycaster.intersectObject(lineObj,false);if(lh.length){const r=edgeRecords[Math.floor(lh[0].index/2)];if(r)openEdge(r)}}});
-  function groupFilter(id,key){document.querySelectorAll("#"+id+" .chip").forEach(b=>b.onclick=()=>{document.querySelectorAll("#"+id+" .chip").forEach(x=>x.classList.remove("active"));b.classList.add("active");state[key]=b.dataset.v;build()})}
-  document.querySelector("#fitBtn").onclick=()=>{camera.position.set(0,8,145);controls.target.set(0,0,0);controls.update()};
+
+  function bindClose(){
+    const b=document.querySelector("#close");
+    if(b)b.onclick=()=>{
+      document.querySelector("#detail").classList.remove("open");
+      clearSelection();
+    };
+  }
+
+  renderer.domElement.addEventListener("pointermove",ev=>{
+    setPointer(ev);raycaster.setFromCamera(pointer,camera);
+    const hit=raycaster.intersectObjects(sprites,false)[0];
+    if(hit){
+      const r=renderer.domElement.getBoundingClientRect(),n=hit.object.userData.node;
+      tooltip.style.display="block";
+      tooltip.style.left=(ev.clientX-r.left+14)+"px";tooltip.style.top=(ev.clientY-r.top+14)+"px";
+      tooltip.textContent=n.id+" · "+(n.n||0)+" registros";
+    }else tooltip.style.display="none";
+  });
+
+  renderer.domElement.addEventListener("click",ev=>{
+    setPointer(ev);raycaster.setFromCamera(pointer,camera);
+    const h=raycaster.intersectObjects(sprites,false);
+    if(h.length)return openNode(h[0].object.userData.node,h[0].object);
+    if(lineObj){
+      const lh=raycaster.intersectObject(lineObj,false);
+      if(lh.length){
+        const r=edgeRecords[Math.floor(lh[0].index/2)];
+        if(r)openEdge(r);
+      }
+    }
+  });
+
+  function groupFilter(id,key){
+    document.querySelectorAll("#"+id+" .chip").forEach(b=>b.onclick=()=>{
+      document.querySelectorAll("#"+id+" .chip").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");state[key]=b.dataset.v;build();
+    });
+  }
+
+  document.querySelector("#fitBtn").onclick=()=>{camera.position.set(0,6,150);controls.target.set(0,0,0);controls.update()};
   document.querySelector("#rotateBtn").onclick=e=>{state.auto=!state.auto;controls.autoRotate=state.auto;e.currentTarget.classList.toggle("active",state.auto)};
-  function resize(){const el=document.querySelector("#webgl"),w=el.clientWidth,h=el.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+
+  function resize(){
+    const el=document.querySelector("#webgl"),w=el.clientWidth,h=el.clientHeight;
+    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+  }
   addEventListener("resize",resize);
 
-  const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());if(!res.ok)throw new Error("Dataset HTTP "+res.status);
-  DATA=await res.json();DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));
-  const sel=document.querySelector("#interaction");Object.keys(DATA.meta.interactionTypes||{}).sort().forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k+" ("+DATA.meta.interactionTypes[k]+")";sel.appendChild(o)});
-  document.querySelector("#meta").textContent="Base: "+DATA.meta.totalRecords.toLocaleString("es-CO")+" registros · "+DATA.meta.districtRecords.toLocaleString("es-CO")+" reportados en el Distrito.";
+  const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());
+  if(!res.ok)throw new Error("Dataset HTTP "+res.status);
+  DATA=await res.json();
+  DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));
+
+  const sel=document.querySelector("#interaction");
+  Object.keys(DATA.meta.interactionCategories||{}).sort().forEach(k=>{
+    const o=document.createElement("option");o.value=k;o.textContent=k+" ("+DATA.meta.interactionCategories[k]+")";sel.appendChild(o);
+  });
+
+  document.querySelector("#meta").textContent=
+    "Base: "+DATA.meta.totalRecords.toLocaleString("es-CO")+" registros · "+
+    DATA.meta.districtRecords.toLocaleString("es-CO")+" reportados en el Distrito · "+
+    DATA.meta.districtTaxa.toLocaleString("es-CO")+" taxones en la red distrital.";
+
   groupFilter("district","district");groupFilter("origin","origin");groupFilter("quality","quality");
-  sel.onchange=e=>{state.interaction=e.target.value;build()};document.querySelector("#search").oninput=e=>{state.search=e.target.value.trim();build()};document.querySelector("#reset").onclick=()=>location.reload();
+  sel.onchange=e=>{state.interaction=e.target.value;build()};
+  document.querySelector("#search").oninput=e=>{state.search=e.target.value.trim();build()};
+  document.querySelector("#reset").onclick=()=>location.reload();
+
   bindClose();resize();build();loading.remove();
 
-  function animate(){controls.update();renderer.render(scene,camera);requestAnimationFrame(animate)}animate();
-}catch(err){loading.innerHTML="No se pudo iniciar la visualización 3D. "+err.message;console.error(err)}
+  function animate(){controls.update();renderer.render(scene,camera);requestAnimationFrame(animate)}
+  animate();
+
+}catch(err){
+  loading.innerHTML="No se pudo iniciar la visualización 3D. "+err.message;
+  console.error(err);
+}
 </script>
 </body>
 </html>
