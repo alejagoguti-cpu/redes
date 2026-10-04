@@ -1102,7 +1102,7 @@ async function ensureNodePhoto(name,el){
 
 function closeSubnetwork(){
   const modal=document.querySelector("#subnetModal");
-  modal.classList.remove("open");modal.setAttribute("aria-hidden","true");
+  modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.querySelector("#sceneEditor")?.classList.remove("open");
 }
 
 function relationLabel(r,rootId,nodeId){
@@ -1242,56 +1242,45 @@ async function openSubnetwork(n){
   svg.appendChild(defs);
   const markerIndex=new Map(Object.keys(COLORS).map((k,i)=>[k,i]));
 
-  const root={x:50,y:50},pos=new Map([[n.id,root]]);
-  const groups={plants:[],invert:[],fungi:[],micro:[],birds:[],vertebrates:[]};
-  ids.filter(id=>id!==n.id).forEach(id=>(groups[ecoGroup(id)]||groups.plants).push(id));
+  let pos=decentralizedPositions(ids);
+  const edgeStyles=new Map();
+  applySavedScene(n.id,pos,edgeStyles);
+  sceneEditorState.root=n.id;sceneEditorState.graph=graph;sceneEditorState.pos=pos;sceneEditorState.edgeStyles=edgeStyles;
 
-  // Reference-like ecological composition: resources on the sides,
-  // trophic relations above, prey/invertebrates/fungi below.
-  const zones={
-    plants:[{x:10,y:22},{x:10,y:36},{x:10,y:50},{x:10,y:64},{x:10,y:78},{x:88,y:22},{x:88,y:34},{x:88,y:46},{x:88,y:58},{x:88,y:70},{x:88,y:80}],
-    birds:[{x:38,y:15},{x:50,y:13},{x:62,y:15},{x:72,y:20},{x:28,y:20}],
-    vertebrates:[{x:31,y:18},{x:69,y:18},{x:22,y:28}],
-    invert:[{x:30,y:78},{x:40,y:80},{x:50,y:80},{x:60,y:80},{x:70,y:78},{x:22,y:72},{x:78,y:72}],
-    fungi:[{x:76,y:80},{x:82,y:72},{x:70,y:84}],
-    micro:[{x:24,y:82},{x:18,y:74},{x:82,y:82}]
-  };
-  Object.entries(groups).forEach(([eco,arr])=>{
-    const slots=zones[eco]||zones.plants;
-    arr.forEach((id,i)=>{
-      if(i<slots.length)pos.set(id,slots[i]);
-      else{
-        const h=(hash(id+"ecoexpand")%1000)/1000,ang=h*Math.PI*2;
-        const base=slots[i%slots.length]||{x:50,y:50};
-        pos.set(id,{x:Math.max(6,Math.min(94,base.x+Math.cos(ang)*5)),y:Math.max(14,Math.min(86,base.y+Math.sin(ang)*5))});
-      }
-    });
-  });
-
-  // Draw directional, curved interaction paths.
-  for(const r of graph.edges){
-    const p1=pos.get(r.s),p2=pos.get(r.t);if(!p1||!p2)continue;
-    const x1=p1.x*10,y1=p1.y*6.5,x2=p2.x*10,y2=p2.y*6.5;
-    const mx=(x1+x2)/2,my=(y1+y2)/2;
-    const bend=(hash(r.s+r.t)%2?1:-1)*Math.min(55,Math.abs(x2-x1)*.08+18);
-    const path=document.createElementNS(NS,"path");
-    path.setAttribute("d","M "+x1+" "+y1+" Q "+mx+" "+(my+bend)+" "+x2+" "+y2);
-    const color=COLORS[r.title]||"#87958a";
-    path.setAttribute("fill","none");path.setAttribute("stroke",color);
-    path.setAttribute("stroke-width",(r.s===n.id||r.t===n.id)?"2.2":"1.1");
-    path.setAttribute("stroke-opacity",(r.s===n.id||r.t===n.id)?".95":".48");
-    const mi=markerIndex.has(r.title)?markerIndex.get(r.title):null;
-    if(mi!==null)path.setAttribute("marker-end","url(#arrow-"+mi+")");
-    if(r.q==="Media")path.setAttribute("stroke-dasharray","7 5");
-    if(r.q==="Baja")path.setAttribute("stroke-dasharray","3 6");
-    svg.appendChild(path);
+  function renderEdges(){
+    [...svg.querySelectorAll("path[data-edge]")].forEach(x=>x.remove());
+    for(const r of graph.edges){
+      const p1=pos.get(r.s),p2=pos.get(r.t);if(!p1||!p2)continue;
+      const x1=p1.x*10,y1=p1.y*6.5,x2=p2.x*10,y2=p2.y*6.5;
+      const mx=(x1+x2)/2,my=(y1+y2)/2;
+      const bend=(hash(r.s+r.t)%2?1:-1)*Math.min(42,Math.abs(x2-x1)*.055+12);
+      const path=document.createElementNS(NS,"path");
+      path.dataset.edge=r.id;
+      path.setAttribute("d","M "+x1+" "+y1+" Q "+mx+" "+(my+bend)+" "+x2+" "+y2);
+      const st=edgeStyles.get(r.id)||{};
+      const relation=st.relation||r.title;
+      const color=st.color||COLORS[relation]||COLORS[r.title]||"#87958a";
+      path.setAttribute("fill","none");path.setAttribute("stroke",color);
+      path.setAttribute("stroke-width",String(st.width||1.5));
+      path.setAttribute("stroke-opacity",".86");
+      const ls=st.lineStyle||((r.q==="Media")?"dashed":(r.q==="Baja"?"dotted":"solid"));
+      if(ls==="dashed")path.setAttribute("stroke-dasharray","8 5");
+      if(ls==="dotted")path.setAttribute("stroke-dasharray","2 6");
+      const mi=markerIndex.has(relation)?markerIndex.get(relation):(markerIndex.has(r.title)?markerIndex.get(r.title):null);
+      if(mi!==null)path.setAttribute("marker-end","url(#arrow-"+mi+")");
+      path.style.color=color;
+      path.addEventListener("click",ev=>{ev.stopPropagation();sceneEditorState.selectedEdge=r.id;syncSceneEditorInputs();highlightSceneSelection()});
+      svg.appendChild(path);
+    }
+    highlightSceneSelection();
   }
 
   for(const id of ids){
     const p=pos.get(id);if(!p)continue;
     const nd=nodeMap.get(id)||DATA.nodeById.get(id)||{id,n:0,origin:""};
     const eco=SPECIAL_ECO_GROUP[id]||ecoGroup(id),el=document.createElement("div"),isRoot=id===n.id;
-    el.className="sub-node"+(isRoot?" center":"");
+    el.className="sub-node";
+    el.dataset.node=id;
     el.style.left=p.x+"%";el.style.top=p.y+"%";
     const degree=graph.edges.filter(e=>e.s===id||e.t===id).length;
     const size=isRoot?104:(degree>=5?72:degree>=3?62:54);
@@ -1305,11 +1294,41 @@ async function openSubnetwork(n){
     el.innerHTML='<div class="pic photo-loading" style="border-color:'+(ECO_COLORS[eco]||"#fff")+';width:'+size+'px;height:'+size+'px"></div>'+
       '<div class="nm">'+id+'</div>'+
       '<div class="rel">'+relation+(coord?'<br>'+coord:'')+(statusText?'<br>'+statusText:'')+'</div>';
-    el.addEventListener("click",()=>{if(!isRoot){openSubnetwork(nd);openNode(nd,false)}});
+    el.addEventListener("click",()=>{if(document.querySelector("#sceneEditor").classList.contains("open")){sceneEditorState.selectedNode=id;syncSceneEditorInputs();highlightSceneSelection();return;} if(!isRoot){openSubnetwork(nd);openNode(nd,false)}});
     holder.appendChild(el);ensureNodePhoto(id,el.querySelector(".pic"));
+    el.addEventListener("pointerdown",ev=>{
+      if(!document.querySelector("#sceneEditor").classList.contains("open"))return;
+      ev.preventDefault();ev.stopPropagation();
+      sceneEditorState.selectedNode=id;syncSceneEditorInputs();highlightSceneSelection();
+      el.setPointerCapture(ev.pointerId);
+      const move=mv=>{
+        const rect=holder.getBoundingClientRect();
+        const x=Math.max(2,Math.min(98,((mv.clientX-rect.left)/rect.width)*100));
+        const y=Math.max(8,Math.min(92,((mv.clientY-rect.top)/rect.height)*100));
+        pos.set(id,{x,y});el.style.left=x+"%";el.style.top=y+"%";
+        document.querySelector("#editX").value=x.toFixed(1);document.querySelector("#editY").value=y.toFixed(1);
+        renderEdges();
+      };
+      const up=()=>{el.removeEventListener("pointermove",move);el.removeEventListener("pointerup",up)};
+      el.addEventListener("pointermove",move);el.addEventListener("pointerup",up);
+    });
   }
+  sceneEditorState.render=()=>{
+    pos=sceneEditorState.pos;
+    document.querySelectorAll(".sub-node").forEach(el=>{
+      const p=pos.get(el.dataset.node);if(p){el.style.left=p.x+"%";el.style.top=p.y+"%";}
+    });
+    renderEdges();
+  };
+  renderEdges();
+  fillSceneEditor(graph);
+  document.querySelector("#sceneEditor").classList.remove("open");
+  document.querySelector("#sceneJSON").value="";
+  highlightSceneSelection();
 
 }
+
+bindSceneEditor();
 
 document.querySelector("#subnetClose").addEventListener("click",closeSubnetwork);
 document.querySelector("#subnetModal").addEventListener("click",e=>{if(e.target.id==="subnetModal")closeSubnetwork()});
@@ -1920,10 +1939,11 @@ async function init(){
     if(qs.get("story")==="1")document.body.classList.add("storymode");
     resize();
     const dbPromise=loadTaxonImageDB();
+    const scenePromise=loadSubnetScenes();
     const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());
     if(!res.ok)throw new Error("HTTP "+res.status);
     DATA=await res.json();
-    await dbPromise;
+    await Promise.all([dbPromise,scenePromise]);
     DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));
     const sel=document.querySelector("#interaction");
     Object.keys(DATA.meta.interactionTypes||{}).sort().forEach(k=>{
