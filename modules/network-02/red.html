@@ -291,6 +291,8 @@ let W=0,H=0,dpr=1,drag=false,dragMoved=false,lastX=0,lastY=0,hoverNode=null;
 let raf=null,lastFrame=performance.now();
 
 const imageCache=new Map();
+let TAXON_IMAGE_DB={};
+let TAXON_IMAGE_DB_READY=false;
 const imageQueue=[];
 let activeLoads=0,loadedCount=0,failedCount=0;
 const MAX_LOADS=5;
@@ -513,7 +515,30 @@ function updateImageProgress(){
     total ? "Imágenes: "+loadedCount.toLocaleString("es-CO")+" cargadas · "+failedCount+" sin foto validada" : "";
 }
 
+async function loadTaxonImageDB(){
+  try{
+    const r=await fetch("../../assets/data/taxon_images.json?v=1",{cache:"force-cache"});
+    if(!r.ok)return;
+    const j=await r.json();
+    TAXON_IMAGE_DB=j.taxa||{};
+    TAXON_IMAGE_DB_READY=true;
+  }catch(e){}
+}
+function localTaxonPhoto(name){
+  const row=TAXON_IMAGE_DB[name];
+  return row&&row.path?row.path:"";
+}
+async function preloadLocalPhotos(names){
+  const urls=names.map(localTaxonPhoto).filter(Boolean);
+  await Promise.allSettled(urls.map(url=>new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>resolve(true);
+    img.onerror=()=>resolve(false);
+    img.src=url;
+  })));
+}
 async function resolveImage(name){
+  const local=localTaxonPhoto(name);if(local)return local;
   const pickPhoto=t=>t?.default_photo?.medium_url||t?.default_photo?.square_url||"";
   try{
     const exactRes=await fetch("https://api.inaturalist.org/v1/taxa?q="+encodeURIComponent(name)+"&per_page=10");
@@ -1004,10 +1029,22 @@ async function resolveGuaranteedPhoto(name){
 async function ensureNodePhoto(name,el){
   if(!el)return;
   const eco=SPECIAL_ECO_GROUP[name]||ecoGroup(name);
-  const cached=imageCache.get(name);
+  const local=localTaxonPhoto(name);
 
-  // 1. If the main network already has a successfully loaded image,
-  // reuse the exact same browser-loaded image immediately.
+  // Local cache is the primary path: no API call and no empty waiting state.
+  if(local){
+    const img=document.createElement("img");
+    img.alt=name;img.src=local;
+    el.innerHTML="";el.appendChild(img);
+    el.classList.remove("photo-loading","representative-photo");
+    img.onerror=async()=>{
+      const resolved=await resolveGuaranteedPhoto(name);
+      if(resolved?.url&&resolved.url!==local){img.src=resolved.url}
+    };
+    return;
+  }
+
+  const cached=imageCache.get(name);
   if(cached?.status==="loaded"&&cached.img?.src){
     const img=document.createElement("img");
     img.alt=name;img.src=cached.img.src;
@@ -1017,52 +1054,24 @@ async function ensureNodePhoto(name,el){
     return;
   }
 
-  // 2. Never leave a dark/empty circle while resolving taxonomy.
-  // Put a photographic group fallback on screen immediately.
   const immediate=CATEGORY_PHOTOS[eco]||CATEGORY_PHOTOS.plants;
   const baseImg=document.createElement("img");
-  baseImg.alt=name;
-  baseImg.src=immediate;
-  baseImg.onload=()=>{
-    if(!el.querySelector("img"))el.appendChild(baseImg);
-    el.classList.remove("photo-loading");
-    el.classList.add("representative-photo");
-  };
-  baseImg.onerror=()=>{ el.classList.remove("photo-loading"); };
-  el.innerHTML="";
-  el.appendChild(baseImg);
+  baseImg.alt=name;baseImg.src=immediate;
+  el.innerHTML="";el.appendChild(baseImg);
   el.classList.add("representative-photo");
   el.classList.remove("photo-loading");
 
-  // 3. Upgrade asynchronously to the exact/best available taxon photo.
   try{
-    const exactCandidates=[...(EXACT_PHOTO_OVERRIDES[name]||[])];
-    const apiUrl=await resolveImage(name);
-    if(apiUrl)exactCandidates.push(apiUrl);
-
-    const clean=(name||"").replace(/\b(sp\.|spp\.|cf\.|aff\.)\b/gi,"").replace(/\s+/g," ").trim();
-    if(clean&&clean!==name){
-      const cleaned=await resolveImage(clean);
-      if(cleaned)exactCandidates.push(cleaned);
-    }
-
-    const urls=[...new Set(exactCandidates.filter(Boolean))];
-    const tryExact=index=>{
-      if(index>=urls.length)return;
+    const resolved=await resolveGuaranteedPhoto(name);
+    if(resolved?.url&&resolved.url!==immediate){
       const candidate=document.createElement("img");
       candidate.alt=name;
       candidate.onload=()=>{
-        el.innerHTML="";
-        el.appendChild(candidate);
-        el.classList.remove("photo-loading","representative-photo");
-        let entry=imageCache.get(name);
-        if(!entry){entry={status:"loaded",img:candidate,url:candidate.src};imageCache.set(name,entry)}
-        entry.status="loaded";entry.img=candidate;entry.url=candidate.src;entry.photoExact=true;entry.photoLabel="foto del taxón";
+        el.innerHTML="";el.appendChild(candidate);
+        if(resolved.exact)el.classList.remove("representative-photo");
       };
-      candidate.onerror=()=>tryExact(index+1);
-      candidate.src=urls[index];
-    };
-    tryExact(0);
+      candidate.src=resolved.url;
+    }
   }catch(e){}
 }
 
@@ -1093,10 +1102,13 @@ function bestRelationForNode(graph,rootId,id){
   return parent?.r||graph.edges.find(r=>r.s===id||r.t===id)||null;
 }
 
-function openSubnetwork(n){
+async function openSubnetwork(n){
   const modal=document.querySelector("#subnetModal"),svg=document.querySelector("#subnetSvg"),holder=document.querySelector("#subnetNodes");
   const graph=deepSubgraph(n.id,4,30),ids=graph.selected;
   document.querySelector("#subnetTitle").textContent=n.id;
+  document.querySelector("#subnetSubtitle").textContent="Preparando fotos de la subred…";
+  modal.classList.add("open");modal.setAttribute("aria-hidden","false");
+  await preloadLocalPhotos(ids);
   document.querySelector("#subnetSubtitle").textContent=(ids.length-1)+" organismos relacionados · "+graph.edges.length+" registros/vínculos · red ecológica expandida hasta 4 grados";
   svg.innerHTML="";holder.innerHTML="";
   const NS="http://www.w3.org/2000/svg";
@@ -1179,7 +1191,6 @@ function openSubnetwork(n){
     holder.appendChild(el);ensureNodePhoto(id,el.querySelector(".pic"));
   }
 
-  modal.classList.add("open");modal.setAttribute("aria-hidden","false");
 }
 
 document.querySelector("#subnetClose").addEventListener("click",closeSubnetwork);
@@ -1790,9 +1801,11 @@ async function init(){
     if(qs.get("embed")==="1")document.body.classList.add("embed");
     if(qs.get("story")==="1")document.body.classList.add("storymode");
     resize();
+    const dbPromise=loadTaxonImageDB();
     const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());
     if(!res.ok)throw new Error("HTTP "+res.status);
     DATA=await res.json();
+    await dbPromise;
     DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));
     const sel=document.querySelector("#interaction");
     Object.keys(DATA.meta.interactionTypes||{}).sort().forEach(k=>{
@@ -1816,6 +1829,8 @@ async function init(){
     document.querySelector("#search").oninput=e=>{state.search=e.target.value.trim();rebuild()};
     document.querySelector("#reset").onclick=()=>location.reload();
     bindClose();
+    const warmIds=["Zonotrichia capensis costaricensis",...Object.keys(SPECIAL_ECO_GROUP)];
+    preloadLocalPhotos([...new Set(warmIds)]).catch(()=>{});
     rebuild();
     captureAnalysisBaseline();
     networkDataReady=true;
