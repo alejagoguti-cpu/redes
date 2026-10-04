@@ -1127,6 +1127,99 @@ function bestRelationForNode(graph,rootId,id){
   return parent?.r||graph.edges.find(r=>r.s===id||r.t===id)||null;
 }
 
+async let SUBNET_SCENES={};
+const sceneEditorState={root:null,graph:null,pos:new Map(),edgeStyles:new Map(),selectedNode:null,selectedEdge:null,render:null};
+
+async function loadSubnetScenes(){
+  try{
+    const r=await fetch("../../assets/data/subnetwork_scenes.json?v=1",{cache:"no-store"});
+    if(r.ok){const j=await r.json();SUBNET_SCENES=j.scenes||{}}
+  }catch(e){}
+}
+function sceneStorageKey(root){return "ribb-scene:"+root}
+function getSavedScene(root){
+  try{
+    const local=localStorage.getItem(sceneStorageKey(root));
+    if(local)return JSON.parse(local);
+  }catch(e){}
+  return SUBNET_SCENES[root]||null;
+}
+function decentralizedPositions(ids){
+  const sorted=[...ids].sort((a,b)=>(hash(a+"scene")%10000)-(hash(b+"scene")%10000));
+  const cols=6,rows=Math.ceil(sorted.length/cols),map=new Map();
+  sorted.forEach((id,i)=>{
+    const col=i%cols,row=Math.floor(i/cols);
+    const jx=((hash(id+"x")%1000)/1000-.5)*6;
+    const jy=((hash(id+"y")%1000)/1000-.5)*5;
+    map.set(id,{x:9+(col/Math.max(1,cols-1))*82+jx,y:17+(row/Math.max(1,rows-1))*66+jy});
+  });
+  return map;
+}
+function serializeScene(){
+  const nodes={};sceneEditorState.pos.forEach((p,id)=>nodes[id]={x:+p.x.toFixed(2),y:+p.y.toFixed(2)});
+  const edges={};sceneEditorState.edgeStyles.forEach((st,id)=>edges[id]={...st});
+  return {root:sceneEditorState.root,nodes,edges};
+}
+function saveSceneLocal(){
+  const data=serializeScene();
+  try{localStorage.setItem(sceneStorageKey(sceneEditorState.root),JSON.stringify(data))}catch(e){}
+  document.querySelector("#sceneJSON").value=JSON.stringify(data,null,2);
+}
+function applySavedScene(root,pos,edgeStyles){
+  const saved=getSavedScene(root);if(!saved)return;
+  Object.entries(saved.nodes||{}).forEach(([id,p])=>{if(pos.has(id))pos.set(id,{x:+p.x,y:+p.y})});
+  Object.entries(saved.edges||{}).forEach(([id,st])=>edgeStyles.set(id,{...st}));
+}
+function syncSceneEditorInputs(){
+  const id=sceneEditorState.selectedNode,p=sceneEditorState.pos.get(id);
+  if(p){document.querySelector("#editNode").value=id;document.querySelector("#editX").value=p.x.toFixed(1);document.querySelector("#editY").value=p.y.toFixed(1)}
+  const eid=sceneEditorState.selectedEdge,edge=sceneEditorState.graph?.edges.find(e=>e.id===eid);
+  if(edge){
+    document.querySelector("#editEdge").value=eid;
+    const st=sceneEditorState.edgeStyles.get(eid)||{};
+    document.querySelector("#editRelation").value=st.relation||edge.title||"OTRAS INTERACCIONES";
+    document.querySelector("#editLineStyle").value=st.lineStyle||"solid";
+    document.querySelector("#editWidth").value=st.width||1.6;
+    document.querySelector("#editColor").value=st.color||COLORS[edge.title]||"#6f9569";
+  }
+}
+function highlightSceneSelection(){
+  document.querySelectorAll(".sub-node").forEach(el=>el.classList.toggle("selected",el.dataset.node===sceneEditorState.selectedNode));
+  document.querySelectorAll("#subnetSvg path[data-edge]").forEach(el=>el.classList.toggle("sub-edge-selected",el.dataset.edge===sceneEditorState.selectedEdge));
+}
+function fillSceneEditor(graph){
+  const nodeSel=document.querySelector("#editNode"),edgeSel=document.querySelector("#editEdge");
+  nodeSel.innerHTML="";graph.selected.forEach(id=>{const o=document.createElement("option");o.value=id;o.textContent=id;nodeSel.appendChild(o)});
+  edgeSel.innerHTML="";graph.edges.forEach(r=>{const o=document.createElement("option");o.value=r.id;o.textContent=r.s+" → "+r.t;edgeSel.appendChild(o)});
+  sceneEditorState.selectedNode=graph.selected[0]||null;sceneEditorState.selectedEdge=graph.edges[0]?.id||null;syncSceneEditorInputs();
+}
+function bindSceneEditor(){
+  document.querySelector("#sceneEditorToggle").onclick=()=>{
+    const panel=document.querySelector("#sceneEditor");panel.classList.toggle("open");
+    document.querySelectorAll(".sub-node").forEach(n=>n.classList.toggle("editable",panel.classList.contains("open")));
+  };
+  document.querySelector("#editNode").onchange=e=>{sceneEditorState.selectedNode=e.target.value;syncSceneEditorInputs();highlightSceneSelection()};
+  const updateNode=()=>{
+    const id=sceneEditorState.selectedNode;if(!id)return;
+    const x=Math.max(2,Math.min(98,+document.querySelector("#editX").value||50));
+    const y=Math.max(8,Math.min(92,+document.querySelector("#editY").value||50));
+    sceneEditorState.pos.set(id,{x,y});sceneEditorState.render?.();
+  };
+  document.querySelector("#editX").oninput=updateNode;document.querySelector("#editY").oninput=updateNode;
+  document.querySelector("#editEdge").onchange=e=>{sceneEditorState.selectedEdge=e.target.value;syncSceneEditorInputs();highlightSceneSelection()};
+  const updateEdge=()=>{
+    const id=sceneEditorState.selectedEdge;if(!id)return;
+    sceneEditorState.edgeStyles.set(id,{relation:document.querySelector("#editRelation").value,lineStyle:document.querySelector("#editLineStyle").value,width:+document.querySelector("#editWidth").value,color:document.querySelector("#editColor").value});
+    sceneEditorState.render?.();
+  };
+  ["editRelation","editLineStyle","editWidth","editColor"].forEach(id=>document.querySelector("#"+id).oninput=updateEdge);
+  document.querySelector("#saveScene").onclick=saveSceneLocal;
+  document.querySelector("#exportScene").onclick=()=>{document.querySelector("#sceneJSON").value=JSON.stringify(serializeScene(),null,2)};
+  document.querySelector("#resetScene").onclick=()=>{
+    try{localStorage.removeItem(sceneStorageKey(sceneEditorState.root))}catch(e){}
+    sceneEditorState.pos=decentralizedPositions(sceneEditorState.graph.selected);sceneEditorState.edgeStyles.clear();sceneEditorState.render?.();fillSceneEditor(sceneEditorState.graph);
+  };
+}
 async function openSubnetwork(n){
   const modal=document.querySelector("#subnetModal"),svg=document.querySelector("#subnetSvg"),holder=document.querySelector("#subnetNodes");
   const graph=deepSubgraph(n.id,4,30),ids=graph.selected;
