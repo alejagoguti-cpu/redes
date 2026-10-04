@@ -48,13 +48,13 @@ h3{font-size:11px;margin:0 0 9px}.label{display:block;font-size:7px;text-transfo
 .subnet-stage{position:absolute;inset:0}
 .subnet-svg{position:absolute;inset:0;width:100%;height:100%}
 .sub-ring{display:none}.eco-zone-label{font:600 9px Inter,Arial;letter-spacing:.11em;text-transform:uppercase;opacity:.72}
-.sub-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;z-index:5;width:100px;color:#fff}
+.sub-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;z-index:5;width:132px;color:#fff}
 .sub-node .pic{width:54px;height:54px;border-radius:50%;overflow:hidden;border:2px solid #fff;background:#36443a;box-shadow:0 8px 24px #0008;display:grid;place-items:center;font-size:18px;font-weight:700;color:#dce5de}
 .sub-node.center .pic{width:84px;height:84px;border-width:3px}
 .sub-node img{width:100%;height:100%;object-fit:cover;display:block}
-.sub-node .nm{font-size:8px;line-height:1.15;text-align:center;text-shadow:0 1px 4px #000;max-width:105px}
+.sub-node .nm{font-size:9px;line-height:1.12;text-align:center;text-shadow:0 1px 4px #000;max-width:130px;font-weight:600}
 .sub-node.center .nm{font-size:12px;font-weight:700}
-.sub-node .rel{font-size:6px;line-height:1.1;text-transform:uppercase;letter-spacing:.05em;opacity:.78;text-align:center}
+.sub-node .rel{font-size:7px;line-height:1.22;letter-spacing:.02em;color:#b7c2b9;text-align:center;max-width:135px}
 .sub-node:hover .pic{box-shadow:0 0 0 4px #ffffff1f,0 8px 28px #000}
 .subnet-legend{position:absolute;left:24px;bottom:18px;z-index:8;display:flex;gap:11px;flex-wrap:wrap;color:#b7c1ba;font-size:8px}
 .subnet-legend span{display:flex;align-items:center;gap:5px}.subnet-legend i{width:18px;height:2px;border-radius:2px;display:block}
@@ -240,10 +240,10 @@ body.embed .analysis{display:none!important}
     </div>
     <div class="subnet-legend">
       <span><i style="background:#6f9569"></i>Visita floral</span>
-      <span><i style="background:#be8b57"></i>Herbivoría</span>
+      <span><i style="background:#be8b57"></i>Herbivoría / alimento</span>
       <span><i style="background:#b45f5f"></i>Depredación</span>
-      <span><i style="background:#648bb2"></i>Dispersión</span>
-      <span><i style="background:#8c73a5"></i>Otras</span>
+      <span><i style="background:#648bb2"></i>Dispersión / consumo</span>
+      <span><i style="background:#8c73a5"></i>Parasitismo / otras</span>
     </div>
     <div class="subnet-note">clic en una especie = convertirla en centro</div>
   </div>
@@ -800,80 +800,111 @@ function closeSubnetwork(){
   modal.classList.remove("open");modal.setAttribute("aria-hidden","true");
 }
 
+function relationLabel(r,rootId,nodeId){
+  const other=nodeId;
+  let text=(r.i||r.title||"Interacción");
+  if(r.i==="Consume"){
+    if(r.part&&r.part!=="general")text="Consume "+r.part.replace(/^el |^la |^los |^las /,"");
+    else text="Consume";
+  }else if(r.i==="Parasita a")text="Parasita";
+  else if(r.i==="Oviposita en")text="Oviposita";
+  else if(r.i==="Poliniza a")text="Poliniza";
+  else if(r.i==="Dispersa"||r.i==="Dispersa a")text="Dispersa";
+  else if(r.title==="DEPREDACIÓN")text="Depredación";
+  else if(r.title==="NIDIFICACIÓN")text="Nidificación";
+  return text;
+}
+
+function bestRelationForNode(graph,rootId,id){
+  const direct=graph.edges.filter(r=>(r.s===rootId&&r.t===id)||(r.t===rootId&&r.s===id));
+  if(direct.length)return direct[0];
+  const parent=graph.parentEdge.get(id);
+  return parent?.r||graph.edges.find(r=>r.s===id||r.t===id)||null;
+}
+
 function openSubnetwork(n){
   const modal=document.querySelector("#subnetModal"),svg=document.querySelector("#subnetSvg"),holder=document.querySelector("#subnetNodes");
-  const graph=deepSubgraph(n.id,4,34), ids=graph.selected;
+  const graph=deepSubgraph(n.id,4,30),ids=graph.selected;
   document.querySelector("#subnetTitle").textContent=n.id;
-  document.querySelector("#subnetSubtitle").textContent=(ids.length-1)+" organismos · "+graph.edges.length+" vínculos · red ecológica expandida hasta 4 grados.";
-  svg.innerHTML='';holder.innerHTML='';
+  document.querySelector("#subnetSubtitle").textContent=(ids.length-1)+" organismos · "+graph.edges.length+" vínculos · red ecológica expandida hasta 4 grados";
+  svg.innerHTML="";holder.innerHTML="";
   const NS="http://www.w3.org/2000/svg";
 
-  // Ecological territories across the canvas, inspired by an ecosystem map rather than radial rings.
-  const anchors={
-    birds:{x:18,y:23}, vertebrates:{x:18,y:67}, invert:{x:48,y:24},
-    plants:{x:55,y:68}, fungi:{x:79,y:68}, micro:{x:82,y:30}
-  };
-  const labels={
-    birds:"AVES",vertebrates:"OTROS VERTEBRADOS",invert:"INVERTEBRADOS",
-    plants:"PLANTAS Y VEGETACIÓN",fungi:"HONGOS",micro:"MICROORGANISMOS"
-  };
-  Object.entries(anchors).forEach(([k,p])=>{
-    if(!activeEco.has(k))return;
-    const t=document.createElementNS(NS,"text");t.setAttribute("x",p.x*10);t.setAttribute("y",p.y*6.5-55);
-    t.setAttribute("text-anchor","middle");t.setAttribute("fill",ECO_COLORS[k]);t.setAttribute("class","eco-zone-label");t.textContent=labels[k];svg.appendChild(t);
+  // Arrowheads make interaction direction explicit.
+  const defs=document.createElementNS(NS,"defs");
+  Object.entries(COLORS).forEach(([key,color],i)=>{
+    const m=document.createElementNS(NS,"marker");
+    const mid="arrow-"+i;m.setAttribute("id",mid);m.setAttribute("viewBox","0 0 10 10");m.setAttribute("refX","8");m.setAttribute("refY","5");
+    m.setAttribute("markerWidth","6");m.setAttribute("markerHeight","6");m.setAttribute("orient","auto-start-reverse");
+    const p=document.createElementNS(NS,"path");p.setAttribute("d","M 0 0 L 10 5 L 0 10 z");p.setAttribute("fill",color);m.appendChild(p);defs.appendChild(m);
   });
+  svg.appendChild(defs);
+  const markerIndex=new Map(Object.keys(COLORS).map((k,i)=>[k,i]));
 
-  const pos=new Map();
-  const buckets={micro:[],fungi:[],plants:[],invert:[],birds:[],vertebrates:[]};
-  ids.forEach(id=>(buckets[ecoGroup(id)]||buckets.plants).push(id));
+  const root={x:50,y:50},pos=new Map([[n.id,root]]);
+  const groups={plants:[],invert:[],fungi:[],micro:[],birds:[],vertebrates:[]};
+  ids.filter(id=>id!==n.id).forEach(id=>(groups[ecoGroup(id)]||groups.plants).push(id));
 
-  Object.entries(buckets).forEach(([eco,arr])=>{
-    const A=anchors[eco]; if(!A||!arr.length)return;
-    // deterministic sunflower cloud around each ecological anchor
+  // Reference-like ecological composition: resources on the sides,
+  // trophic relations above, prey/invertebrates/fungi below.
+  const zones={
+    plants:[{x:10,y:22},{x:10,y:36},{x:10,y:50},{x:10,y:64},{x:10,y:78},{x:88,y:22},{x:88,y:34},{x:88,y:46},{x:88,y:58},{x:88,y:70},{x:88,y:80}],
+    birds:[{x:38,y:15},{x:50,y:13},{x:62,y:15},{x:72,y:20},{x:28,y:20}],
+    vertebrates:[{x:31,y:18},{x:69,y:18},{x:22,y:28}],
+    invert:[{x:30,y:78},{x:40,y:80},{x:50,y:80},{x:60,y:80},{x:70,y:78},{x:22,y:72},{x:78,y:72}],
+    fungi:[{x:76,y:80},{x:82,y:72},{x:70,y:84}],
+    micro:[{x:24,y:82},{x:18,y:74},{x:82,y:82}]
+  };
+  Object.entries(groups).forEach(([eco,arr])=>{
+    const slots=zones[eco]||zones.plants;
     arr.forEach((id,i)=>{
-      const h=(hash(id+"sub")%10000)/10000;
-      const ang=i*2.399963+h*.8;
-      const rr=Math.sqrt(i+.35)*3.8;
-      let x=A.x+Math.cos(ang)*rr, y=A.y+Math.sin(ang)*rr*.78;
-      x=Math.max(7,Math.min(93,x));y=Math.max(13,Math.min(88,y));
-      pos.set(id,{x,y});
+      if(i<slots.length)pos.set(id,slots[i]);
+      else{
+        const h=(hash(id+"ecoexpand")%1000)/1000,ang=h*Math.PI*2;
+        const base=slots[i%slots.length]||{x:50,y:50};
+        pos.set(id,{x:Math.max(6,Math.min(94,base.x+Math.cos(ang)*5)),y:Math.max(14,Math.min(86,base.y+Math.sin(ang)*5))});
+      }
     });
   });
 
-  // The selected organism remains identifiable, but inside its ecological territory.
-  const rootEco=ecoGroup(n.id),rootAnchor=anchors[rootEco]||{x:50,y:50};
-  pos.set(n.id,{x:rootAnchor.x,y:rootAnchor.y});
-
-  // Draw all cross-connections first.
+  // Draw directional, curved interaction paths.
   for(const r of graph.edges){
     const p1=pos.get(r.s),p2=pos.get(r.t);if(!p1||!p2)continue;
-    const line=document.createElementNS(NS,"line");
-    line.setAttribute("x1",p1.x*10);line.setAttribute("y1",p1.y*6.5);
-    line.setAttribute("x2",p2.x*10);line.setAttribute("y2",p2.y*6.5);
-    line.setAttribute("stroke",COLORS[r.title]||"#8c73a5");
-    line.setAttribute("stroke-width",r.s===n.id||r.t===n.id?"2":"1.15");
-    line.setAttribute("stroke-opacity",r.s===n.id||r.t===n.id?".9":".58");
-    if(r.q==="Media")line.setAttribute("stroke-dasharray","7 6");
-    if(r.q==="Baja")line.setAttribute("stroke-dasharray","2 7");
-    svg.appendChild(line);
+    const x1=p1.x*10,y1=p1.y*6.5,x2=p2.x*10,y2=p2.y*6.5;
+    const mx=(x1+x2)/2,my=(y1+y2)/2;
+    const bend=(hash(r.s+r.t)%2?1:-1)*Math.min(55,Math.abs(x2-x1)*.08+18);
+    const path=document.createElementNS(NS,"path");
+    path.setAttribute("d","M "+x1+" "+y1+" Q "+mx+" "+(my+bend)+" "+x2+" "+y2);
+    const color=COLORS[r.title]||"#87958a";
+    path.setAttribute("fill","none");path.setAttribute("stroke",color);
+    path.setAttribute("stroke-width",(r.s===n.id||r.t===n.id)?"2.2":"1.1");
+    path.setAttribute("stroke-opacity",(r.s===n.id||r.t===n.id)?".95":".48");
+    const mi=markerIndex.has(r.title)?markerIndex.get(r.title):null;
+    if(mi!==null)path.setAttribute("marker-end","url(#arrow-"+mi+")");
+    if(r.q==="Media")path.setAttribute("stroke-dasharray","7 5");
+    if(r.q==="Baja")path.setAttribute("stroke-dasharray","3 6");
+    svg.appendChild(path);
   }
 
   for(const id of ids){
     const p=pos.get(id);if(!p)continue;
     const nd=nodeMap.get(id)||DATA.nodeById.get(id)||{id,n:0,origin:""};
-    const d=graph.depth.get(id)||0, eco=ecoGroup(id), el=document.createElement("div");
-    el.className="sub-node"+(id===n.id?" center":"");
+    const eco=ecoGroup(id),el=document.createElement("div"),isRoot=id===n.id;
+    el.className="sub-node"+(isRoot?" center":"");
     el.style.left=p.x+"%";el.style.top=p.y+"%";
     const degree=graph.edges.filter(e=>e.s===id||e.t===id).length;
-    if(id!==n.id){
-      const size=degree>=5?68:degree>=3?58:48;
-      el.querySelector?.(".pic");
-      el.style.setProperty("--node-size",size+"px");
-    }
-    el.innerHTML='<div class="pic" style="border-color:'+(ECO_COLORS[eco]||'#fff')+';'+(id!==n.id?'width:'+(degree>=5?68:degree>=3?58:48)+'px;height:'+(degree>=5?68:degree>=3?58:48)+'px;':'')+'">'+id.charAt(0).toUpperCase()+'</div><div class="nm">'+id+'</div><div class="rel">'+(id===n.id?"SELECCIONADO":ECO_LABELS[eco])+'</div>';
-    el.addEventListener("click",()=>{if(id!==n.id){openSubnetwork(nd);openNode(nd,false)}});
+    const size=isRoot?104:(degree>=5?72:degree>=3?62:54);
+    const rel=bestRelationForNode(graph,n.id,id);
+    const relation=isRoot?ECO_LABELS[eco]:(rel?relationLabel(rel,n.id,id):ECO_LABELS[eco]);
+    const coord=rel?.coord?String(rel.coord).replace(/\s+/g," ").slice(0,36):"";
+    const localNote=rel&&rel.district!=="SI"?" · no reportada en Distrito":"";
+    el.innerHTML='<div class="pic" style="border-color:'+(ECO_COLORS[eco]||"#fff")+';width:'+size+'px;height:'+size+'px">'+id.charAt(0).toUpperCase()+'</div>'+
+      '<div class="nm">'+id+'</div>'+
+      '<div class="rel">'+relation+(coord?'<br>'+coord:'')+localNote+'</div>';
+    el.addEventListener("click",()=>{if(!isRoot){openSubnetwork(nd);openNode(nd,false)}});
     holder.appendChild(el);ensureNodePhoto(id,el.querySelector(".pic"));
   }
+
   modal.classList.add("open");modal.setAttribute("aria-hidden","false");
 }
 
