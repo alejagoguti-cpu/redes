@@ -196,7 +196,7 @@ const state={
 };
 const sceneAnim={alpha:1,targetAlpha:1,zoomBoost:0,targetZoomBoost:0,spin:0,targetSpin:0,morph:1,targetMorph:1,burst:0,targetBurst:0,flash:0,targetFlash:0,busy:false,pending:null,lastApplied:null};
 const neonState={groups:new Set(),interaction:null,interactions:new Set(),strength:0,targetStrength:0};
-const storyState={scene:null,records:null,nodeIds:null,featured:new Set(),caption:"",progress:1,targetProgress:1,scan:1,targetScan:1,entry:1,targetEntry:1};
+const storyState={scene:null,records:null,nodeIds:null,featured:new Set(),caption:""};
 
 let DATA=null,visible=[],nodes=[],nodeMap=new Map(),edgeScreen=[];
 let canvas=document.querySelector("#swarm"),ctx=canvas.getContext("2d"),tooltip=document.querySelector("#tooltip");
@@ -248,27 +248,10 @@ function project(n){
   const morph=Math.max(.02,sceneAnim.morph);
   const burst=sceneAnim.burst;
   const radial=scale*morph*(1+burst*.72);
-  let x=cx+p.x*radial,y=cy+p.y*radial;
-  const entry=storyState.entry;
-  if(storyState.scene==="gis"){
-    // Vegetation grows upward into place.
-    y=H*(1.08-entry*.55)+(y-H*.53)*entry;
-    x=cx+(x-cx)*(.45+.55*entry);
-  }else if(storyState.scene==="records"){
-    // Georeferenced observations arrive from the perimeter.
-    const ang=((hash(n.id)%6283)/1000);
-    const sx=cx+Math.cos(ang)*Math.max(W,H)*.68;
-    const sy=cy+Math.sin(ang)*Math.max(W,H)*.58;
-    x=sx+(x-sx)*entry;y=sy+(y-sy)*entry;
-  }else if(storyState.scene==="hyp"){
-    // Final niche model assembles from dispersed layers.
-    const ang=((hash(n.id+"hyp")%6283)/1000);
-    const spread=1-entry;
-    x+=Math.cos(ang)*W*.42*spread;
-    y+=Math.sin(ang)*H*.38*spread;
-  }
   return {
-    x,y,z:p.z,
+    x:cx+p.x*radial,
+    y:cy+p.y*radial,
+    z:p.z,
     scale:Math.max(.22,Math.min(2.8,(1.15/depth*2.3)*(0.45+0.55*morph)*(1+burst*.28)))
   };
 }
@@ -437,14 +420,6 @@ function draw(){
     ctx.beginPath();ctx.arc(cx,cy,rr*.62,0,Math.PI*2);ctx.stroke();
     ctx.restore();
   }
-  if(storyState.scene==="evidence"&&storyState.scan<.995){
-    const sx=W*storyState.scan;
-    const gg=ctx.createLinearGradient(sx-55,0,sx+55,0);
-    gg.addColorStop(0,"rgba(120,255,165,0)");gg.addColorStop(.5,"rgba(120,255,165,.22)");gg.addColorStop(1,"rgba(120,255,165,0)");
-    ctx.fillStyle=gg;ctx.fillRect(sx-55,0,110,H);
-    ctx.save();ctx.globalAlpha=.75;ctx.strokeStyle="#9dffb9";ctx.shadowColor="#70ff9b";ctx.shadowBlur=25;ctx.lineWidth=1.5;
-    ctx.beginPath();ctx.moveTo(sx,0);ctx.lineTo(sx,H);ctx.stroke();ctx.restore();
-  }
   ctx.save();
   ctx.globalAlpha=sceneAnim.alpha;
   edgeScreen=[];
@@ -459,8 +434,7 @@ function draw(){
   });
 
   ctx.lineCap="round";
-  for(let edgeIndex=0;edgeIndex<orderedEdges.length;edgeIndex++){
-    const r=orderedEdges[edgeIndex];
+  for(const r of orderedEdges){
     const a=projected.get(r.s),b=projected.get(r.t);
     if(!a||!b)continue;
     const hot=state.focus&&(state.focus===r.id||state.focus===r.s||state.focus===r.t);
@@ -474,17 +448,7 @@ function draw(){
     ctx.shadowBlur=edgeNeon?28*neonState.strength:0;
     ctx.lineWidth=edgeNeon?Math.max(2.2,3.8*neonState.strength):(hot?2.2:Math.max(.35,.65+(depth*.18)));
     ctx.setLineDash(linePattern(r.q));
-    let edgeReveal=1;
-    if(storyState.scene==="ribb"){
-      const stagger=edgeIndex/Math.max(1,orderedEdges.length);
-      edgeReveal=Math.max(0,Math.min(1,(storyState.progress-stagger*.72)/.28));
-    }
-    if(storyState.scene==="evidence"){
-      const mid=(a.x+b.x)*.5/W;
-      edgeReveal=mid<=storyState.scan?1:.055;
-    }
-    ctx.beginPath();ctx.moveTo(a.x,a.y);
-    ctx.lineTo(a.x+(b.x-a.x)*edgeReveal,a.y+(b.y-a.y)*edgeReveal);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
     if(edgeNeon&&neonState.strength>.15){
       const phase=((performance.now()*.00022)+((hash(r.id||r.s+r.t)%1000)/1000))%1;
       const px=a.x+(b.x-a.x)*phase, py=a.y+(b.y-a.y)*phase;
@@ -581,9 +545,6 @@ function animate(now){
   sceneAnim.burst+=(sceneAnim.targetBurst-sceneAnim.burst)*ease;
   sceneAnim.flash+=(sceneAnim.targetFlash-sceneAnim.flash)*Math.min(1,dt*.024);
   neonState.strength+=(neonState.targetStrength-neonState.strength)*ease;
-  storyState.progress+=(storyState.targetProgress-storyState.progress)*Math.min(1,dt*.009);
-  storyState.scan+=(storyState.targetScan-storyState.scan)*Math.min(1,dt*.006);
-  storyState.entry+=(storyState.targetEntry-storyState.entry)*Math.min(1,dt*.008);
   state.yaw+=sceneAnim.spin*dt*.0005;
   draw();
   raf=requestAnimationFrame(animate);
@@ -872,75 +833,6 @@ document.querySelectorAll("#ecoGroups .eco-btn").forEach(btn=>{
 function syncEcoButtons(){
   document.querySelectorAll("#ecoGroups .eco-btn").forEach(btn=>btn.classList.toggle("active",activeEco.has(btn.dataset.eco)));
 }
-function animateStoryScene(name,applyFn,key){
-  if(sceneAnim.busy){
-    sceneAnim.pending={applyFn:()=>animateStoryScene(name,applyFn,key),key:"queued:"+key};
-    return;
-  }
-  sceneAnim.busy=true;
-  neonState.targetStrength=0;
-
-  if(name==="gis"){
-    // CLEAN CUT -> vegetation grows upward.
-    sceneAnim.targetAlpha=.03;sceneAnim.targetSpin=0;sceneAnim.targetMorph=1;
-    setTimeout(()=>{
-      applyFn();storyState.entry=0;storyState.targetEntry=1;
-      sceneAnim.alpha=.15;sceneAnim.targetAlpha=1;neonState.strength=.08;neonState.targetStrength=1;
-      setTimeout(()=>{sceneAnim.busy=false},1250);
-    },300);
-    return;
-  }
-
-  if(name==="records"){
-    // Observation points fly in from the perimeter one by one.
-    sceneAnim.targetAlpha=.12;sceneAnim.targetSpin=.4;
-    setTimeout(()=>{
-      applyFn();storyState.entry=0;storyState.targetEntry=1;
-      sceneAnim.alpha=.25;sceneAnim.targetAlpha=1;sceneAnim.flash=.35;sceneAnim.targetFlash=0;
-      neonState.strength=.15;neonState.targetStrength=1;
-      setTimeout(()=>{sceneAnim.targetSpin=0;sceneAnim.busy=false},1500);
-    },260);
-    return;
-  }
-
-  if(name==="ribb"){
-    // Keep organisms visible, then weave documented relations progressively.
-    sceneAnim.targetAlpha=.34;sceneAnim.targetSpin=0;
-    setTimeout(()=>{
-      applyFn();storyState.progress=0;storyState.targetProgress=1;storyState.entry=1;
-      sceneAnim.alpha=.7;sceneAnim.targetAlpha=1;neonState.strength=.12;neonState.targetStrength=1;
-      setTimeout(()=>{sceneAnim.busy=false},1800);
-    },220);
-    return;
-  }
-
-  if(name==="evidence"){
-    // Horizontal validation scan: weak/unvalidated links remain almost dark until passed.
-    sceneAnim.targetAlpha=.42;sceneAnim.targetSpin=0;
-    setTimeout(()=>{
-      applyFn();storyState.scan=0;storyState.targetScan=1;storyState.entry=1;
-      sceneAnim.alpha=.78;sceneAnim.targetAlpha=1;neonState.strength=.1;neonState.targetStrength=.75;
-      setTimeout(()=>{sceneAnim.busy=false},2100);
-    },220);
-    return;
-  }
-
-  if(name==="hyp"){
-    // Dispersed layers converge into one assembled niche network.
-    sceneAnim.targetAlpha=.18;sceneAnim.targetSpin=-1.2;sceneAnim.targetZoomBoost=-.08;
-    setTimeout(()=>{
-      applyFn();storyState.entry=0;storyState.targetEntry=1;
-      sceneAnim.alpha=.3;sceneAnim.flash=1;sceneAnim.targetFlash=0;
-      sceneAnim.targetAlpha=1;sceneAnim.targetSpin=0;sceneAnim.targetZoomBoost=.08;
-      neonState.strength=.05;neonState.targetStrength=1;
-      setTimeout(()=>{sceneAnim.targetZoomBoost=0;sceneAnim.busy=false},1900);
-    },420);
-    return;
-  }
-
-  animateSceneChange(applyFn,key);
-}
-
 function animateSceneChange(applyFn,key){
   sceneAnim.pending={applyFn,key};
   if(sceneAnim.busy)return;
@@ -1075,15 +967,14 @@ function handleNetworkMessage(m){
   if(!m||typeof m!=="object")return;
   if(!networkDataReady){pendingNetworkMessages.push(m);return}
   if(m.type==="storyScene"){
-    const sceneName=m.scene||null;
-    animateStoryScene(sceneName,()=>{
-      setStoryScene(sceneName);
+    animateSceneChange(()=>{
+      setStoryScene(m.scene||null);
       neonState.groups.clear();
       neonState.interaction=null;
       neonState.interactions=new Set(m.neonInteractions||[]);
       neonState.targetStrength=1;
-      try{parent.postMessage({type:"sceneApplied",scene:sceneName,nodes:nodes.length,edges:visible.length},"*")}catch(e){}
-    },"story:"+String(sceneName));
+      try{parent.postMessage({type:"sceneApplied",scene:m.scene||null,nodes:nodes.length,edges:visible.length},"*")}catch(e){}
+    },"story:"+String(m.scene));
     return;
   }
   if(m.type==="setScene"){
@@ -1109,7 +1000,7 @@ function handleNetworkMessage(m){
   }
   if(m.type==="setInteraction"){const v=m.value||"ALL";animateSceneChange(()=>{state.interactionSet=null;state.interaction=v;const sel=document.querySelector("#interaction");if(sel)sel.value=state.interaction;state.focus=null;rebuild()},"interaction:"+v)}
   if(m.type==="setQuality"){const v=m.value||"ALL";animateSceneChange(()=>{state.quality=v;state.focus=null;rebuild()},"quality:"+v)}
-  if(m.type==="resetNetwork"){storyState.scene=null;storyState.records=null;storyState.nodeIds=null;storyState.featured.clear();storyState.progress=storyState.targetProgress=1;storyState.scan=storyState.targetScan=1;storyState.entry=storyState.targetEntry=1;neonState.groups.clear();neonState.interaction=null;neonState.interactions.clear();neonState.targetStrength=0;state.interactionSet=null;state.includeIsolated=false;animateSceneChange(()=>resetNetworkState(),"reset");}
+  if(m.type==="resetNetwork"){storyState.scene=null;storyState.records=null;storyState.nodeIds=null;storyState.featured.clear();neonState.groups.clear();neonState.interaction=null;neonState.interactions.clear();neonState.targetStrength=0;state.interactionSet=null;state.includeIsolated=false;animateSceneChange(()=>resetNetworkState(),"reset");}
   if(m.type==="focusTaxon"||m.type==="openTaxon"){
     const n=nodeMap.get(m.taxon)||DATA?.nodeById?.get(m.taxon);
     if(n){state.focus=n.id;if(m.type==="openTaxon")openNode(n);else draw()}
