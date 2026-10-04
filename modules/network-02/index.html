@@ -14,7 +14,7 @@
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif}.sidebar{position:fixed!important;left:0;top:0;bottom:0;z-index:100}.page{margin-left:72px}
 .hero{min-height:100vh;display:grid;grid-template-columns:minmax(390px,.72fr) minmax(620px,1.28fr);align-items:center;padding:46px 3.2vw 46px 4vw;gap:34px;background:radial-gradient(circle at 76% 30%,#dce7df 0,transparent 31%),linear-gradient(180deg,#fbfbf8,#f1f3ee)}
 .eyebrow{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:700;margin-bottom:24px}.hero h1{font:600 clamp(48px,5.2vw,78px)/.94 "Space Grotesk",sans-serif;letter-spacing:-.055em;margin:0;max-width:680px;color:#22342a}.hero p{font-size:14px;line-height:1.65;color:#526057;max-width:590px;margin:25px 0 20px}.hero-actions{display:flex;gap:9px;flex-wrap:wrap}.hero-actions button,.hero-actions a{border:1px solid var(--line);background:#fff;border-radius:999px;padding:11px 15px;font-size:9px;font-weight:600;color:#34473a;text-decoration:none;cursor:pointer}.hero-actions .primary{background:var(--green);color:#fff;border-color:var(--green)}
-.network-shell{height:min(82vh,760px);min-height:620px;position:relative;border-radius:38px;overflow:hidden;background:#fff;border:1px solid #d3dbd2;box-shadow:var(--shadow)}.network-shell iframe{width:100%;height:100%;border:0;display:block}.network-tags{position:absolute;left:18px;top:16px;z-index:4;display:flex;gap:7px;flex-wrap:wrap;pointer-events:none}.tag{background:rgba(255,255,252,.92);border:1px solid var(--line);border-radius:999px;padding:7px 9px;font-size:8px;color:#59645c;backdrop-filter:blur(10px)}.network-note{position:absolute;left:18px;right:18px;bottom:16px;z-index:4;background:rgba(255,255,252,.9);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:9px;line-height:1.45;color:#667168;backdrop-filter:blur(10px);pointer-events:none}
+.network-shell{height:min(82vh,760px);min-height:620px;position:relative;border-radius:38px;overflow:hidden;background:#fff;border:1px solid #d3dbd2;box-shadow:var(--shadow)}.network-shell iframe{width:100%;height:100%;border:0;display:block}.network-tags{position:absolute;left:18px;top:16px;z-index:4;display:flex;gap:7px;flex-wrap:wrap;pointer-events:none}.tag{background:rgba(255,255,252,.92);border:1px solid var(--line);border-radius:999px;padding:7px 9px;font-size:8px;color:#59645c;backdrop-filter:blur(10px)}.tag.status{transition:.3s}.tag.status.live{background:#13251a;color:#dfffe8;border-color:#315b3d;box-shadow:0 0 22px rgba(86,255,137,.25)}.network-note{position:absolute;left:18px;right:18px;bottom:16px;z-index:4;background:rgba(255,255,252,.9);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:9px;line-height:1.45;color:#667168;backdrop-filter:blur(10px);pointer-events:none}
 .story{display:grid;grid-template-columns:minmax(330px,.72fr) minmax(560px,1.28fr)}.copy{padding:10vh 4vw 16vh 5vw}.step{min-height:76vh;display:flex;align-items:center;opacity:.24;transform:translateY(28px) scale(.985);transition:opacity .5s ease,transform .5s ease}.step.active{opacity:1;transform:none}.step-card{max-width:520px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 12px 40px rgba(31,42,34,.04);transition:.45s}.step.active .step-card{box-shadow:0 18px 54px rgba(31,42,34,.09);border-color:#b9c6ba}.step-no{font:700 10px/1 "Space Grotesk",sans-serif;color:var(--green);letter-spacing:.12em;margin-bottom:20px}.step h2{font:600 clamp(28px,3.4vw,48px)/1 "Space Grotesk",sans-serif;letter-spacing:-.04em;margin:0 0 15px}.step p{font-size:13px;line-height:1.65;color:#5b655d;margin:0 0 18px}.chips{display:flex;gap:7px;flex-wrap:wrap}.chips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px;font-size:9px;color:#516057;cursor:pointer}.chips button.active{background:var(--green);color:#fff;border-color:var(--green)}
 .visual{position:sticky;top:0;height:100vh;background:linear-gradient(155deg,#f8f8f4,#edf0ea);border-left:1px solid var(--line);overflow:hidden}.visual .network-shell{position:absolute;inset:26px;height:auto;min-height:0;border-radius:28px;background:#030604;border-color:#16231a;box-shadow:0 28px 90px rgba(0,0,0,.24)}
 .gallery{padding:90px 5vw;background:#172019;color:#eef3ef}.gallery-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:34px}.gallery h2{font:600 clamp(34px,4.5vw,64px)/.98 "Space Grotesk",sans-serif;letter-spacing:-.04em;margin:0;max-width:900px}.gallery p{max-width:520px;color:#b8c4ba;font-size:12px;line-height:1.55;margin:0}.photo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.photo-card{position:relative;aspect-ratio:1/1.15;border-radius:18px;overflow:hidden;background:#314237;cursor:pointer;opacity:0;transform:translateY(26px) scale(.96);transition:opacity .55s ease,transform .55s ease,border-radius .35s ease}.gallery.in-view .photo-card{opacity:1;transform:none}.gallery.in-view .photo-card:nth-child(2){transition-delay:.05s}.gallery.in-view .photo-card:nth-child(3){transition-delay:.10s}.gallery.in-view .photo-card:nth-child(4){transition-delay:.15s}.gallery.in-view .photo-card:nth-child(5){transition-delay:.20s}.gallery.in-view .photo-card:nth-child(n+6){transition-delay:.25s}.photo-card img{width:100%;height:100%;object-fit:cover;transition:.35s}.photo-card:hover img{transform:scale(1.08)}.photo-card:hover{border-radius:28px}.photo-card:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.78))}.photo-card .meta{position:absolute;left:14px;right:14px;bottom:13px;z-index:2}.photo-card .meta b{display:block;font-size:12px;font-style:italic}.photo-card .meta span{font-size:8px;color:#c6d1c8}.gallery-note{margin-top:16px;font-size:9px;color:#9daaa0}
@@ -53,7 +53,7 @@
 
  <div class="visual">
    <div class="network-shell">
-     <div class="network-tags"><span class="tag" id="sceneTag">Territorio · Kennedy</span><span class="tag">neón = capa activa</span></div>
+     <div class="network-tags"><span class="tag" id="sceneTag">Territorio · Kennedy</span><span class="tag status" id="sceneStatus">esperando escena</span></div>
      <iframe id="storyFrame" src="red.html?embed=1&story=1" title="Red RIBB en scrollytelling" loading="lazy"></iframe>
      <div class="network-note" id="sceneNote">La red completa permanece visible como sistema de referencia.</div>
    </div>
@@ -96,11 +96,20 @@ function send(frame,msg){
 }
 window.addEventListener("message",e=>{
   const frame=frames.find(f=>f.contentWindow===e.source);
-  if(!frame||e.data?.type!=="networkReady")return;
-  ready.set(frame,true);
-  const q=queues.get(frame).splice(0);
-  send(frame,{type:"resetNetwork"});
-  q.forEach(m=>send(frame,m));
+  if(!frame)return;
+  if(e.data?.type==="networkReady"){
+    ready.set(frame,true);
+    const q=queues.get(frame).splice(0);
+    send(frame,{type:"resetNetwork"});
+    q.forEach(m=>send(frame,m));
+    return;
+  }
+  if(frame===storyFrame&&e.data?.type==="sceneApplied"){
+    const st=document.querySelector("#sceneStatus");
+    st.textContent=(e.data.nodes||0)+" nodos · "+(e.data.edges||0)+" vínculos";
+    st.classList.add("live");
+    setTimeout(()=>st.classList.remove("live"),700);
+  }
 });
 
 const scenes={
@@ -118,29 +127,44 @@ function applyScene(scene){
   current=scene;
   document.querySelector("#sceneTag").textContent=c.label;
   document.querySelector("#sceneNote").textContent=c.note;
-  send(storyFrame,{type:"setScene",groups:c.groups,interactions:c.interactions,neonGroups:c.neonGroups,neonInteractions:c.neonInteractions,includeIsolated:!!c.includeIsolated,quality:"ALL"});
+  document.querySelector("#sceneStatus").textContent="cambiando…";
+  send(storyFrame,{type:"storyScene",scene:scene,neonInteractions:c.neonInteractions||[]});
 }
 
 const observed=[...document.querySelectorAll(".step")];
-function updateScene(){
-  const y=innerHeight*.48;let best=null,d=Infinity;
-  for(const el of observed){const r=el.getBoundingClientRect(),m=r.top+r.height*.5,dd=Math.abs(m-y);if(dd<d){d=dd;best=el}}
-  if(!best)return;
-  observed.forEach(x=>x.classList.toggle("active",x===best));
-  const scene=best.dataset.scene;
+function activateStep(el){
+  if(!el)return;
+  observed.forEach(x=>x.classList.toggle("active",x===el));
+  const scene=el.dataset.scene;
   if(scene!==current)applyScene(scene);
 }
+const io=new IntersectionObserver(entries=>{
+  const visible=entries.filter(e=>e.isIntersecting&&e.intersectionRatio>.38).sort((a,b)=>b.intersectionRatio-a.intersectionRatio);
+  if(visible[0])activateStep(visible[0].target);
+},{threshold:[.38,.5,.65]});
+observed.forEach(el=>io.observe(el));
+
+function updateSceneFromScroll(){
+  const target=innerHeight*.5;
+  let best=null,bestDist=Infinity;
+  for(const el of observed){
+    const r=el.getBoundingClientRect();
+    const d=Math.abs((r.top+r.height*.5)-target);
+    if(d<bestDist){bestDist=d;best=el}
+  }
+  activateStep(best);
+}
 let ticking=false;
-addEventListener("scroll",()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;updateScene()})},{passive:true});
-addEventListener("resize",updateScene);
-updateScene();
+addEventListener("scroll",()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{ticking=false;updateSceneFromScroll()})},{passive:true});
+addEventListener("resize",updateSceneFromScroll);
+setTimeout(updateSceneFromScroll,300);
 
 document.querySelector("#start").onclick=()=>document.querySelector("#story").scrollIntoView({behavior:"smooth"});
 document.querySelectorAll("[data-interaction]").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("[data-interaction]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
   const v=b.dataset.interaction;
-  const base=scenes.ribb;
-  send(storyFrame,{type:"setScene",groups:base.groups,interactions:v==="ALL"?base.interactions:[v],neonGroups:v==="ALL"?base.neonGroups:[],neonInteractions:v==="ALL"?base.neonInteractions:[v],quality:"ALL"});
+  send(storyFrame,{type:"storyScene",scene:"ribb",neonInteractions:v==="ALL"?scenes.ribb.neonInteractions:[v]});
+  if(v!=="ALL")setTimeout(()=>send(storyFrame,{type:"setInteraction",value:v}),750);
 });
 document.querySelectorAll("[data-quality]").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("[data-quality]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
