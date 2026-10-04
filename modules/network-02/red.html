@@ -124,6 +124,7 @@ body.embed .analysis{display:none!important}
   <button class="eco-btn active" data-eco="birds"><i style="background:#668eb5"></i><span>Aves</span></button>
   <button class="eco-btn active" data-eco="vertebrates"><i style="background:#c46f67"></i><span>Otros vertebrados</span></button>
 </div>
+<p class="small" style="margin:6px 0 0">clic = aislar categoría · clic de nuevo = restaurar todas · Shift/Ctrl = combinar</p>
 <span class="label">Interacción</span>
 <select id="interaction"><option value="ALL">Todas</option></select>
 <span class="label">Origen</span>
@@ -259,7 +260,7 @@ const CLUSTER_ANCHORS={
   invert:{x:.18,y:-.50},birds:{x:-.55,y:-.10},vertebrates:{x:-.55,y:.44}
 };
 
-let DATA=null,visible=[],nodes=[],nodeMap=new Map(),edgeScreen=[];
+let DATA=null,visible=[],nodes=[],nodeMap=new Map(),edgeScreen=[],visibleDegree=new Map(),networkFit=1;
 let canvas=document.querySelector("#swarm"),ctx=canvas.getContext("2d"),tooltip=document.querySelector("#tooltip");
 let W=0,H=0,dpr=1,drag=false,dragMoved=false,lastX=0,lastY=0,hoverNode=null;
 let raf=null,lastFrame=performance.now();
@@ -304,7 +305,7 @@ function rotatePoint(p){
 function project(n){
   const p=rotatePoint(n.base);
   const depth=2.8-p.z;
-  const scale=(state.zoom+sceneAnim.zoomBoost)*(Math.min(W,H)*0.38)/depth;
+  const scale=(state.zoom+sceneAnim.zoomBoost)*networkFit*(Math.min(W,H)*0.38)/depth;
   const cx=W*0.52,cy=H*0.53;
   const morph=Math.max(.02,sceneAnim.morph);
   const burst=sceneAnim.burst;
@@ -372,35 +373,88 @@ function match(r){
 }
 
 function rebuild(){
+  // Base records after non-ecological filters. This lets us know which taxa
+  // actually participate in the currently selected evidence set.
+  let baseRecords;
   if(storyState.scene&&storyState.records){
-    visible=[...storyState.records];
+    baseRecords=[...storyState.records];
   }else{
-    visible=DATA.records.filter(match);
+    baseRecords=DATA.records.filter(r=>{
+      if(analysisState.removedNodes.has(r.s)||analysisState.removedNodes.has(r.t))return false;
+      if(analysisState.removedGroups.has(ecoGroup(r.s))||analysisState.removedGroups.has(ecoGroup(r.t)))return false;
+      if(analysisState.interactionSet.size&&!analysisState.interactionSet.has(r.title))return false;
+      if(state.interactionSet&&state.interactionSet.size&&!state.interactionSet.has(r.title))return false;
+      if(!state.interactionSet&&state.interaction!=="ALL"&&r.title!==state.interaction)return false;
+      if(state.origin!=="ALL"){
+        const ns=DATA.nodeById.get(r.s),nt=DATA.nodeById.get(r.t);
+        if((ns?.origin||"")!==state.origin&&(nt?.origin||"")!==state.origin)return false;
+      }
+      if(state.quality!=="ALL"&&r.q!==state.quality)return false;
+      if(state.district==="SI"&&r.district!=="SI")return false;
+      if(state.search){
+        const q=state.search.toLowerCase();
+        if(!r.s.toLowerCase().includes(q)&&!r.t.toLowerCase().includes(q))return false;
+      }
+      return true;
+    });
   }
+
+  // Degree before hiding categories: a taxon stays eligible when it has real
+  // evidence in the current filter, even if its counterpart belongs to a
+  // category that is currently hidden.
+  const participationDegree=new Map();
+  baseRecords.forEach(r=>{
+    participationDegree.set(r.s,(participationDegree.get(r.s)||0)+1);
+    participationDegree.set(r.t,(participationDegree.get(r.t)||0)+1);
+  });
+
+  // Visible edges require both endpoints to belong to active categories.
+  visible=baseRecords.filter(r=>activeEco.has(ecoGroup(r.s))&&activeEco.has(ecoGroup(r.t)));
 
   const ids=new Set();
-  visible.forEach(r=>{ids.add(r.s);ids.add(r.t)});
-
   if(storyState.scene&&storyState.nodeIds){
-    storyState.nodeIds.forEach(id=>ids.add(id));
-  }else if(state.includeIsolated){
-    [...DATA.nodes]
-      .filter(n=>activeEco.has(ecoGroup(n.id)))
-      .sort((a,b)=>(b.n||0)-(a.n||0))
-      .slice(0,220)
-      .forEach(n=>ids.add(n.id));
+    storyState.nodeIds.forEach(id=>{
+      if(activeEco.has(ecoGroup(id))&&(participationDegree.get(id)||0)>0)ids.add(id);
+    });
+  }else{
+    // Node visibility follows the selected ecological categories, but only
+    // includes taxa that participate in at least one record under the current
+    // evidence filters.
+    for(const [id,deg] of participationDegree){
+      if(deg>0&&activeEco.has(ecoGroup(id)))ids.add(id);
+    }
   }
 
-  if(!ids.size){
-    [...DATA.nodes].sort((a,b)=>(b.n||0)-(a.n||0)).slice(0,120).forEach(n=>ids.add(n.id));
+  // If there are visible within-category edges, compute degree from the
+  // filtered subnetwork. Otherwise use participation degree so an isolated
+  // category (e.g. fungi connected mainly to plants) still scales meaningfully.
+  visibleDegree=new Map();
+  visible.forEach(r=>{
+    visibleDegree.set(r.s,(visibleDegree.get(r.s)||0)+1);
+    visibleDegree.set(r.t,(visibleDegree.get(r.t)||0)+1);
+  });
+  for(const id of ids){
+    if(!visibleDegree.has(id))visibleDegree.set(id,participationDegree.get(id)||1);
   }
 
+  // Never inject unrelated fallback taxa. If a filter produces zero evidence,
+  // the canvas honestly becomes empty and the UI reports 0 nodes.
   nodes=[...ids].map(id=>{
     const src=DATA.nodeById.get(id)||{id,n:1,origin:""};
     return {...src,id,base:unitSphere(id),screen:null};
   });
   nodeMap=new Map(nodes.map(n=>[n.id,n]));
-  document.querySelector("#nodes").textContent=nodes.length.toLocaleString("es-CO");
+
+  // Re-fit the sphere to the amount of information that remains.
+  // Small subnetworks expand; large swarms stay compact.
+  const count=nodes.length;
+  if(count<=8)networkFit=1.65;
+  else if(count<=25)networkFit=1.42;
+  else if(count<=80)networkFit=1.18;
+  else if(count<=220)networkFit=1.02;
+  else networkFit=.88;
+
+  document.querySelector("#nodes").textContent=count.toLocaleString("es-CO");
   document.querySelector("#edges").textContent=visible.length.toLocaleString("es-CO");
   queueImages();
   if(analysisState.open)setTimeout(updateAnalysis,0);
@@ -547,7 +601,10 @@ function draw(){
     const nodeAlpha=dim?.08:Math.max(.35,.72+(p.z+1)*.14);
     ctx.globalAlpha=nodeAlpha*sceneAnim.alpha;
 
-    const baseRadius=4+Math.min(12,Math.sqrt(n.n||1)*.42);
+    const deg=visibleDegree.get(n.id)||1;
+    const maxDeg=Math.max(1,...visibleDegree.values());
+    const degreeNorm=Math.sqrt(deg/maxDeg);
+    const baseRadius=4.5+degreeNorm*15;
     const radius=Math.max(3,baseRadius*p.scale)*(storyState.featured.has(n.id)?1.32:1);
     n.drawRadius=radius;
 
@@ -891,17 +948,38 @@ document.querySelector("#labels").onclick=e=>{
 };
 
 document.querySelectorAll("#ecoGroups .eco-btn").forEach(btn=>{
-  btn.addEventListener("click",()=>{
+  btn.addEventListener("click",e=>{
     const k=btn.dataset.eco;
-    if(activeEco.has(k)){
-      if(activeEco.size===1)return;
-      activeEco.delete(k);btn.classList.remove("active");
+    const all=Object.keys(ECO_LABELS);
+    const additive=e.shiftKey||e.ctrlKey||e.metaKey;
+
+    if(additive){
+      // Shift/Ctrl/Cmd = combine categories.
+      if(activeEco.has(k)){
+        if(activeEco.size>1)activeEco.delete(k);
+      }else activeEco.add(k);
     }else{
-      activeEco.add(k);btn.classList.add("active");
+      // Normal click = isolate one category. Clicking that isolated category
+      // again restores the complete ecological network.
+      if(activeEco.size===1&&activeEco.has(k)){
+        activeEco.clear();all.forEach(x=>activeEco.add(x));
+      }else{
+        activeEco.clear();activeEco.add(k);
+      }
     }
+
+    syncEcoButtons();
+    storyState.scene=null;storyState.records=null;storyState.nodeIds=null;storyState.featured.clear();
     state.focus=null;
     closeSubnetwork();
-    rebuild();
+    sceneAnim.targetAlpha=.08;
+    setTimeout(()=>{
+      rebuild();
+      sceneAnim.alpha=.12;
+      sceneAnim.targetAlpha=1;
+      sceneAnim.targetZoomBoost=.12;
+      setTimeout(()=>sceneAnim.targetZoomBoost=0,420);
+    },180);
   });
 });
 
