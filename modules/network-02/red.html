@@ -85,6 +85,12 @@ body.embed .analysis{display:none!important}
 .arch-key{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px}
 .arch-key span{display:flex;align-items:center;gap:6px;font-size:7.5px;color:#687168}
 .arch-key i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+.sub-node .pic{position:relative;overflow:hidden;background:#172019}
+.sub-node .pic img{width:100%;height:100%;object-fit:cover;display:block}
+.sub-node .pic.photo-loading:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,#172019 20%,#314437 45%,#172019 70%);background-size:200% 100%;animation:photoShimmer 1s linear infinite}
+.sub-node .pic.representative-photo:after{content:"REP.";position:absolute;right:2px;bottom:2px;background:rgba(0,0,0,.72);color:#fff;font-size:5px;letter-spacing:.08em;padding:2px 3px;border-radius:4px}
+@keyframes photoShimmer{to{background-position:-200% 0}}
 </style>
 </head>
 <body><div class="app">
@@ -877,11 +883,57 @@ function deepSubgraph(rootId,maxDepth=4,maxNodes=34){
   return {selected,depth,parentEdge,edges,adjacency};
 }
 
+const REPRESENTATIVE_TAXA={
+  birds:["Aves","Passeriformes"],
+  plants:["Plantae","Magnoliopsida"],
+  invert:["Insecta","Arthropoda"],
+  fungi:["Fungi","Agaricomycetes"],
+  micro:["Bacteria"],
+  vertebrates:["Mammalia","Vertebrata"]
+};
+
+async function resolveGuaranteedPhoto(name){
+  const direct=await resolveImage(name);
+  if(direct)return {url:direct,exact:true,label:"foto del taxón"};
+
+  // Normalize common open nomenclature labels before falling back.
+  const clean=(name||"").replace(/\b(sp\.|spp\.|cf\.|aff\.)\b/gi,"").replace(/\s+/g," ").trim();
+  if(clean&&clean!==name){
+    const cleaned=await resolveImage(clean);
+    if(cleaned)return {url:cleaned,exact:false,label:"imagen representativa de "+clean};
+  }
+
+  const eco=SPECIAL_ECO_GROUP[name]||ecoGroup(name);
+  for(const taxon of (REPRESENTATIVE_TAXA[eco]||["Biota"])){
+    const url=await resolveImage(taxon);
+    if(url)return {url,exact:false,label:"imagen representativa · "+ECO_LABELS[eco]};
+  }
+
+  // Last visual fallback: generated SVG thumbnail, still an image rather than initials.
+  const label=(ECO_LABELS[eco]||"Taxón").replace(/&/g,"y");
+  const icon=eco==="birds"?"AVE":eco==="plants"?"FLORA":eco==="fungi"?"HONGO":eco==="invert"?"INVERT":eco==="micro"?"MICRO":"FAUNA";
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><rect width="240" height="240" fill="%23131c16"/><circle cx="120" cy="105" r="64" fill="%232a3b2e"/><text x="120" y="112" text-anchor="middle" fill="white" font-family="Arial" font-size="25" font-weight="700">'+icon+'</text><text x="120" y="194" text-anchor="middle" fill="%23b8c7bb" font-family="Arial" font-size="14">'+label+'</text></svg>';
+  return {url:"data:image/svg+xml;charset=utf-8,"+svg,exact:false,label:"representación de categoría"};
+}
+
 async function ensureNodePhoto(name,el){
+  if(!el)return;
   const cached=imageCache.get(name);
-  if(cached?.status==="loaded"&&cached.url){el.innerHTML='<img src="'+cached.url+'" alt="'+name+'">';return;}
-  const url=await resolveImage(name);
-  if(url){let entry=imageCache.get(name);if(!entry){entry={status:"loading",img:null,url:""};imageCache.set(name,entry)}entry.url=url;el.innerHTML='<img src="'+url+'" alt="'+name+'">';}
+  if(cached?.url){
+    el.innerHTML='<img src="'+cached.url+'" alt="'+name+'">';
+    if(cached.photoLabel)el.title=cached.photoLabel;
+    return;
+  }
+
+  el.classList.add("photo-loading");
+  const photo=await resolveGuaranteedPhoto(name);
+  let entry=imageCache.get(name);
+  if(!entry){entry={status:"loading",img:null,url:""};imageCache.set(name,entry)}
+  entry.url=photo.url;entry.photoExact=photo.exact;entry.photoLabel=photo.label;
+  el.innerHTML='<img src="'+photo.url+'" alt="'+name+'">';
+  el.title=photo.label;
+  if(!photo.exact)el.classList.add("representative-photo");
+  el.classList.remove("photo-loading");
 }
 
 function closeSubnetwork(){
@@ -990,7 +1042,7 @@ function openSubnetwork(n){
     const statuses=direct.map(r=>r.status).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
     const coord=coords.length?coords.join(" / "):"";
     const statusText=statuses.length?statuses.join(" · "):(rel?.district==="NO"?"No reportada en Distrito":"");
-    el.innerHTML='<div class="pic" style="border-color:'+(ECO_COLORS[eco]||"#fff")+';width:'+size+'px;height:'+size+'px">'+id.charAt(0).toUpperCase()+'</div>'+
+    el.innerHTML='<div class="pic photo-loading" style="border-color:'+(ECO_COLORS[eco]||"#fff")+';width:'+size+'px;height:'+size+'px"></div>'+
       '<div class="nm">'+id+'</div>'+
       '<div class="rel">'+relation+(coord?'<br>'+coord:'')+(statusText?'<br>'+statusText:'')+'</div>';
     el.addEventListener("click",()=>{if(!isRoot){openSubnetwork(nd);openNode(nd,false)}});
