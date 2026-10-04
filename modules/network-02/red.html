@@ -89,7 +89,7 @@ body.embed .analysis{display:none!important}
 .sub-node .pic{position:relative;overflow:hidden;background:#172019}
 .sub-node .pic img{width:100%;height:100%;object-fit:cover;display:block}
 .sub-node .pic.photo-loading:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,#172019 20%,#314437 45%,#172019 70%);background-size:200% 100%;animation:photoShimmer 1s linear infinite}
-.sub-node .pic.representative-photo:after{content:"REP.";position:absolute;right:2px;bottom:2px;background:rgba(0,0,0,.72);color:#fff;font-size:5px;letter-spacing:.08em;padding:2px 3px;border-radius:4px}
+.sub-node .pic.representative-photo:after{content:"";position:absolute;right:2px;bottom:2px;background:rgba(0,0,0,.72);color:#fff;font-size:5px;letter-spacing:.08em;padding:2px 3px;border-radius:4px}
 @keyframes photoShimmer{to{background-position:-200% 0}}
 </style>
 </head>
@@ -560,13 +560,15 @@ function pumpImages(){
         loadedCount++;updateImageProgress()
       };
       img.onerror=()=>{
-        // Even if a remote representative fails, force the local SVG image fallback.
         const eco=SPECIAL_ECO_GROUP[name]||ecoGroup(name);
-        const label=(ECO_LABELS[eco]||"Taxón").replace(/&/g,"y");
-        const icon=eco==="birds"?"AVE":eco==="plants"?"FLORA":eco==="fungi"?"HONGO":eco==="invert"?"INVERT":eco==="micro"?"MICRO":"FAUNA";
-        const svg='<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><rect width="240" height="240" fill="%23131c16"/><circle cx="120" cy="105" r="64" fill="%232a3b2e"/><text x="120" y="112" text-anchor="middle" fill="white" font-family="Arial" font-size="25" font-weight="700">'+icon+'</text><text x="120" y="194" text-anchor="middle" fill="%23b8c7bb" font-family="Arial" font-size="14">'+label+'</text></svg>';
-        img.crossOrigin=null;img.src="data:image/svg+xml;charset=utf-8,"+svg;
-        entry.url=img.src;entry.photoExact=false;entry.photoLabel="representación de categoría";
+        const fallback=CATEGORY_PHOTOS[eco]||CATEGORY_PHOTOS.plants;
+        if(img.src!==fallback){
+          img.crossOrigin="anonymous";
+          img.src=fallback;
+          entry.url=fallback;entry.photoExact=false;entry.photoLabel="fotografía representativa · "+(ECO_LABELS[eco]||"grupo ecológico");
+        }else{
+          entry.status="failed";failedCount++;updateImageProgress();
+        }
       };
       img.src=url;
     }).finally(()=>{activeLoads--;updateImageProgress();pumpImages()});
@@ -901,11 +903,19 @@ const REPRESENTATIVE_TAXA={
   vertebrates:["Mammalia","Vertebrata"]
 };
 
+const CATEGORY_PHOTOS={
+  birds:"https://images.unsplash.com/photo-1444464666168-49d633b86797?auto=format&fit=crop&w=600&q=80",
+  plants:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=600&q=80",
+  invert:"https://images.unsplash.com/photo-1473445361085-b9a07f55608b?auto=format&fit=crop&w=600&q=80",
+  fungi:"https://images.unsplash.com/photo-1504545102780-26774c1bb073?auto=format&fit=crop&w=600&q=80",
+  micro:"https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=600&q=80",
+  vertebrates:"https://images.unsplash.com/photo-1474511320723-9a56873867b5?auto=format&fit=crop&w=600&q=80"
+};
+
 async function resolveGuaranteedPhoto(name){
   const direct=await resolveImage(name);
   if(direct)return {url:direct,exact:true,label:"foto del taxón"};
 
-  // Normalize common open nomenclature labels before falling back.
   const clean=(name||"").replace(/\b(sp\.|spp\.|cf\.|aff\.)\b/gi,"").replace(/\s+/g," ").trim();
   if(clean&&clean!==name){
     const cleaned=await resolveImage(clean);
@@ -918,11 +928,11 @@ async function resolveGuaranteedPhoto(name){
     if(url)return {url,exact:false,label:"imagen representativa · "+ECO_LABELS[eco]};
   }
 
-  // Last visual fallback: generated SVG thumbnail, still an image rather than initials.
-  const label=(ECO_LABELS[eco]||"Taxón").replace(/&/g,"y");
-  const icon=eco==="birds"?"AVE":eco==="plants"?"FLORA":eco==="fungi"?"HONGO":eco==="invert"?"INVERT":eco==="micro"?"MICRO":"FAUNA";
-  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><rect width="240" height="240" fill="%23131c16"/><circle cx="120" cy="105" r="64" fill="%232a3b2e"/><text x="120" y="112" text-anchor="middle" fill="white" font-family="Arial" font-size="25" font-weight="700">'+icon+'</text><text x="120" y="194" text-anchor="middle" fill="%23b8c7bb" font-family="Arial" font-size="14">'+label+'</text></svg>';
-  return {url:"data:image/svg+xml;charset=utf-8,"+svg,exact:false,label:"representación de categoría"};
+  return {
+    url:CATEGORY_PHOTOS[eco]||CATEGORY_PHOTOS.plants,
+    exact:false,
+    label:"fotografía representativa · "+(ECO_LABELS[eco]||"grupo ecológico")
+  };
 }
 
 async function ensureNodePhoto(name,el){
