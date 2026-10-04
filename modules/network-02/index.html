@@ -2,28 +2,131 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Interacciones bióticas · RIBB</title>
+<title>Interacciones bióticas · Red RIBB</title>
 <link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/sidebar.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f5f5f3;color:#242424;font-family:Arial,sans-serif;overflow:hidden}.app{display:flex;height:100vh}.main{position:relative;flex:1;overflow:hidden}.head{position:absolute;z-index:5;top:22px;left:50%;transform:translateX(-50%);text-align:center;width:min(760px,75vw)}h1{font-size:20px;margin:0 0 5px;font-weight:500}.head p{font-size:12px;color:#777;margin:0}.stage{position:absolute;inset:0}.edges{position:absolute;inset:0;width:100%;height:100%}.edge{stroke:#c6b69e;stroke-width:1;opacity:.38}.node{position:absolute;width:82px;transform:translate(-50%,-50%);text-align:center;z-index:3;cursor:pointer}.photo{width:58px;height:58px;border-radius:50%;margin:auto;background:#e5e0d8 center/cover;border:2px solid white;box-shadow:0 2px 12px #0002;display:grid;place-items:center;color:#9b8a70;font-size:18px}.node b{display:block;font-size:9.5px;line-height:1.15;margin-top:5px;font-style:italic;font-weight:500}.node small{font-size:8px;color:#888}.panel{position:absolute;right:18px;top:18px;width:290px;z-index:8;background:#fffffff2;border:1px solid #e7e1d9;border-radius:16px;padding:17px;box-shadow:0 12px 35px #0001}.panel h2{font-size:14px;margin:0 0 8px;font-style:italic}.panel p{font-size:11px;line-height:1.5;margin:5px 0;color:#666}.chip{display:inline-block;font-size:9px;padding:4px 7px;border-radius:10px;background:#eee7dd;margin:2px}.legend{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:6;font-size:10px;color:#777;background:#ffffffcc;padding:7px 12px;border-radius:12px}.source{font-size:9px!important}.sidebar{z-index:20}
+:root{--bg:#f3f4f1;--ink:#20211f;--muted:#73766f;--panel:#fffffff2;--line:#dedfd9;--accent:#5e765a}
+*{box-sizing:border-box}html,body{margin:0;height:100%}body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink);overflow:hidden}
+.app{display:flex;height:100vh}.main{flex:1;position:relative;min-width:0}
+.top{position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:8;text-align:center;pointer-events:none}
+.top h1{margin:0;font-size:18px;font-weight:600}.top p{margin:4px 0 0;font-size:11px;color:var(--muted)}
+.toolbar{position:absolute;top:18px;left:18px;width:260px;z-index:10;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 14px 40px #0000000f;backdrop-filter:blur(14px);max-height:calc(100vh - 36px);overflow:auto}
+.toolbar h3{margin:0 0 8px;font-size:12px}.field{margin:12px 0}.field label{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#858880;margin-bottom:6px}
+.search{width:100%;border:1px solid var(--line);background:white;border-radius:10px;padding:9px 10px;font-size:11px;outline:none}
+.chips{display:flex;gap:5px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 8px;font-size:9px;cursor:pointer;color:#565a54}.chip.active{background:#2f352e;color:#fff;border-color:#2f352e}
+.reset{width:100%;border:0;background:#687a64;color:white;border-radius:10px;padding:8px;font-size:10px;cursor:pointer;margin-top:8px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}.stat{background:#f7f7f4;border-radius:10px;padding:8px}.stat b{display:block;font-size:16px}.stat span{font-size:8px;color:var(--muted)}
+.stage{position:absolute;inset:0}.edges{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.edge{fill:none;stroke:#b8bcb5;stroke-width:1.5;opacity:.45;cursor:pointer;pointer-events:stroke}.edge.dim{opacity:.05}.edge.hot{opacity:1;stroke-width:3}
+.node{position:absolute;width:92px;transform:translate(-50%,-50%);text-align:center;z-index:4;cursor:pointer;transition:opacity .2s,transform .2s}.node.dim{opacity:.12}.node.hidden{display:none}.node.hot{transform:translate(-50%,-50%) scale(1.08)}
+.photo{width:58px;height:58px;border-radius:50%;margin:auto;background:#e1e3dc center/cover;border:3px solid white;box-shadow:0 4px 16px #0002;display:grid;place-items:center;color:#8b9585}.node b{display:block;font-size:9.5px;line-height:1.15;font-style:italic;font-weight:600;margin-top:5px}.node small{font-size:8px;color:#7c8077}
+.info{position:absolute;right:18px;top:18px;bottom:18px;width:330px;z-index:10;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 14px 40px #00000012;overflow:auto;backdrop-filter:blur(14px)}
+.info h2{font-size:15px;margin:0 0 5px;font-style:italic}.info h3{font-size:11px;margin:16px 0 7px;text-transform:uppercase;letter-spacing:.06em;color:#767a72}.info p{font-size:11px;line-height:1.55;color:#565a54}.meta{display:flex;gap:5px;flex-wrap:wrap}.badge{font-size:9px;border-radius:999px;padding:5px 7px;background:#f0f1ec}.photoLarge{width:100%;height:150px;background:#e9ebe5 center/cover;border-radius:14px;margin:10px 0}
+.rel{border-top:1px solid var(--line);padding:10px 0;cursor:pointer}.rel b{font-size:10px}.rel span{font-size:9px;color:#777;display:block;margin-top:3px}
+.legend{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:8;background:#ffffffdc;border:1px solid var(--line);border-radius:999px;padding:7px 10px;display:flex;gap:10px;align-items:center;font-size:8px}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+.help{position:absolute;left:50%;bottom:54px;transform:translateX(-50%);font-size:9px;color:#777;z-index:7}
+.sidebar{z-index:30}
 </style></head>
 <body><div class="app">
-<aside class="sidebar"><a class="brand-icon" href="../../index.html"><i class="fa-solid fa-diagram-project"></i></a><nav class="icon-nav">
+<aside class="sidebar">
+<a class="brand-icon" href="../../index.html"><i class="fa-solid fa-diagram-project"></i></a>
+<nav class="icon-nav">
 <a href="../../index.html" class="icon-nav-item"><i class="fa-solid fa-house"></i></a>
 <a href="../network-01/index.html" class="icon-nav-item"><i class="fa-solid fa-city"></i></a>
 <a href="index.html" class="icon-nav-item active"><i class="fa-solid fa-leaf"></i></a>
 </nav></aside>
-<main class="main"><div class="head"><h1>Red de interacciones bióticas</h1><p>Primera visualización · 25 especies con alta conectividad en la base RIBB 2024</p></div>
+<main class="main">
+<div class="top"><h1>Red de interacciones bióticas</h1><p>Exploración basada en RIBB · Jardín Botánico de Bogotá · corte diciembre 2024</p></div>
+
+<aside class="toolbar">
+<h3>Explorar la red</h3>
+<input id="search" class="search" placeholder="Buscar especie…">
+<div class="field"><label>Reino</label><div class="chips" id="kingdomFilters">
+<button class="chip active" data-v="Todos">Todos</button><button class="chip" data-v="Animal">Animal</button><button class="chip" data-v="Planta">Planta</button><button class="chip" data-v="Hongo">Hongo</button>
+</div></div>
+<div class="field"><label>Interacción</label><div class="chips" id="interactionFilters">
+<button class="chip active" data-v="Todos">Todas</button><button class="chip" data-v="VISITA FLORAL">Visita floral</button><button class="chip" data-v="HERBIVORÍA">Herbivoría</button><button class="chip" data-v="DEPREDACIÓN">Depredación</button><button class="chip" data-v="DISPERSIÓN">Dispersión</button><button class="chip" data-v="OVIPOSICIÓN">Oviposición</button>
+</div></div>
+<div class="field"><label>Origen</label><div class="chips" id="originFilters"><button class="chip active" data-v="Todos">Todos</button><button class="chip" data-v="Nativa">Nativa</button><button class="chip" data-v="No nativa">No nativa</button></div></div>
+<div class="field"><label>Calidad de evidencia</label><div class="chips" id="qualityFilters"><button class="chip active" data-v="Todos">Todas</button><button class="chip" data-v="Alta">Alta</button><button class="chip" data-v="Media">Media</button></div></div>
+<button id="reset" class="reset">Restablecer red</button>
+<div class="stats"><div class="stat"><b id="taxonCount">0</b><span>taxones visibles</span></div><div class="stat"><b id="edgeCount">0</b><span>interacciones visibles</span></div></div>
+</aside>
+
 <div class="stage" id="stage"><svg class="edges" id="svg"></svg></div>
-<aside class="panel" id="panel"><h2>Selecciona una especie</h2><p>Cada nodo corresponde a un taxón a nivel de especie o inferior. Las líneas representan interacciones documentadas en RIBB.</p><p class="source">Fuente: Jardín Botánico de Bogotá · Red de Interacciones Bióticas, corte 30-12-2024.</p></aside>
-<div class="legend">Consumo · polinización · dispersión · oviposición · otras interacciones</div></main></div>
+<aside class="info" id="info"><h2>Panel de información</h2><p>Haz clic en una especie para ver sus relaciones. Haz clic o doble clic sobre una línea para saber <b>por qué están conectadas</b>, qué tipo de interacción es y cuál es la fuente que la respalda.</p><h3>Convenciones</h3><p>El color de cada línea indica la clase de interacción. El grosor aumenta cuando hay más de un registro agregado para la misma relación.</p></aside>
+<div class="help">Clic en nodo = especie · clic/doble clic en línea = evidencia de la relación</div>
+<div class="legend">
+<span><i class="dot" style="background:#6c8f62"></i>Visita floral</span><span><i class="dot" style="background:#b98555"></i>Herbivoría</span><span><i class="dot" style="background:#ad5d5d"></i>Depredación</span><span><i class="dot" style="background:#5c83a8"></i>Dispersión</span><span><i class="dot" style="background:#9774a8"></i>Otras</span>
+</div>
+</main></div>
+
 <script type="module">
 import {resolveSpeciesImage} from './image-resolver.js';
-const D={"nodes":[{"id":"Apis mellifera","records":551,"origin":"No nativa: 551"},{"id":"Myzus persicae","records":347,"origin":"No nativa: 347"},{"id":"Macrosiphum euphorbiae","records":213,"origin":"No nativa: 213"},{"id":"Bombus pauloensis","records":154,"origin":"Nativa: 154"},{"id":"Neomyzus circumflexus","records":129,"origin":"No nativa: 129"},{"id":"Tapirus pinchaque","records":128,"origin":"Nativa: 128"},{"id":"Bombus hortulanus","records":129,"origin":"Nativa: 129"},{"id":"Turdus fuscater gigas","records":112,"origin":"Nativa: 112"},{"id":"Peridroma saucia","records":104,"origin":"No nativa: 104"},{"id":"Thygater aethiops","records":112,"origin":"Nativa: 112"},{"id":"Eristalis tenax","records":103,"origin":"No nativa: 103"},{"id":"Colibri coruscans","records":128,"origin":"Nativa: 128"},{"id":"Agrotis ipsilon","records":84,"origin":"Nativa: 84"},{"id":"Bombus rubicundus","records":79,"origin":"Nativa: 79"},{"id":"Diglossa humeralis","records":85,"origin":"Nativa: 85"},{"id":"Tremarctos ornatus","records":69,"origin":"Nativa: 69"},{"id":"Vanessa cardui","records":64,"origin":"Nativa: 64"},{"id":"Quercus humboldtii","records":76,"origin":"Nativa: 76"},{"id":"Diglossa cyanea","records":69,"origin":"Nativa: 69"},{"id":"Taraxacum officinale","records":59,"origin":"No nativa: 59"},{"id":"Macleania rupestris","records":56,"origin":"Nativa: 56"},{"id":"Prunus serotina","records":53,"origin":"No nativa: 53"},{"id":"Ficus americana subsp. andicola","records":59,"origin":"Nativa: 59"},{"id":"Miconia theizans","records":50,"origin":"Nativa: 50"},{"id":"Espeletia grandiflora","records":60,"origin":"Nativa: 60"}],"edges":[["Apis mellifera","Taraxacum officinale","Consume"],["Apis mellifera","Macleania rupestris","Consume"],["Apis mellifera","Quercus humboldtii","Consume"],["Apis mellifera","Miconia theizans","Consume"],["Apis mellifera","Prunus serotina","Poliniza a"],["Bombus hortulanus","Taraxacum officinale","Consume"],["Bombus pauloensis","Taraxacum officinale","Consume"],["Bombus rubicundus","Espeletia grandiflora","Poliniza a"],["Thygater aethiops","Taraxacum officinale","Consume"],["Tremarctos ornatus","Apis mellifera","Consume"],["Tremarctos ornatus","Tapirus pinchaque","Consume"],["Tremarctos ornatus","Macleania rupestris","Consume"],["Tremarctos ornatus","Quercus humboldtii","Consume"],["Tapirus pinchaque","Taraxacum officinale","Dispersa"],["Tapirus pinchaque","Macleania rupestris","Consume"],["Tapirus pinchaque","Prunus serotina","Dispersa"],["Colibri coruscans","Macleania rupestris","Consume"],["Diglossa cyanea","Macleania rupestris","Dispersa"],["Diglossa cyanea","Miconia theizans","Dispersa"],["Diglossa humeralis","Macleania rupestris","Poliniza a"],["Turdus fuscater gigas","Macleania rupestris","Dispersa"],["Turdus fuscater gigas","Prunus serotina","Consume"],["Eristalis tenax","Taraxacum officinale","Interactúa con"],["Macrosiphum euphorbiae","Taraxacum officinale","Consume"],["Myzus persicae","Taraxacum officinale","Consume"],["Neomyzus circumflexus","Taraxacum officinale","Consume"],["Myzus persicae","Prunus serotina","Consume"],["Colibri coruscans","Ficus americana subsp. andicola","Oviposita en"],["Colibri coruscans","Prunus serotina","Consume"]]};
-const stage=document.querySelector('#stage'),svg=document.querySelector('#svg'),panel=document.querySelector('#panel'),pos=new Map(),els=new Map();
-function layout(){const w=stage.clientWidth,h=stage.clientHeight,cx=w*.47,cy=h*.53;D.nodes.forEach((n,i)=>{const a=i/D.nodes.length*Math.PI*2,r=(i%3===0?0.34:i%3===1?0.26:0.18)*Math.min(w,h);pos.set(n.id,{x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r});});}
-function draw(){layout();svg.innerHTML='';D.edges.forEach(e=>{const a=pos.get(e[0]),b=pos.get(e[1]);if(!a||!b)return;const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);l.setAttribute('x2',b.x);l.setAttribute('y2',b.y);l.classList.add('edge');l.dataset.type=e[2];svg.appendChild(l)});D.nodes.forEach(n=>{let el=els.get(n.id);if(!el){el=document.createElement('div');el.className='node';el.innerHTML='<div class="photo"><i class="fa-solid fa-leaf"></i></div><b></b><small></small>';el.querySelector('b').textContent=n.id;el.querySelector('small').textContent=n.records+' registros';el.onclick=()=>show(n);stage.appendChild(el);els.set(n.id,el);resolveSpeciesImage({taxon:n.id}).then(im=>{if(im){el.querySelector('.photo').style.backgroundImage=`url("${im.url}")`;el.querySelector('.photo').innerHTML='';el.dataset.imageSource=im.source;el.dataset.imageUrl=im.sourceUrl||'';}})}const p=pos.get(n.id);el.style.left=p.x+'px';el.style.top=p.y+'px';});}
-function show(n){const related=D.edges.filter(e=>e[0]===n.id||e[1]===n.id);const types=[...new Set(related.map(e=>e[2]))];const el=els.get(n.id);panel.innerHTML=`<h2>${n.id}</h2><p><b>${n.records}</b> registros en RIBB · ${n.origin}</p><p>${types.map(t=>'<span class="chip">'+t+'</span>').join('')}</p><p>Conectada con <b>${related.length}</b> relaciones en esta vista.</p><p class="source">Imagen: ${el.dataset.imageSource||'resolviendo…'} · Fuente de interacciones: RIBB, Jardín Botánico de Bogotá.</p>`;}
-draw();addEventListener('resize',draw);
-</script></body></html>
+
+const DATA={"nodes":[{"id":"Apis mellifera","records":528,"origin":"No nativa: 528"},{"id":"Myzus persicae","records":337,"origin":"No nativa: 337"},{"id":"Macrosiphum euphorbiae","records":213,"origin":"No nativa: 213"},{"id":"Bombus pauloensis","records":143,"origin":"Nativa: 143"},{"id":"Neomyzus circumflexus","records":129,"origin":"No nativa: 129"},{"id":"Tapirus pinchaque","records":128,"origin":"Nativa: 128"},{"id":"Bombus hortulanus","records":125,"origin":"Nativa: 125"},{"id":"Thygater aethiops","records":104,"origin":"Nativa: 104"},{"id":"Eristalis tenax","records":100,"origin":"No nativa: 100"},{"id":"Bombus rubicundus","records":76,"origin":"Nativa: 76"},{"id":"Tremarctos ornatus","records":69,"origin":"Nativa: 69"},{"id":"Quercus humboldtii","records":61,"origin":"Nativa: 61"},{"id":"Taraxacum officinale","records":54,"origin":"No nativa: 54"}],"edges":[{"s":"Apis mellifera","t":"Taraxacum officinale","i":"Consume","label":"VISITA FLORAL","n":2,"part":"el polen","district":"SI","ref":"Montoya, P.M. (2011) Uso de recursos florales poliníferos por Apis mellifera (Hymenoptera:Apidae) en apiarios de la Sabana de Bogotá y alrededores. Tesis de Maestría. Universidad Nacional de Colombia, Bogotá D.C."},{"s":"Bombus pauloensis","t":"Taraxacum officinale","i":"Consume","label":"VISITA FLORAL","n":2,"part":"el polen","district":"NO","ref":"Almanza-Fandiño, M.T. (2007) Management of Bombus pauloensis bumblebees to pollinate Lulo (Solanus quitoense L), a native fruit from the Andes of Colombia. 1 ed. University of Bonn: Ecology and Development Series 50."},{"s":"Apis mellifera","t":"Quercus humboldtii","i":"Consume","label":"VISITA FLORAL","n":1,"part":"el polen","district":"NO","ref":"Bogotá-A., R.G., Rangel Ch, J.O., Jiménez, L.C. (2001) Análisis palinológico de mieles de tres localidades de la sabana de Bogotá. Caldasia 23, 455-465."},{"s":"Bombus hortulanus","t":"Taraxacum officinale","i":"Consume","label":"VISITA FLORAL","n":1,"part":"el polen","district":"NO","ref":"Sánchez, H.A., Alarcón, D.P., Padilla, S.C., Da Silva, C.I., Poveda, C.A., Riaño, D.A., Cure, J.R. (2015) Modelo preliminar de red de interacción planta – polinizador (Hymenoptera‚ Apoidea) en un ecosistema de sub-páramo (Chía‚ Colombia). IV Congreso Colombiano de Zoología."},{"s":"Bombus rubicundus","t":"Taraxacum officinale","i":"Consume","label":"VISITA FLORAL","n":1,"part":"el polen","district":"NO","ref":"Sánchez, H.A., Alarcón, D.P., Padilla, S.C., Da Silva, C.I., Poveda, C.A., Riaño, D.A., Cure, J.R. (2015) Modelo preliminar de red de interacción planta – polinizador."},{"s":"Thygater aethiops","t":"Taraxacum officinale","i":"Consume","label":"VISITA FLORAL","n":1,"part":"el polen","district":"NO","ref":"Sánchez, H.A., Alarcón, D.P., Padilla, S.C., Da Silva, C.I., Poveda, C.A., Riaño, D.A., Cure, J.R. (2015) Modelo preliminar de red de interacción planta – polinizador."},{"s":"Tremarctos ornatus","t":"Apis mellifera","i":"Consume","label":"DEPREDACIÓN","n":1,"part":"general","district":"NO","ref":"Figueroa, J. (2013) Revisión de la dieta del oso andino Tremarctos ornatus en América del Sur y nuevos registros para el Perú. Revista del Museo Argentino de Ciencias Naturales 15, 1-27."},{"s":"Tremarctos ornatus","t":"Tapirus pinchaque","i":"Consume","label":"DEPREDACIÓN","n":1,"part":"general","district":"NO","ref":"Figueroa, J. (2013) Revisión de la dieta del oso andino Tremarctos ornatus en América del Sur y nuevos registros para el Perú."},{"s":"Tremarctos ornatus","t":"Quercus humboldtii","i":"Consume","label":"HERBIVORÍA","n":1,"part":"el fruto","district":"NO","ref":"Figueroa, J. (2013) Revisión de la dieta del oso andino Tremarctos ornatus en América del Sur y nuevos registros para el Perú."},{"s":"Tapirus pinchaque","t":"Taraxacum officinale","i":"Consume","label":"HERBIVORÍA","n":1,"part":"parte no especificada","district":"NO","ref":"Downer, C.C. (2001) Observations on the diet and habitat of the mountain tapir (Tapirus pinchaque). Journal of Zoology 254, 279-291."},{"s":"Tapirus pinchaque","t":"Taraxacum officinale","i":"Dispersa","label":"DISPERSIÓN","n":1,"part":"la semilla","district":"NO","ref":"Downer, C.C. (2001) Observations on the diet and habitat of the mountain tapir (Tapirus pinchaque). Journal of Zoology 254, 279-291."},{"s":"Bombus hortulanus","t":"Taraxacum officinale","i":"Interactúa con","label":"VISITA FLORAL","n":1,"part":"la flor","district":"SI","ref":"Pereira, A. (2021) Determinado por Pereira, A."},{"s":"Eristalis tenax","t":"Taraxacum officinale","i":"Interactúa con","label":"VISITA FLORAL","n":1,"part":"la flor","district":"SI","ref":"Moreno-Beltrán, L.F. (2024) Redes de interacción flora-sírfidos en los humedales El Burro y Techo de la ciudad de Bogotá. Universidad de La Salle."},{"s":"Macrosiphum euphorbiae","t":"Taraxacum officinale","i":"Consume","label":"HERBIVORÍA","n":1,"part":"la savia","district":"NO","ref":"Blackman, R., Eastop, V.F. (2013) Aphids on the World’s Plants. An Identification and Information Guide."},{"s":"Myzus persicae","t":"Taraxacum officinale","i":"Consume","label":"HERBIVORÍA","n":1,"part":"la savia","district":"NO","ref":"Blackman, R., Eastop, V.F. (2013) Aphids on the World’s Plants. An Identification and Information Guide."},{"s":"Neomyzus circumflexus","t":"Taraxacum officinale","i":"Consume","label":"HERBIVORÍA","n":1,"part":"la savia","district":"NO","ref":"Blackman, R., Eastop, V.F. (2013) Aphids on the World’s Plants. An Identification and Information Guide."}]};
+
+const COLORS={"VISITA FLORAL":"#6c8f62","HERBIVORÍA":"#b98555","DEPREDACIÓN":"#ad5d5d","DISPERSIÓN":"#5c83a8","OVIPOSICIÓN":"#8f6ea6","OTRAS INTERACCIONES":"#777"};
+const stage=document.querySelector('#stage'),svg=document.querySelector('#svg'),info=document.querySelector('#info');
+const nodeEls=new Map(),edgeEls=[],pos=new Map(); let selected=null;
+let state={search:'',kingdom:'Todos',interaction:'Todos',origin:'Todos',quality:'Todos'};
+
+DATA.edges.forEach(e=>e.quality=e.ref?(e.district==='SI'?'Alta':'Media'):'Baja');
+function explain(e){
+ const a=`<i>${e.s}</i>`,b=`<i>${e.t}</i>`;
+ if(e.i==='Consume') return `${a} consume ${e.part&&e.part!=='general'?e.part+' de ':''}${b}. La base clasifica el evento como <b>${e.label.toLowerCase()}</b>.`;
+ if(e.i==='Dispersa') return `${a} dispersa semillas de ${b}; la interacción contribuye al movimiento de propágulos de la especie vegetal.`;
+ if(e.i==='Poliniza a') return `${a} transfiere polen y participa en la polinización de ${b}.`;
+ if(e.i==='Oviposita en') return `${a} utiliza a ${b} como sustrato de oviposición.`;
+ if(e.i==='Interactúa con') return `${a} fue registrada interactuando directamente con ${b}; RIBB la ubica dentro de <b>${e.label.toLowerCase()}</b>.`;
+ return `${a} mantiene una interacción registrada con ${b}.`;
+}
+function layout(){
+ const w=stage.clientWidth,h=stage.clientHeight,cx=w*.53,cy=h*.54,rx=Math.min(w*.30,430),ry=Math.min(h*.35,300);
+ DATA.nodes.forEach((n,i)=>{const a=i/DATA.nodes.length*Math.PI*2;pos.set(n.id,{x:cx+Math.cos(a)*rx,y:cy+Math.sin(a)*ry})});
+}
+function visibleEdge(e){
+ const s=DATA.nodes.find(n=>n.id===e.s),t=DATA.nodes.find(n=>n.id===e.t);
+ if(state.interaction!=='Todos'&&e.label!==state.interaction)return false;
+ if(state.quality!=='Todos'&&e.quality!==state.quality)return false;
+ if(state.origin!=='Todos'&&!([s,t].some(n=>n.origin.startsWith(state.origin))))return false;
+ if(state.kingdom!=='Todos'&&!([s,t].some(n=>n.kingdom===state.kingdom)))return false;
+ if(state.search&&!([e.s,e.t].some(x=>x.toLowerCase().includes(state.search))))return false;
+ return true;
+}
+function render(){
+ layout(); svg.innerHTML=''; edgeEls.length=0;
+ const visibleNodes=new Set();
+ DATA.edges.forEach((e,idx)=>{if(!visibleEdge(e))return;visibleNodes.add(e.s);visibleNodes.add(e.t);const a=pos.get(e.s),b=pos.get(e.t);if(!a||!b)return;
+  const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);l.setAttribute('x2',b.x);l.setAttribute('y2',b.y);l.style.stroke=COLORS[e.label]||'#777';l.style.strokeWidth=1.4+Math.min(e.n,3);l.classList.add('edge');l.dataset.idx=idx;
+  l.addEventListener('click',ev=>{ev.stopPropagation();selectEdge(e,l)});l.addEventListener('dblclick',ev=>{ev.stopPropagation();selectEdge(e,l)});svg.appendChild(l);edgeEls.push([l,e]);
+ });
+ DATA.nodes.forEach(n=>{const el=nodeEls.get(n.id),p=pos.get(n.id);if(!el)return;el.style.left=p.x+'px';el.style.top=p.y+'px';el.classList.toggle('hidden',!visibleNodes.has(n.id));});
+ document.querySelector('#taxonCount').textContent=visibleNodes.size;document.querySelector('#edgeCount').textContent=edgeEls.length;
+}
+function resetHighlights(){nodeEls.forEach(e=>e.classList.remove('dim','hot'));edgeEls.forEach(([l])=>l.classList.remove('dim','hot'))}
+function selectNode(n){
+ selected=n.id;resetHighlights();const related=edgeEls.filter(([,e])=>e.s===n.id||e.t===n.id);const neighbors=new Set([n.id]);related.forEach(([,e])=>{neighbors.add(e.s);neighbors.add(e.t)});
+ nodeEls.forEach((el,id)=>{if(!neighbors.has(id))el.classList.add('dim');else if(id===n.id)el.classList.add('hot')});
+ edgeEls.forEach(([l,e])=>{if(e.s===n.id||e.t===n.id)l.classList.add('hot');else l.classList.add('dim')});
+ const relHTML=related.map(([,e])=>`<div class="rel" data-a="${e.s}" data-b="${e.t}"><b>${e.label}</b><span>${e.s} → ${e.t}</span></div>`).join('');
+ info.innerHTML=`<h2>${n.id}</h2><div class="photoLarge" id="largePhoto"></div><div class="meta"><span class="badge">${n.kingdom||'Clasificando…'}</span><span class="badge">${n.origin.split(':')[0]}</span><span class="badge">${n.records} registros</span></div><h3>Relaciones visibles</h3>${relHTML||'<p>No hay relaciones con los filtros actuales.</p>'}<p class="source" id="photoCredit"></p>`;
+ if(n.image){document.querySelector('#largePhoto').style.backgroundImage=`url("${n.image.url}")`;document.querySelector('#photoCredit').innerHTML=`Imagen: <a href="${n.image.sourceUrl}" target="_blank">${n.image.source}</a> ${n.image.attribution||''}`;}
+ document.querySelectorAll('.rel').forEach(x=>x.onclick=()=>{const e=DATA.edges.find(e=>e.s===x.dataset.a&&e.t===x.dataset.b);if(e)selectEdge(e)});
+}
+function selectEdge(e,line){
+ resetHighlights();nodeEls.forEach((el,id)=>{if(id!==e.s&&id!==e.t)el.classList.add('dim');else el.classList.add('hot')});edgeEls.forEach(([l,x])=>{if(x!==e)l.classList.add('dim');else l.classList.add('hot')});
+ info.innerHTML=`<h2>${e.s} ↔ ${e.t}</h2><div class="meta"><span class="badge">${e.label}</span><span class="badge">${e.i}</span><span class="badge">Calidad ${e.quality}</span><span class="badge">${e.district==='SI'?'Reportada en Bogotá':'Fuente externa / no marcada en Distrito'}</span></div><h3>¿Por qué están conectadas?</h3><p>${explain(e)}</p><h3>Dato registrado</h3><p><b>Parte afectada:</b> ${e.part||'No especificada'}<br><b>Registros agrupados:</b> ${e.n}</p><h3>Evidencia</h3><p>${e.ref||'Referencia no disponible en esta vista.'}</p><p style="font-size:9px;color:#888">Fuente base: Red de Interacciones Bióticas de Bogotá D.C., Jardín Botánico de Bogotá.</p>`;
+}
+function makeNodes(){
+ DATA.nodes.forEach(n=>{const el=document.createElement('div');el.className='node';el.innerHTML='<div class="photo"><i class="fa-solid fa-leaf"></i></div><b></b><small></small>';el.querySelector('b').textContent=n.id;el.querySelector('small').textContent=n.records+' registros';el.onclick=()=>selectNode(n);stage.appendChild(el);nodeEls.set(n.id,el);
+ resolveSpeciesImage({id:n.id}).then(im=>{if(im){n.image=im;n.kingdom=im.kingdom||'Sin clasificar';if(im.url){el.querySelector('.photo').style.backgroundImage=`url("${im.url}")`;el.querySelector('.photo').innerHTML=''}render()}});
+ });
+}
+function bindGroup(id,key){document.querySelectorAll('#'+id+' .chip').forEach(b=>b.onclick=()=>{document.querySelectorAll('#'+id+' .chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');state[key]=b.dataset.v;resetHighlights();render()})}
+document.querySelector('#search').oninput=e=>{state.search=e.target.value.trim().toLowerCase();render()};
+bindGroup('kingdomFilters','kingdom');bindGroup('interactionFilters','interaction');bindGroup('originFilters','origin');bindGroup('qualityFilters','quality');
+document.querySelector('#reset').onclick=()=>{state={search:'',kingdom:'Todos',interaction:'Todos',origin:'Todos',quality:'Todos'};document.querySelector('#search').value='';document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.chips .chip:first-child').forEach(x=>x.classList.add('active'));resetHighlights();render();info.innerHTML='<h2>Panel de información</h2><p>Haz clic en una especie o en una línea para explorar la evidencia de la relación.</p>'};
+makeNodes();render();addEventListener('resize',render);
+</script>
+</body></html>
