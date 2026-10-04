@@ -1,0 +1,361 @@
+{
+  "metadata": {
+    "title": "Red de Interacciones Bióticas y Matriz de Perturbación - Kennedy",
+    "study_area": "Humedales El Burro, La Vaca y Techo - Bogotá D.C.",
+    "author": "Cátedra de Modelamiento Dinámico y Simulación - Universidad",
+    "methodology": "Del Risco et al. (2022) Urban Ecosystems & JBB SiB Colombia (001_bio-rrbb_sc_2023014)",
+    "version": "2.0.0"
+  },
+  "statistics_charts": {
+    "interaction_types": {
+      "Visita Floral / Polinización": 39.18,
+      "Herbivoría Parcial": 31.58,
+      "Nidificación / Refugio": 7.44,
+      "Dispersión de Semillas": 4.88,
+      "Depredación y Epibiosis": 9.2,
+      "Perturbación Urbana / Ruido": 7.72
+    },
+    "taxonomic_kingdoms": {
+      "Plantae (Flora Nativa e Invasora)": 59.5,
+      "Animalia (Avifauna y Polinizadores)": 30.4,
+      "Fungi (Hongos Descomponedores)": 7.0,
+      "Factores Urbano-Abióticos & Bacteria": 3.1
+    },
+    "data_sources": {
+      "Artículos Científicos & Libros": 36.1,
+      "Registros Multimedia & Fotografía": 25.8,
+      "Colecciones Biológicas & SIGAU": 23.4,
+      "PMA Humedal El Burro / Literatura Gris": 9.7,
+      "Ciencia Participativa SiB Colombia": 5.0
+    }
+  },
+  "nodes": [
+    {
+      "id": "sambucus_nigra",
+      "label": "Sambucus nigra (Saúco)",
+      "group": "Plantae",
+      "category": "Flora Nativa Hub",
+      "centrality_degree": 9,
+      "is_hub": true,
+      "location": "Ronda ZMPA El Burro / La Vaca",
+      "color": "#10B981",
+      "size": 35,
+      "description": "Hub ecológico principal. Provee frutos ornitócoros y sitios de nidificación crítica."
+    },
+    {
+      "id": "prunus_serotina",
+      "label": "Prunus serotina (Capulí)",
+      "group": "Plantae",
+      "category": "Flora Nativa Hub",
+      "centrality_degree": 8,
+      "is_hub": true,
+      "location": "Ecotono ZMPA y Parques Vecinales",
+      "color": "#059669",
+      "size": 32,
+      "description": "Especie nativa con alta oferta trófica en época de fructificación."
+    },
+    {
+      "id": "baccharis_latifolia",
+      "label": "Baccharis latifolia (Chilco)",
+      "group": "Plantae",
+      "category": "Flora Nativa",
+      "centrality_degree": 6,
+      "is_hub": false,
+      "location": "Borde del Humedal El Burro",
+      "color": "#34D399",
+      "size": 22,
+      "description": "Arbusto pionero atrayente de insectos polinizadores y colibríes."
+    },
+    {
+      "id": "alnus_acuminata",
+      "label": "Alnus acuminata (Aliso)",
+      "group": "Plantae",
+      "category": "Flora Nativa",
+      "centrality_degree": 5,
+      "is_hub": false,
+      "location": "Franja hídrica litoral",
+      "color": "#047857",
+      "size": 20,
+      "description": "Fijador de nitrógeno y estabilizador de taludes hídricos."
+    },
+    {
+      "id": "pennisetum_clandestinum",
+      "label": "Pennisetum clandestinum (Kikuyo)",
+      "group": "Plantae",
+      "category": "Flora Invasora",
+      "centrality_degree": 4,
+      "is_hub": false,
+      "location": "Potreros degradados y ZMPA",
+      "color": "#A7F3D0",
+      "size": 18,
+      "description": "Pasto invasor que desplaza flora autóctona y terriza espejos de agua."
+    },
+    {
+      "id": "typha_domingensis",
+      "label": "Typha domingensis (Enea)",
+      "group": "Plantae",
+      "category": "Macrófita Helófita",
+      "centrality_degree": 5,
+      "is_hub": false,
+      "location": "Vaso del humedal",
+      "color": "#6EE7B7",
+      "size": 22,
+      "description": "Provee refugio y nido a aves acuáticas, pero prolifera por eutrofización."
+    },
+    {
+      "id": "turdus_fuscater",
+      "label": "Turdus fuscater (Mirla patinaranja)",
+      "group": "Animalia",
+      "category": "Avifauna Terrestre",
+      "centrality_degree": 7,
+      "is_hub": false,
+      "vulnerability": "Alta dependencia de Hubs",
+      "color": "#3B82F6",
+      "size": 26,
+      "description": "Dispersora de semillas. Altamente vulnerable a la pérdida de Saúco y Capulí."
+    },
+    {
+      "id": "rallus_semiplumbeus",
+      "label": "Rallus semiplumbeus (Tingua bogotana)",
+      "group": "Animalia",
+      "category": "Avifauna Acuática Endémica",
+      "centrality_degree": 6,
+      "is_hub": false,
+      "vulnerability": "En Peligro (EN)",
+      "color": "#1D4ED8",
+      "size": 28,
+      "description": "Anida exclusivamente en juncales y requiere espejos de agua sin lixiviados."
+    },
+    {
+      "id": "egretta_thula",
+      "label": "Egretta thula (Garza real/nivea)",
+      "group": "Animalia",
+      "category": "Avifauna Acuática",
+      "centrality_degree": 4,
+      "is_hub": false,
+      "vulnerability": "Moderada",
+      "color": "#60A5FA",
+      "size": 20,
+      "description": "Depredadora de pequeños peces e invertebrados en agua abierta."
+    },
+    {
+      "id": "colibri_coruscans",
+      "label": "Colibri coruscans (Colibrí chillón)",
+      "group": "Animalia",
+      "category": "Polinizador / Avifauna",
+      "centrality_degree": 5,
+      "is_hub": false,
+      "vulnerability": "Sensible a pesticidas",
+      "color": "#93C5FD",
+      "size": 18,
+      "description": "Polinizador de chilco, fucsias y flora melífera."
+    },
+    {
+      "id": "apis_mellifera",
+      "label": "Apis mellifera (Abeja melífera)",
+      "group": "Animalia",
+      "category": "Insecto Polinizador",
+      "centrality_degree": 6,
+      "is_hub": false,
+      "vulnerability": "Sensible al humo / Diésel",
+      "color": "#FBBF24",
+      "size": 16,
+      "description": "Enjambre polinizador de amplio espectro en la zona urbana."
+    },
+    {
+      "id": "ruido_av_cali",
+      "label": "Ruido Vehicular >75 dB(A)",
+      "group": "Abiotico",
+      "category": "Perturbación Urbana",
+      "centrality_degree": 8,
+      "is_hub": false,
+      "color": "#EF4444",
+      "size": 30,
+      "description": "Barrera acústica de la Av. Cali que altera la comunicación de avifauna."
+    },
+    {
+      "id": "concreto_ndbi",
+      "label": "Suelo Pavimentado (NDBI >78%)",
+      "group": "Abiotico",
+      "category": "Impermeabilización",
+      "centrality_degree": 7,
+      "is_hub": false,
+      "color": "#DC2626",
+      "size": 28,
+      "description": "Impide la infiltración hídrica e incrementa la temperatura LST."
+    },
+    {
+      "id": "lixiviados_corabastos",
+      "label": "Lixiviados y Carga Orgánica",
+      "group": "Abiotico",
+      "category": "Contaminación Hídrica",
+      "centrality_degree": 6,
+      "is_hub": false,
+      "color": "#B91C1C",
+      "size": 25,
+      "description": "Efluentes que provocan eutrofización y anoxia en el vaso del humedal."
+    },
+    {
+      "id": "espejo_ndwi",
+      "label": "Espejo de Agua Activo (NDWI)",
+      "group": "Abiotico",
+      "category": "Recurso Hídrico",
+      "centrality_degree": 8,
+      "is_hub": true,
+      "color": "#0284C7",
+      "size": 32,
+      "description": "Sostén hídrico fundamental para el hábitat de aves acuáticas."
+    }
+  ],
+  "edges": [
+    {
+      "from": "sambucus_nigra",
+      "to": "turdus_fuscater",
+      "label": "Nidificación & Frugivoría",
+      "layer": "Capa 1: Nidificación",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "prunus_serotina",
+      "to": "turdus_fuscater",
+      "label": "Oferta Trófica (Fruto)",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#059669"
+    },
+    {
+      "from": "baccharis_latifolia",
+      "to": "colibri_coruscans",
+      "label": "Visita Floral (Néctar)",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#34D399"
+    },
+    {
+      "from": "baccharis_latifolia",
+      "to": "apis_mellifera",
+      "label": "Polinización",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#FBBF24"
+    },
+    {
+      "from": "typha_domingensis",
+      "to": "rallus_semiplumbeus",
+      "label": "Nidificación & Refugio",
+      "layer": "Capa 1: Nidificación",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#1D4ED8"
+    },
+    {
+      "from": "espejo_ndwi",
+      "to": "rallus_semiplumbeus",
+      "label": "Sostén Hábitat Hídrico",
+      "layer": "Capa 1: Nidificación",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#0284C7"
+    },
+    {
+      "from": "espejo_ndwi",
+      "to": "egretta_thula",
+      "label": "Zona de Forrajeo",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#60A5FA"
+    },
+    {
+      "from": "ruido_av_cali",
+      "to": "turdus_fuscater",
+      "label": "Repulsión / Estrés Auditivo (>75dB)",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 4,
+      "color": "#EF4444"
+    },
+    {
+      "from": "ruido_av_cali",
+      "to": "rallus_semiplumbeus",
+      "label": "Desplazamiento de Hábitat",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 5,
+      "color": "#DC2626"
+    },
+    {
+      "from": "lixiviados_corabastos",
+      "to": "espejo_ndwi",
+      "label": "Eutrofización / Anoxia",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 5,
+      "color": "#B91C1C"
+    },
+    {
+      "from": "concreto_ndbi",
+      "to": "baccharis_latifolia",
+      "label": "Estrés Hídrico y Térmico",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#F87171"
+    }
+  ],
+  "abm_rules": [
+    {
+      "agent_type": "Mirla / Avifauna",
+      "if_condition": "Parche con Sambucus_nigra O Prunus_serotina dentro de radio de 150m",
+      "then_action": "Ajustar vector de atracción A +0.85 y buscar sitio de nidificación",
+      "else_action": "Continuar vuelo de exploración hacia ZMPA"
+    },
+    {
+      "agent_type": "Tingua bogotana",
+      "if_condition": "Nivel de Ruido > 75 dB O Calidad de Agua NDWI contaminada por lixiviados",
+      "then_action": "Aplicar fuerza de repulsión R -0.90 y evacuar polígono de borde",
+      "else_action": "Permanecer en juncal de Typha"
+    },
+    {
+      "agent_type": "Colibrí / Polinizador",
+      "if_condition": "Floración activa de Baccharis latifolia O Chilco",
+      "then_action": "Consumir néctar, recargar energía (+15pt) y dispersar polen",
+      "else_action": "Migrar a parque vecinal adyacente"
+    }
+  ],
+  "narrative_structure": {
+    "title": "De la Ruptura Urbana a la Regeneración Biótica: El Enjambre Silencioso de Kennedy",
+    "subtitle": "Una experiencia interactiva basada en grafos, microbiología hídrica y simulación de enjambres (ABM)",
+    "acts": [
+      {
+        "act": "Acto I",
+        "name": "El Territorio Ecosistémico de Kennedy",
+        "narrative": "Kennedy no es solo un corredor agrocomercial y logístico de asfalto; alberga el sistema hídrico de los humedales El Burro, La Vaca y Techo. Mediante 3 diagramas de dona (metodología JBB, Del Risco et al. 2022), revelamos la huella relacional de sus especies.",
+        "interactive_focus": "Exploración de las gráficas de dona y censo completo."
+      },
+      {
+        "act": "Acto II",
+        "name": "La Barrera Urbana y la Ruptura Abiótica",
+        "narrative": "La Av. Ciudad de Cali (>75 dB), la pavimentación (NDBI) y los vertimientos DBO5 de Corabastos fragmentan la matriz ecológica. Las presiones urbanas actúan como vectores de repulsión que cortan los flujos biológicos.",
+        "interactive_focus": "Encendido de la capa de Perturbación Urbana en el visor de red."
+      },
+      {
+        "act": "Acto III",
+        "name": "El Pulso Bioluminiscente (Subred en Fondo Negro & Experimento Knock-Out)",
+        "narrative": "Al seleccionar cualquier nodo, la interfaz conmuta a un lienzo en negro absoluto (#000000). Se encienden únicamente las conexiones egocéntricas de orden 1 y 2 en neón. Al simular la remoción del Saúco o el Capulí, el sistema emite una alerta roja: especies 'colgando de un hilo'.",
+        "interactive_focus": "Aislamiento de subredes, tarjetas con fotos reales de especímenes y simulación de cascada trófica."
+      },
+      {
+        "act": "Acto IV",
+        "name": "Inteligencia de Enjambre (ABM) para la Decisión Territorial",
+        "narrative": "Las relaciones bióticas se traducen en reglas computacionales (Atracción/Repulsión). El comportamiento emergente de las aves, polinizadores y bacterias orienta las Actuaciones Estratégicas del POT (AE09 y AE17).",
+        "interactive_focus": "Fichas de reglas de agentes y vectores de navegación para NetLogo / Python Mesa."
+      }
+    ]
+  }
+}

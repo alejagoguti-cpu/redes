@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 05 · Navegador Multiescalar & Red Biótica Kennedy</title>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- VisNetwork para Grafos -->
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <!-- Chart.js para Donas -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brandDark: '#0D1B2A',
+            brandBlack: '#000000',
+            brandGreen: '#10B981',
+            brandNeonViolet: '#A855F7',
+            brandNeonRed: '#EF4444'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    #mynetwork {
+      width: 100%;
+      height: 650px;
+      background-color: #0D1B2A;
+      transition: background-color 0.5s ease;
+      border-radius: 0.75rem;
+    }
+    #mynetwork.isolated {
+      background-color: #000000 !important;
+      box-shadow: inset 0 0 50px rgba(168, 85, 247, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans leading-relaxed">
+
+  <!-- CABECERA NARRATIVA -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur px-6 py-8">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <a href="../../index.html" class="inline-flex items-center text-xs font-semibold text-emerald-400 hover:underline mb-2">
+          <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Inicio de Redes
+        </a>
+        <span class="block text-xs uppercase tracking-widest text-emerald-400 font-semibold">Punto 5 | Modelamiento Dinámico y Simulación (Corte II)</span>
+        <h1 class="text-3xl font-extrabold text-white mt-1">De la Ruptura Urbana a la Regeneración Biótica en Kennedy</h1>
+        <p class="text-slate-400 text-sm mt-2 max-w-4xl">
+          Una experiencia interactiva basada en la metodología de síntesis del Jardín Botánico de Bogotá (Del Risco et al., 2022). Exploración del territorio, perturbaciones abióticas, subredes bioluminiscentes en fondo negro y reglas para simulación de enjambres (ABM).
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="../../red-biotica-enjambre-kennedy-v6.xlsx" download class="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg transition">
+          <i class="fa-solid fa-file-excel mr-1"></i> Excel Darwin Core (v6)
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVEGACIÓN DE ACTOS -->
+  <nav class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 px-6 py-3">
+    <div class="max-w-7xl mx-auto flex space-x-4 text-sm font-medium overflow-x-auto">
+      <button onclick="scrollToAct('acto1')" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 whitespace-nowrap">Acto I: Donas & Censo</button>
+      <button onclick="scrollToAct('acto2')" class="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 whitespace-nowrap">Acto II: Choque Urbano</button>
+      <button onclick="scrollToAct('acto3')" class="px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 whitespace-nowrap">Acto III: Subred & Knock-Out</button>
+      <button onclick="scrollToAct('acto4')" class="px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 whitespace-nowrap">Acto IV: Reglas ABM</button>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-6 py-8 space-y-12">
+
+    <!-- ACTO I -->
+    <section id="acto1" class="space-y-6">
+      <div class="border-l-4 border-emerald-500 pl-4">
+        <span class="text-xs font-bold text-emerald-400 uppercase">Acto I</span>
+        <h2 class="text-2xl font-bold text-white">El Territorio Ecosistémico de Kennedy</h2>
+        <p class="text-slate-400 text-sm">Estadística de síntesis relacional según la metodología del JBB (Del Risco et al., 2022).</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <h3 class="text-xs font-semibold text-slate-300 text-center mb-2">Tipos de Interacción (%)</h3>
+          <canvas id="chartInteracciones"></canvas>
+        </div>
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <h3 class="text-xs font-semibold text-slate-300 text-center mb-2">Composición por Reinos (%)</h3>
+          <canvas id="chartReinos"></canvas>
+        </div>
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <h3 class="text-xs font-semibold text-slate-300 text-center mb-2">Origen de Evidencia (%)</h3>
+          <canvas id="chartFuentes"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTO II & III -->
+    <section id="acto3" class="space-y-6">
+      <div class="border-l-4 border-purple-500 pl-4">
+        <span class="text-xs font-bold text-purple-400 uppercase">Acto II & III</span>
+        <h2 class="text-2xl font-bold text-white">Visor de Subred Bioluminiscente & Experimento Knock-Out</h2>
+        <p class="text-slate-400 text-sm">Haz clic en cualquier nodo para encender el fondo negro (#000000), aislar sus conexiones e inspeccionar la foto real del espécimen.</p>
+      </div>
+
+      <!-- CONTROLES Y FILTROS -->
+      <div class="flex flex-wrap gap-3 bg-slate-900 p-4 rounded-xl border border-slate-800 items-center justify-between">
+        <div class="flex flex-wrap gap-2">
+          <button onclick="filterLayer('all')" class="px-3 py-1.5 text-xs rounded-lg bg-slate-800 text-white hover:bg-slate-700">Ver Todo</button>
+          <button onclick="filterLayer('Plantae')" class="px-3 py-1.5 text-xs rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-800">Solo Flora Nativa</button>
+          <button onclick="filterLayer('Animalia')" class="px-3 py-1.5 text-xs rounded-lg bg-blue-950 text-blue-300 border border-blue-800">Solo Avifauna</button>
+          <button onclick="filterLayer('Microorganismos')" class="px-3 py-1.5 text-xs rounded-lg bg-teal-950 text-teal-300 border border-teal-800">Microbiología Hídrica</button>
+          <button onclick="filterLayer('Abiotico')" class="px-3 py-1.5 text-xs rounded-lg bg-rose-950 text-rose-300 border border-rose-800">Perturbación Urbana (>75dB)</button>
+        </div>
+        <div>
+          <button onclick="runKnockout()" class="px-4 py-1.5 text-xs font-bold rounded-lg bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/30">🔥 Simular Knock-Out de Saúco/Capulí</button>
+          <button onclick="resetIsolation()" class="px-3 py-1.5 text-xs rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 ml-2">Restablecer Fondo</button>
+        </div>
+      </div>
+
+      <!-- CANVAS Y PANEL LATERAL MULTIMEDIA -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div class="lg:col-span-3 relative">
+          <div id="mynetwork"></div>
+          <div id="alertBanner" class="hidden absolute top-4 left-4 right-4 bg-red-950/90 border border-red-500 text-red-200 p-3 rounded-lg text-xs font-semibold backdrop-blur animate-pulse">
+            ⚠️ ALERTA DE FRAGILIDAD SÉPTICA: Al eliminar los nodos vegetales Hub (Saúco/Capulí), la Tingua Bogotana y el Cucarachero de Pantano pierden el 80% de su soporte trófico y refugio ("Colgando de un Hilo").
+          </div>
+        </div>
+
+        <!-- TARJETA LATERAL DE ESPÉCIMEN -->
+        <div id="nodeDetailCard" class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-4">
+          <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2">Ficha Técnica del Espécimen</h3>
+          <div id="cardContent" class="text-xs text-slate-400 space-y-3">
+            <p class="italic">Selecciona un nodo del mapa para ver la foto real en vivo, su nombre científico, rol en Kennedy y reglas condicionales ABM.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTO IV -->
+    <section id="acto4" class="space-y-6">
+      <div class="border-l-4 border-blue-500 pl-4">
+        <span class="text-xs font-bold text-blue-400 uppercase">Acto IV</span>
+        <h2 class="text-2xl font-bold text-white">Inteligencia de Enjambre (Simulación ABM)</h2>
+        <p class="text-slate-400 text-sm">Traducción de la red relacional en vectores de Atracción y Repulsión para simulación de agentes en NetLogo / Python Mesa.</p>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl overflow-x-auto">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="text-slate-400 uppercase bg-slate-800/50 border-b border-slate-700">
+            <tr>
+              <th class="p-3">Tipo de Agente</th>
+              <th class="p-3">Entidad / Especie</th>
+              <th class="p-3">Regla de Atracción (Vector A)</th>
+              <th class="p-3">Regla de Repulsión (Vector R)</th>
+              <th class="p-3">Efecto Emergente Ecosistémico</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800">
+            <tr>
+              <td class="p-3 font-semibold text-blue-400">Agente Móvil (Avifauna)</td>
+              <td class="p-3 italic">Rallus semiplumbeus (Tingua bogotana)</td>
+              <td class="p-3">Busca parches de Schoenoplectus / Typha con NDWI hídrico activo.</td>
+              <td class="p-3 text-red-400">Evita zonas con ruido >75 dB(A) y NDBI >70%. Tasa de huida = +85%.</td>
+              <td class="p-3">Concentración en parches núcleo; aislamiento del canal Av. Cali.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-emerald-400">Agente Fijo (Flora Hub)</td>
+              <td class="p-3 italic">Sambucus nigra (Saúco)</td>
+              <td class="p-3">Emite pulso de recurso trófico (frutos/néctar) en radio de 50m.</td>
+              <td class="p-3 text-amber-400">Sufre desecación si la Isla de Calor LST supera los 32°C.</td>
+              <td class="p-3">Soporta la mayor centralidad de grado del enjambre silvestre.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-teal-400">Agente Biótico (Microbio)</td>
+              <td class="p-3 italic">Nitrosomonas europaea</td>
+              <td class="p-3">Transforma amonio residual en nitrito en el biofiltro de La Vaca.</td>
+              <td class="p-3 text-red-400">Inhibida por presencia de plásticos inorgánicos o metales pesados.</td>
+              <td class="p-3">Mantiene la capacidad de depuración hídrica del humedal.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    let network = null;
+    let nodesDataset = null;
+    let edgesDataset = null;
+    let fullData = null;
+
+    fetch('data-red-kennedy.json')
+      .then(res => res.json())
+      .then(data => {
+        fullData = data;
+        const stats = data.statistics_charts || {};
+        initCharts(stats);
+        initNetwork(data.nodes || [], data.edges || []);
+      })
+      .catch(err => {
+        console.error("Error cargando JSON:", err);
+      });
+
+    function initCharts(stats) {
+      const interData = stats.interaction_types || stats.interactions_percentage || {};
+      if (Object.keys(interData).length > 0) {
+        new Chart(document.getElementById('chartInteracciones'), {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(interData),
+            datasets: [{
+              data: Object.values(interData),
+              backgroundColor: ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444', '#EC4899']
+            }]
+          },
+          options: { plugins: { legend: { labels: { color: '#94A3B8', font: { size: 9 } } } } }
+        });
+      }
+
+      const kingdomData = stats.taxonomic_kingdoms || stats.kingdoms_percentage || {};
+      if (Object.keys(kingdomData).length > 0) {
+        new Chart(document.getElementById('chartReinos'), {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(kingdomData),
+            datasets: [{
+              data: Object.values(kingdomData),
+              backgroundColor: ['#059669', '#2563EB', '#0D9488', '#E11D48']
+            }]
+          },
+          options: { plugins: { legend: { labels: { color: '#94A3B8', font: { size: 9 } } } } }
+        });
+      }
+
+      const sourceData = stats.data_sources || stats.evidence_sources_percentage || {};
+      if (Object.keys(sourceData).length > 0) {
+        new Chart(document.getElementById('chartFuentes'), {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(sourceData),
+            datasets: [{
+              data: Object.values(sourceData),
+              backgroundColor: ['#6366F1', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316']
+            }]
+          },
+          options: { plugins: { legend: { labels: { color: '#94A3B8', font: { size: 9 } } } } }
+        });
+      }
+    }
+
+    function initNetwork(nodes, edges) {
+      const container = document.getElementById('mynetwork');
+      
+      const formattedNodes = nodes.map(n => ({
+        id: n.id,
+        label: n.label,
+        group: n.group,
+        shape: n.image_url ? 'circularImage' : 'dot',
+        image: n.image_url || undefined,
+        size: n.is_hub ? 35 : 22,
+        color: { border: n.is_hub ? '#10B981' : (n.color || '#3B82F6'), background: '#0D1B2A' },
+        font: { color: '#FFFFFF', size: 11 }
+      }));
+
+      nodesDataset = new vis.DataSet(formattedNodes);
+      edgesDataset = new vis.DataSet(edges);
+
+      const options = {
+        nodes: { borderWidth: 2 },
+        edges: { width: 1.5, smooth: { type: 'continuous' } },
+        physics: { forceAtlas2Based: { gravitationalConstant: -50, centralGravity: 0.01, springLength: 100 } }
+      };
+
+      network = new vis.Network(container, { nodes: nodesDataset, edges: edgesDataset }, options);
+
+      network.on("click", function (params) {
+        if (params.nodes.length > 0) {
+          const selectedId = params.nodes[0];
+          isolateSubnetwork(selectedId);
+          showNodeCard(selectedId);
+        } else {
+          resetIsolation();
+        }
+      });
+    }
+
+    function isolateSubnetwork(nodeId) {
+      const container = document.getElementById('mynetwork');
+      container.classList.add('isolated');
+
+      const connectedNodes = network.getConnectedNodes(nodeId);
+      connectedNodes.push(nodeId);
+
+      const allNodes = nodesDataset.get();
+      const updatedNodes = allNodes.map(n => {
+        if (connectedNodes.includes(n.id)) {
+          return { ...n, opacity: 1, font: { color: '#A855F7', size: 13 } };
+        } else {
+          return { ...n, opacity: 0.1, font: { color: '#334155', size: 9 } };
+        }
+      });
+
+      nodesDataset.update(updatedNodes);
+    }
+
+    function resetIsolation() {
+      const container = document.getElementById('mynetwork');
+      container.classList.remove('isolated');
+      document.getElementById('alertBanner').classList.add('hidden');
+
+      const allNodes = nodesDataset.get().map(n => ({
+        ...n,
+        opacity: 1,
+        font: { color: '#FFFFFF', size: 11 }
+      }));
+      nodesDataset.update(allNodes);
+    }
+
+    function showNodeCard(nodeId) {
+      const nodeObj = fullData.nodes.find(n => n.id === nodeId);
+      if (!nodeObj) return;
+
+      const card = document.getElementById('cardContent');
+      const imgHtml = nodeObj.image_url ? `<img src="${nodeObj.image_url}" alt="${nodeObj.label}" class="w-full h-40 object-cover rounded-lg border border-slate-700 shadow-lg">` : '';
+      card.innerHTML = `
+        ${imgHtml}
+        <div>
+          <h4 class="text-base font-bold text-white">${nodeObj.label}</h4>
+          <p class="text-xs text-emerald-400 italic">${nodeObj.scientific_name || ''}</p>
+        </div>
+        <div class="bg-slate-800/60 p-2.5 rounded border border-slate-700 space-y-1">
+          <p><span class="font-bold text-slate-300">Grupo:</span> ${nodeObj.group || ''}</p>
+          <p><span class="font-bold text-slate-300">Ubicación en Kennedy:</span> ${nodeObj.location || 'Humedales El Burro, La Vaca y Techo'}</p>
+          <p><span class="font-bold text-slate-300">Función Biótica:</span> ${nodeObj.ecosystem_role || nodeObj.description || 'Elemento clave en la matriz hídrica y trófica.'}</p>
+        </div>
+      `;
+    }
+
+    function runKnockout() {
+      document.getElementById('alertBanner').classList.remove('hidden');
+      isolateSubnetwork('sambucus_nigra');
+    }
+
+    function filterLayer(group) {
+      if (group === 'all') {
+        resetIsolation();
+        return;
+      }
+      const allNodes = fullData.nodes.map(n => ({
+        id: n.id,
+        hidden: n.group !== group
+      }));
+      nodesDataset.update(allNodes);
+    }
+
+    function scrollToAct(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
