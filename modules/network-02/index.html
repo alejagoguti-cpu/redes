@@ -7,24 +7,21 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://unpkg.com/cytoscape@3.30.3/dist/cytoscape.min.js"></script>
 <style>
-:root{--bg:#f3f4f1;--panel:#fffffff2;--ink:#222;--muted:#747870;--line:#dde0d9}
-*{box-sizing:border-box}html,body{margin:0;height:100%}body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink);overflow:hidden}
-.app{display:flex;height:100vh}.main{position:relative;flex:1;min-width:0}.sidebar{z-index:30}
-#cy{position:absolute;inset:0}.title{position:absolute;z-index:8;top:16px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none}
-.title h1{margin:0;font-size:18px;font-weight:650}.title p{margin:4px 0;font-size:10px;color:var(--muted)}
-.panel{position:absolute;z-index:12;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 35px #0001;backdrop-filter:blur(12px)}
-.filters{left:16px;top:16px;width:275px;padding:14px;max-height:calc(100vh - 32px);overflow:auto}.detail{right:16px;top:16px;bottom:16px;width:340px;padding:18px;overflow:auto}
-h3{font-size:12px;margin:0 0 10px}.label{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#858980;margin:12px 0 6px}
-.search,select{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px;font-size:10px}
-.checks{display:flex;gap:5px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:white;border-radius:999px;padding:6px 8px;font-size:8px;cursor:pointer}.btn.active{background:#2d332c;color:#fff}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}.stat{background:#f7f7f4;border-radius:10px;padding:8px}.stat b{display:block;font-size:16px}.stat span{font-size:8px;color:var(--muted)}
-.reset{width:100%;margin-top:10px;border:0;background:#61705d;color:white;border-radius:10px;padding:8px;font-size:9px;cursor:pointer}
-.detail h2{font-size:15px;margin:0 0 8px;font-style:italic}.detail p{font-size:10.5px;line-height:1.55;color:#555}.detail h4{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#777;margin:16px 0 6px}.hero{height:160px;border-radius:14px;background:#e7e9e2 center/cover;margin:10px 0}
-.badges{display:flex;flex-wrap:wrap;gap:5px}.badge{font-size:8px;padding:5px 7px;background:#eff1eb;border-radius:999px}.warning{padding:10px;border-radius:10px;background:#fff4db;color:#755a25;font-size:9px;line-height:1.4}
-.legend{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:9;background:#ffffffdf;border:1px solid var(--line);border-radius:14px;padding:8px 10px;display:flex;gap:10px;flex-wrap:wrap;max-width:60%;font-size:8px}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}.lineDemo{display:inline-block;width:18px;border-top:2px solid #777;margin-right:4px;vertical-align:middle}.dash{border-top-style:dashed}.dotline{border-top-style:dotted}
-.loading{position:absolute;inset:0;display:grid;place-items:center;background:#f3f4f1;z-index:40;font-size:12px;color:#666}
-.small{font-size:8px!important;color:#80847b!important}
+:root{--paper:#f7f7f3;--ink:#1f241f;--muted:#747a72;--glass:rgba(255,255,252,.92);--hair:#dfe3da;--green:#415c46;--shadow:0 18px 50px rgba(31,40,31,.10)}
+*{box-sizing:border-box}html,body{margin:0;height:100%}body{font-family:Inter,Arial,sans-serif;background:var(--paper);color:var(--ink);overflow:hidden}
+.app{display:flex;height:100vh}.main{position:relative;flex:1;min-width:0}.sidebar{z-index:40}#cy{position:absolute;inset:0;background:radial-gradient(circle at 50% 48%,#fff 0,#f8f8f4 46%,#f0f2eb 100%)}
+.title{position:absolute;z-index:8;top:22px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none}.title h1{margin:0;font:600 20px/1.1 Inter,Arial}.title p{margin:6px 0;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#8a9087}
+.panel{position:absolute;z-index:14;background:var(--glass);border:1px solid rgba(214,220,209,.9);box-shadow:var(--shadow);backdrop-filter:blur(18px)}
+.filters{left:18px;top:18px;width:246px;padding:12px;border-radius:18px;max-height:calc(100vh - 36px);overflow:auto;transition:.25s}.filters h3{font-size:11px;margin:1px 0 10px;display:flex;justify-content:space-between;align-items:center}
+.detail{right:18px;top:18px;bottom:18px;width:318px;padding:18px;border-radius:20px;overflow:auto;transform:translateX(calc(100% + 30px));opacity:0;pointer-events:none;transition:.28s ease}.detail.open{transform:none;opacity:1;pointer-events:auto}
+.closeDetail{position:absolute;right:12px;top:12px;width:28px;height:28px;border:0;border-radius:50%;background:#eef0ea;cursor:pointer}
+.label{display:block;font-size:7.5px;text-transform:uppercase;letter-spacing:.11em;color:#8a9087;margin:11px 0 5px}.search,select{width:100%;border:1px solid var(--hair);background:#fff;border-radius:10px;padding:8px 9px;font-size:9px;outline:none}.search:focus,select:focus{border-color:#839481}
+.checks{display:flex;gap:4px;flex-wrap:wrap}.btn{border:1px solid var(--hair);background:#fff;border-radius:999px;padding:5px 7px;font-size:7.5px;cursor:pointer;color:#62675f}.btn.active{background:var(--green);color:#fff;border-color:var(--green)}
+.stats{display:flex;gap:5px;margin-top:10px}.stat{flex:1;background:#f1f3ed;border-radius:10px;padding:7px 8px}.stat b{display:block;font-size:14px}.stat span{font-size:7px;color:var(--muted)}.reset{width:100%;margin-top:9px;border:0;background:#e8ece4;color:#465044;border-radius:9px;padding:7px;font-size:8px;cursor:pointer}
+.detail h2{font-size:16px;margin:0 30px 8px 0;font-style:italic}.detail p{font-size:10px;line-height:1.55;color:#555d54}.detail h4{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:#8a9087;margin:16px 0 6px}.hero{height:155px;border-radius:14px;background:#e7eae3 center/cover;margin:10px 0}.badges{display:flex;flex-wrap:wrap;gap:4px}.badge{font-size:7.5px;padding:5px 7px;background:#edf0e9;border-radius:999px}.warning{padding:10px;border-radius:10px;background:#f5f0df;color:#695c37;font-size:8px;line-height:1.45}
+.legend{position:absolute;left:50%;bottom:15px;transform:translateX(-50%);z-index:9;background:rgba(255,255,252,.92);border:1px solid var(--hair);border-radius:999px;padding:7px 11px;display:flex;gap:9px;align-items:center;box-shadow:0 8px 25px #0000000b;font-size:7px;white-space:nowrap}.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}.lineDemo{display:inline-block;width:16px;border-top:1.5px solid #777;margin-right:4px;vertical-align:middle}.dash{border-top-style:dashed}.dotline{border-top-style:dotted}
+.loading{position:absolute;inset:0;display:grid;place-items:center;background:var(--paper);z-index:50;font-size:11px;color:#777}.small{font-size:7px!important;color:#8b9088!important}.hint{position:absolute;z-index:8;left:50%;bottom:50px;transform:translateX(-50%);font-size:7px;color:#939890;letter-spacing:.03em;pointer-events:none}
+@media(max-width:900px){.filters{width:220px}.detail{width:300px}.legend{max-width:70vw;overflow:auto}.title{display:none}}
 </style>
 </head>
 <body>
@@ -70,7 +67,7 @@ h3{font-size:12px;margin:0 0 10px}.label{display:block;font-size:8px;text-transf
 <p class="small" id="datasetMeta"></p>
 </aside>
 
-<aside class="panel detail" id="detail">
+<aside class="panel detail" id="detail"><button class="closeDetail" id="closeDetail" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
 <h2>Cómo leer la red</h2>
 <p>El enjambre representa registros individuales de interacción. Haz clic en una especie para aislar su vecindad o en una línea para abrir la evidencia concreta de esa relación.</p>
 <div class="warning">Una interacción reportada en Bogotá no demuestra por sí sola presencia en Kennedy o en un humedal específico. La presencia local debe respaldarse con coordenadas, inventarios o registros del área de estudio.</div>
@@ -78,7 +75,7 @@ h3{font-size:12px;margin:0 0 10px}.label{display:block;font-size:8px;text-transf
 <p><b>Color</b> = tipo de interacción.<br><b>Estilo de línea</b> = calidad documental.<br><b>Tamaño del nodo</b> = cantidad de registros asociados.</p>
 </aside>
 
-<div id="cy"></div>
+<div id="cy"></div><div class="hint">Selecciona un nodo para aislar su red · selecciona una conexión para consultar la evidencia</div>
 <div class="legend">
 <span><i class="dot" style="background:#6f9569"></i>Visita floral</span>
 <span><i class="dot" style="background:#be8b57"></i>Herbivoría</span>
@@ -148,15 +145,15 @@ function buildGraph(){
    pixelRatio:'auto',
    style:[
     {selector:'node',style:{
-      'label':'data(label)','font-size':6,'text-wrap':'wrap','text-max-width':70,'text-valign':'bottom','text-margin-y':5,
+      'label':'','font-size':7,'text-wrap':'wrap','text-max-width':86,'text-valign':'bottom','text-margin-y':7,
       'width':'mapData(count,1,550,7,30)','height':'mapData(count,1,550,7,30)',
       'background-color':'#879682','border-width':1,'border-color':'#fff','opacity':.83
     }},
     {selector:'edge',style:{
-      'width':1,'line-color':'data(color)','curve-style':'straight','opacity':.18,'line-style':'data(lineStyle)'
+      'width':.75,'line-color':'data(color)','curve-style':'straight','opacity':.13,'line-style':'data(lineStyle)'
     }},
     {selector:'.faded',style:{'opacity':.03}},
-    {selector:'.focus',style:{'opacity':1,'z-index':999,'border-width':3,'border-color':'#263326'}},
+    {selector:'node:active',style:{'label':'data(label)'}},\n    {selector:'.focus',style:{'opacity':1,'z-index':999,'border-width':3,'border-color':'#263326','label':'data(label)','font-size':8}},
     {selector:'edge.focus',style:{'opacity':.95,'width':3}}
    ]
  });
@@ -166,7 +163,7 @@ function buildGraph(){
  document.getElementById('nodeCount').textContent=ids.size.toLocaleString('es-CO');
  document.getElementById('edgeCount').textContent=visible.length.toLocaleString('es-CO');
 }
-function clearFocus(){cy.elements().removeClass('faded focus')}
+function clearFocus(){cy.elements().removeClass('faded focus')}\nfunction openDetail(){document.getElementById('detail').classList.add('open')}\nfunction closeDetail(){document.getElementById('detail').classList.remove('open');if(cy)clearFocus()}
 function showNode(node){
  clearFocus();
  const hood=node.closedNeighborhood();
