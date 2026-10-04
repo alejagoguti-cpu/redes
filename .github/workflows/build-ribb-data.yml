@@ -16,17 +16,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install openpyxl
+      - run: pip install openpyxl networkx numpy
       - name: Download official RIBB workbook
         run: |
           mkdir -p assets/data
           curl -L --fail --retry 3 "https://redbiotica.jbb.gov.co/data/RIBB_v2024-12-30.xlsx" -o assets/data/RIBB_v2024-12-30.xlsx
-      - name: Build compact web dataset
+      - name: Build semantic 3D swarm dataset
         run: python modules/network-02/build_web_data.py assets/data/RIBB_v2024-12-30.xlsx assets/data/ribb_web.json
       - name: Commit generated dataset
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add assets/data/ribb_web.json
-          git commit -m "data: actualizar dataset web RIBB" || exit 0
+          git commit -m "data: reconstruir RIBB con layout 3D y semantica" || exit 0
           git push
