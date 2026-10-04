@@ -226,15 +226,32 @@ function updateImageProgress(){
 }
 
 async function resolveImage(name){
+  const pickPhoto=t=>t?.default_photo?.medium_url||t?.default_photo?.square_url||"";
   try{
-    const res=await fetch("https://api.inaturalist.org/v1/taxa/autocomplete?q="+encodeURIComponent(name)+"&per_page=6");
-    if(!res.ok)throw new Error("inat");
-    const j=await res.json();
-    const list=j.results||[];
-    const t=list.find(x=>(x.name||"").toLowerCase()===name.toLowerCase())||list[0];
-    const url=t?.default_photo?.medium_url||t?.default_photo?.square_url||"";
-    if(!url)return "";
-    return url;
+    const exactRes=await fetch("https://api.inaturalist.org/v1/taxa?q="+encodeURIComponent(name)+"&per_page=10");
+    if(exactRes.ok){
+      const j=await exactRes.json();
+      const exact=(j.results||[]).find(x=>(x.name||"").toLowerCase()===name.toLowerCase()&&pickPhoto(x));
+      if(exact)return pickPhoto(exact);
+    }
+    const autoRes=await fetch("https://api.inaturalist.org/v1/taxa/autocomplete?q="+encodeURIComponent(name)+"&per_page=20");
+    if(autoRes.ok){
+      const j=await autoRes.json(),list=j.results||[];
+      const exact=list.find(x=>(x.name||"").toLowerCase()===name.toLowerCase()&&pickPhoto(x));
+      if(exact)return pickPhoto(exact);
+      const photographed=list.find(x=>pickPhoto(x));
+      if(photographed)return pickPhoto(photographed);
+    }
+    const genus=(name||"").trim().split(/\\s+/)[0];
+    if(genus&&genus!==name){
+      const gr=await fetch("https://api.inaturalist.org/v1/taxa/autocomplete?q="+encodeURIComponent(genus)+"&per_page=12");
+      if(gr.ok){
+        const gj=await gr.json();
+        const gt=(gj.results||[]).find(x=>pickPhoto(x));
+        if(gt)return pickPhoto(gt);
+      }
+    }
+    return "";
   }catch{return ""}
 }
 
