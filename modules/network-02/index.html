@@ -36,7 +36,7 @@
   <p>Esta web no parte de bloques de texto. Parte de especies, imágenes y conexiones. Desplázate para ver cómo el territorio, la vegetación, los registros y RIBB van construyendo la red de Kennedy.</p>
   <div class="hero-actions"><button class="primary" id="start">iniciar recorrido</button><a href="#red">ver red completa</a></div>
  </div>
- <div class="hero-visual" id="heroVisual"><div style="position:absolute;left:22px;top:20px;z-index:8;display:flex;gap:6px"><span class="label">RIBB · enjambre completo</span><span class="label">clic = expandir ecosistema</span></div><canvas id="heroCanvas"></canvas><div class="hero-photo-layer" id="heroPhotoLayer"></div><div class="hero-caption">Las fotografías corresponden a taxones de la base RIBB. La presencia local en Kennedy se valida después con registros georreferenciados.</div></div>
+ <div class="hero-visual" id="heroVisual"><div style="position:absolute;left:22px;top:20px;z-index:8;display:flex;gap:6px"><span class="label">RIBB · enjambre completo</span><span class="label">clic = explorar taxón</span></div><canvas id="heroCanvas"></canvas><div class="hero-photo-layer" id="heroPhotoLayer"></div><div class="hero-caption">Las fotografías corresponden a taxones de la base RIBB. La presencia local en Kennedy se valida después con registros georreferenciados.</div></div>
 </section>
 
 <section class="story" id="story">
@@ -120,21 +120,31 @@ function edgeSubset(nodes){const ids=new Set(nodes.map(n=>n.id));return DATA.rec
 function drawNetwork(ctx,c,nodes,edges,alpha=.22){const r=c.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);const map=new Map(nodes.map(n=>[n.id,n]));for(const e of edges){if(mode!=="all"&&e.title!==mode)continue;if(quality!=="ALL"&&e.q!==quality)continue;const a=map.get(e.s),b=map.get(e.t);if(!a||!b)continue;ctx.globalAlpha=alpha;ctx.strokeStyle=COLORS[e.title]||"#8b8f88";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}ctx.globalAlpha=1}
 
 async function buildHero(){
- resizeCanvas(heroCanvas,hctx);const r=heroCanvas.getBoundingClientRect();
- // Dense swarm: the complete system is perceived first; ecological depth appears after selection.
- const ns=setPositions(topNodes.slice(0,150),r.width,r.height,.17);
- // compress into a nearly spherical mass
- ns.forEach((n,i)=>{n.x=r.width*.52+(n.x-r.width*.5)*.72;n.y=r.height*.49+(n.y-r.height*.5)*.88});
- drawNetwork(hctx,heroCanvas,ns,edgeSubset(ns),.14);
+ resizeCanvas(heroCanvas,hctx);
+ const r=heroCanvas.getBoundingClientRect();
+ // SOLO portada: enjambre compacto, esférico y denso como la red de referencia.
+ const count=Math.min(520,topNodes.length);
+ const chosen=topNodes.slice(0,count);
+ const cx=r.width*.52,cy=r.height*.48;
+ const radius=Math.min(r.width,r.height)*.31;
+ const golden=2.399963229728653;
+ const ns=chosen.map((n,i)=>{
+   const t=(i+.5)/count;
+   const rr=radius*Math.sqrt(t);
+   const a=i*golden+(hash(n.id)%1000)/1000*.16;
+   return {...n,x:cx+Math.cos(a)*rr,y:cy+Math.sin(a)*rr};
+ });
+ drawNetwork(hctx,heroCanvas,ns,edgeSubset(ns),.10);
  heroLayer.innerHTML="";
  for(let i=0;i<ns.length;i++){
    const n=ns[i],el=document.createElement("div");el.className="hero-node";
-   const degree=edgeSubset(ns).filter(e=>e.s===n.id||e.t===n.id).length;
-   const size=degree>=8?38:degree>=4?30:24;
+   const size=i<18?22:i<90?18:14;
    el.style.width=size+"px";el.style.height=size+"px";el.style.left=n.x+"px";el.style.top=n.y+"px";
-   el.style.borderWidth="2px";el.style.borderColor={birds:"#668eb5",vertebrates:"#c46f67",invert:"#d09a55",plants:"#6f9569",fungi:"#9a78aa",micro:"#57a6a1"}[ecoGroup(n.id)]||"#86a287";
-   const u=await imgFor(n.id);if(u)el.innerHTML='<img src="'+u+'" alt="'+n.id+'">';else el.textContent=(n.id||"?").charAt(0).toUpperCase();
-   el.title=n.id+" · clic para expandir su ecosistema";
+   el.style.borderWidth="1.5px";el.style.borderColor="#789879";el.style.boxShadow="none";
+   // Keep the sphere dense and readable; load photos only for the most connected foreground taxa.
+   if(i<90){const u=await imgFor(n.id);if(u)el.innerHTML='<img src="'+u+'" alt="'+n.id+'">';else el.textContent=(n.id||"?").charAt(0).toUpperCase();}
+   else{el.textContent=(n.id||"?").charAt(0).toUpperCase();el.style.fontSize="7px";el.style.display="grid";el.style.placeItems="center";el.style.color="#f7faf6";el.style.background="#9db39e";}
+   el.title=n.id+" · "+(n.n||0)+" registros";
    el.onclick=()=>{document.querySelector("#red").scrollIntoView({behavior:"smooth"});setTimeout(()=>{const fr=document.querySelector(".network-frame iframe");try{fr.contentWindow.postMessage({type:"openTaxon",taxon:n.id},"*")}catch(e){}},650)};
    heroLayer.appendChild(el);
  }
