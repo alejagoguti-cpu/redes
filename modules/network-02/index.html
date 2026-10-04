@@ -65,11 +65,12 @@ h3{font-size:11px;margin:0 0 9px}.label{display:block;font-size:7px;text-transfo
 </div>
 </main></div>
 
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/"}}</script>
 <script type="module">
 const loading=document.querySelector("#loading");
 try{
-  const THREE=await import("https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js");
-  const {OrbitControls}=await import("https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/controls/OrbitControls.js");
+  const THREE=await import("three");
+  const {OrbitControls}=await import("three/addons/controls/OrbitControls.js");
 
   const COLORS={"VISITA FLORAL":0x6f9569,"HERBIVORÍA":0xbe8b57,"DEPREDACIÓN":0xb45f5f,"DISPERSIÓN":0x648bb2,"OVIPOSICIÓN":0x9870a6,"PARASITISMO":0x8c73a5,"MUTUALISMO":0x5a9a90,"OTRAS INTERACCIONES":0x8a8a86};
   const state={district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:"",focus:null,auto:true};
