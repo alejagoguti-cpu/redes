@@ -194,7 +194,7 @@ const state={
   district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:"",
   focus:null, interactionSet:null, includeIsolated:false, yaw:0.35,pitch:-0.16,zoom:1,auto:true,labels:false
 };
-const sceneAnim={alpha:1,targetAlpha:1,zoomBoost:0,targetZoomBoost:0,spin:0,targetSpin:0,busy:false,pending:null,lastApplied:null};
+const sceneAnim={alpha:1,targetAlpha:1,zoomBoost:0,targetZoomBoost:0,spin:0,targetSpin:0,morph:1,targetMorph:1,burst:0,targetBurst:0,flash:0,targetFlash:0,busy:false,pending:null,lastApplied:null};
 const neonState={groups:new Set(),interaction:null,interactions:new Set(),strength:0,targetStrength:0};
 
 let DATA=null,visible=[],nodes=[],nodeMap=new Map(),edgeScreen=[];
@@ -243,11 +243,15 @@ function project(n){
   const p=rotatePoint(n.base);
   const depth=2.8-p.z;
   const scale=(state.zoom+sceneAnim.zoomBoost)*(Math.min(W,H)*0.38)/depth;
+  const cx=W*0.52,cy=H*0.53;
+  const morph=Math.max(.02,sceneAnim.morph);
+  const burst=sceneAnim.burst;
+  const radial=scale*morph*(1+burst*.72);
   return {
-    x:W*0.52+p.x*scale,
-    y:H*0.53+p.y*scale,
+    x:cx+p.x*radial,
+    y:cy+p.y*radial,
     z:p.z,
-    scale:Math.max(.35,Math.min(2.4,1.15/depth*2.3))
+    scale:Math.max(.22,Math.min(2.8,(1.15/depth*2.3)*(0.45+0.55*morph)*(1+burst*.28)))
   };
 }
 
@@ -401,6 +405,20 @@ function linePattern(q){
 
 function draw(){
   ctx.clearRect(0,0,W,H);
+  if(sceneAnim.flash>.01){
+    const cx=W*.52,cy=H*.53;
+    const rr=Math.max(W,H)*(.08+(1-sceneAnim.flash)*.62);
+    const g=ctx.createRadialGradient(cx,cy,0,cx,cy,rr);
+    g.addColorStop(0,"rgba(151,255,187,"+(sceneAnim.flash*.22)+")");
+    g.addColorStop(.38,"rgba(85,205,130,"+(sceneAnim.flash*.10)+")");
+    g.addColorStop(1,"rgba(5,8,6,0)");
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    ctx.save();
+    ctx.globalAlpha=sceneAnim.flash*.8;
+    ctx.strokeStyle="#a7ffc2";ctx.shadowColor="#72ff9c";ctx.shadowBlur=32;ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.arc(cx,cy,rr*.62,0,Math.PI*2);ctx.stroke();
+    ctx.restore();
+  }
   ctx.save();
   ctx.globalAlpha=sceneAnim.alpha;
   edgeScreen=[];
@@ -479,6 +497,15 @@ function draw(){
 
     ctx.globalAlpha=(dim?.08:1)*sceneAnim.alpha;
     const nodeNeon=neonState.groups.has(ecoGroup(n.id));
+    if((nodeNeon||neonState.interactions.size)&&sceneAnim.burst>.04){
+      ctx.save();
+      ctx.globalAlpha=Math.min(.42,sceneAnim.burst*.5)*sceneAnim.alpha;
+      ctx.strokeStyle=ECO_COLORS[ecoGroup(n.id)]||"#9dffb9";
+      ctx.shadowColor=ctx.strokeStyle;ctx.shadowBlur=38;
+      ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.arc(p.x,p.y,radius*(1.8+sceneAnim.burst*2.2),0,Math.PI*2);ctx.stroke();
+      ctx.restore();
+    }
     ctx.strokeStyle=hot?"#1f3d25":(ECO_COLORS[ecoGroup(n.id)]||"rgba(255,255,255,.96)");
     ctx.shadowColor=nodeNeon?(ECO_COLORS[ecoGroup(n.id)]||"#8fd3a8"):"transparent";
     ctx.shadowBlur=nodeNeon?34*neonState.strength:0;
@@ -512,6 +539,9 @@ function animate(now){
   sceneAnim.alpha+=(sceneAnim.targetAlpha-sceneAnim.alpha)*ease;
   sceneAnim.zoomBoost+=(sceneAnim.targetZoomBoost-sceneAnim.zoomBoost)*ease;
   sceneAnim.spin+=(sceneAnim.targetSpin-sceneAnim.spin)*ease;
+  sceneAnim.morph+=(sceneAnim.targetMorph-sceneAnim.morph)*ease;
+  sceneAnim.burst+=(sceneAnim.targetBurst-sceneAnim.burst)*ease;
+  sceneAnim.flash+=(sceneAnim.targetFlash-sceneAnim.flash)*Math.min(1,dt*.024);
   neonState.strength+=(neonState.targetStrength-neonState.strength)*ease;
   state.yaw+=sceneAnim.spin*dt*.0005;
   draw();
@@ -806,31 +836,42 @@ function animateSceneChange(applyFn,key){
   if(sceneAnim.busy)return;
   sceneAnim.busy=true;
 
-  sceneAnim.targetAlpha=.015;
-  sceneAnim.targetZoomBoost=.38;
-  sceneAnim.targetSpin=2.6;
+  // ACT I — collapse the old ecosystem into a bright core.
+  sceneAnim.targetAlpha=.10;
+  sceneAnim.targetMorph=.06;
+  sceneAnim.targetBurst=0;
+  sceneAnim.targetZoomBoost=.42;
+  sceneAnim.targetSpin=4.2;
   neonState.targetStrength=0;
 
   setTimeout(()=>{
     const p=sceneAnim.pending;sceneAnim.pending=null;
     if(p){p.applyFn();sceneAnim.lastApplied=p.key}
 
-    // New layer enters from a nearly invisible state and pulses into focus.
-    sceneAnim.alpha=Math.min(sceneAnim.alpha,.06);
-    sceneAnim.zoomBoost=.34;
+    // ACT II — new layer explodes out of the core.
+    sceneAnim.alpha=.10;
+    sceneAnim.morph=.04;
+    sceneAnim.burst=.85;
+    sceneAnim.flash=1;
     sceneAnim.targetAlpha=1;
+    sceneAnim.targetMorph=1;
+    sceneAnim.targetBurst=0;
     sceneAnim.targetZoomBoost=0;
-    sceneAnim.targetSpin=0;
+    sceneAnim.targetSpin=.45;
+    sceneAnim.targetFlash=0;
+
     if(neonState.groups.size||neonState.interactions.size||neonState.interaction){
-      neonState.strength=.05;
+      neonState.strength=.08;
       neonState.targetStrength=1;
     }
 
+    // ACT III — settle, leaving the active trophic layer glowing.
+    setTimeout(()=>{sceneAnim.targetSpin=0},520);
     setTimeout(()=>{
       sceneAnim.busy=false;
       if(sceneAnim.pending)animateSceneChange(sceneAnim.pending.applyFn,sceneAnim.pending.key);
-    },980);
-  },480);
+    },1250);
+  },620);
 }
 function applyEcoSet(list){
   activeEco.clear();
@@ -884,7 +925,7 @@ window.addEventListener("message",e=>handleNetworkMessage(e.data||{}));
 async function init(){
   try{
     if(matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches){
-      sceneAnim.alpha=sceneAnim.targetAlpha=1;sceneAnim.zoomBoost=sceneAnim.targetZoomBoost=0;
+      sceneAnim.alpha=sceneAnim.targetAlpha=1;sceneAnim.zoomBoost=sceneAnim.targetZoomBoost=0;sceneAnim.morph=sceneAnim.targetMorph=1;sceneAnim.burst=sceneAnim.targetBurst=0;sceneAnim.flash=sceneAnim.targetFlash=0;
     }
     const qs=new URLSearchParams(location.search);
     if(qs.get("embed")==="1")document.body.classList.add("embed");
