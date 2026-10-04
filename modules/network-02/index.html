@@ -5,230 +5,73 @@
 <title>Interacciones bióticas · Enjambre RIBB</title>
 <link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/sidebar.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<script src="https://unpkg.com/cytoscape@3.30.3/dist/cytoscape.min.js"></script>
 <style>
-:root{--paper:#f7f7f3;--ink:#1f241f;--muted:#747a72;--glass:rgba(255,255,252,.92);--hair:#dfe3da;--green:#415c46;--shadow:0 18px 50px rgba(31,40,31,.10)}
+:root{--paper:#f7f7f3;--ink:#1f241f;--muted:#737a72;--glass:rgba(255,255,252,.94);--hair:#dde2d9;--green:#415c46;--shadow:0 18px 50px rgba(31,40,31,.10)}
 *{box-sizing:border-box}html,body{margin:0;height:100%}body{font-family:Inter,Arial,sans-serif;background:var(--paper);color:var(--ink);overflow:hidden}
-.app{display:flex;height:100vh}.main{position:relative;flex:1;min-width:0}.sidebar{z-index:40}#cy{position:absolute;inset:0;background:radial-gradient(circle at 50% 48%,#fff 0,#f8f8f4 46%,#f0f2eb 100%)}
-.title{position:absolute;z-index:8;top:22px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none}.title h1{margin:0;font:600 20px/1.1 Inter,Arial}.title p{margin:6px 0;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#8a9087}
-.panel{position:absolute;z-index:14;background:var(--glass);border:1px solid rgba(214,220,209,.9);box-shadow:var(--shadow);backdrop-filter:blur(18px)}
-.filters{left:18px;top:18px;width:246px;padding:12px;border-radius:18px;max-height:calc(100vh - 36px);overflow:auto;transition:.25s}.filters h3{font-size:11px;margin:1px 0 10px;display:flex;justify-content:space-between;align-items:center}
-.detail{right:18px;top:18px;bottom:18px;width:318px;padding:18px;border-radius:20px;overflow:auto;transform:translateX(calc(100% + 30px));opacity:0;pointer-events:none;transition:.28s ease}.detail.open{transform:none;opacity:1;pointer-events:auto}
-.closeDetail{position:absolute;right:12px;top:12px;width:28px;height:28px;border:0;border-radius:50%;background:#eef0ea;cursor:pointer}
-.label{display:block;font-size:7.5px;text-transform:uppercase;letter-spacing:.11em;color:#8a9087;margin:11px 0 5px}.search,select{width:100%;border:1px solid var(--hair);background:#fff;border-radius:10px;padding:8px 9px;font-size:9px;outline:none}.search:focus,select:focus{border-color:#839481}
-.checks{display:flex;gap:4px;flex-wrap:wrap}.btn{border:1px solid var(--hair);background:#fff;border-radius:999px;padding:5px 7px;font-size:7.5px;cursor:pointer;color:#62675f}.btn.active{background:var(--green);color:#fff;border-color:var(--green)}
-.stats{display:flex;gap:5px;margin-top:10px}.stat{flex:1;background:#f1f3ed;border-radius:10px;padding:7px 8px}.stat b{display:block;font-size:14px}.stat span{font-size:7px;color:var(--muted)}.reset{width:100%;margin-top:9px;border:0;background:#e8ece4;color:#465044;border-radius:9px;padding:7px;font-size:8px;cursor:pointer}
-.detail h2{font-size:16px;margin:0 30px 8px 0;font-style:italic}.detail p{font-size:10px;line-height:1.55;color:#555d54}.detail h4{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:#8a9087;margin:16px 0 6px}.hero{height:155px;border-radius:14px;background:#e7eae3 center/cover;margin:10px 0}.badges{display:flex;flex-wrap:wrap;gap:4px}.badge{font-size:7.5px;padding:5px 7px;background:#edf0e9;border-radius:999px}.warning{padding:10px;border-radius:10px;background:#f5f0df;color:#695c37;font-size:8px;line-height:1.45}
-.legend{position:absolute;left:50%;bottom:15px;transform:translateX(-50%);z-index:9;background:rgba(255,255,252,.92);border:1px solid var(--hair);border-radius:999px;padding:7px 11px;display:flex;gap:9px;align-items:center;box-shadow:0 8px 25px #0000000b;font-size:7px;white-space:nowrap}.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}.lineDemo{display:inline-block;width:16px;border-top:1.5px solid #777;margin-right:4px;vertical-align:middle}.dash{border-top-style:dashed}.dotline{border-top-style:dotted}
-.loading{position:absolute;inset:0;display:grid;place-items:center;background:var(--paper);z-index:50;font-size:11px;color:#777}.small{font-size:7px!important;color:#8b9088!important}.hint{position:absolute;z-index:8;left:50%;bottom:50px;transform:translateX(-50%);font-size:7px;color:#939890;letter-spacing:.03em;pointer-events:none}
-@media(max-width:900px){.filters{width:220px}.detail{width:300px}.legend{max-width:70vw;overflow:auto}.title{display:none}}
-</style>
-</head>
-<body>
-<div class="app">
-<aside class="sidebar">
-<a class="brand-icon" href="../../index.html"><i class="fa-solid fa-diagram-project"></i></a>
-<nav class="icon-nav">
+.app{display:flex;height:100vh}.main{position:relative;flex:1;min-width:0}.sidebar{z-index:50}
+#swarm{position:absolute;inset:0;width:100%;height:100%;background:radial-gradient(circle at 50% 48%,#fff 0,#fafaf6 45%,#eef1e9 100%)}
+.title{position:absolute;z-index:8;top:21px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none}.title h1{margin:0;font-size:20px}.title p{margin:6px 0;font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:#8a9088}
+.panel{position:absolute;z-index:15;background:var(--glass);border:1px solid var(--hair);box-shadow:var(--shadow);backdrop-filter:blur(18px)}
+.filters{left:18px;top:18px;width:248px;padding:13px;border-radius:18px;max-height:calc(100vh - 36px);overflow:auto}
+.detail{right:18px;top:18px;bottom:18px;width:330px;padding:18px;border-radius:20px;overflow:auto;transform:translateX(calc(100% + 36px));opacity:0;pointer-events:none;transition:.25s ease}.detail.open{transform:none;opacity:1;pointer-events:auto}
+.close{position:absolute;right:12px;top:12px;border:0;border-radius:50%;width:28px;height:28px;background:#edf0e9;cursor:pointer}
+h3{font-size:11px;margin:0 0 9px}.label{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:#8a9088;margin:10px 0 5px}
+.search,select{width:100%;border:1px solid var(--hair);background:#fff;border-radius:10px;padding:8px 9px;font-size:9px;outline:none}.checks{display:flex;gap:4px;flex-wrap:wrap}
+.btn{border:1px solid var(--hair);background:#fff;border-radius:999px;padding:5px 7px;font-size:7.5px;cursor:pointer}.btn.active{background:var(--green);color:#fff;border-color:var(--green)}
+.stats{display:flex;gap:6px;margin-top:10px}.stat{flex:1;background:#f0f3ec;border-radius:10px;padding:7px}.stat b{display:block;font-size:14px}.stat span{font-size:7px;color:var(--muted)}
+.reset{width:100%;margin-top:9px;border:0;background:#e8ece4;color:#465044;border-radius:9px;padding:7px;font-size:8px;cursor:pointer}
+.detail h2{font-size:16px;margin:0 34px 8px 0;font-style:italic}.detail p{font-size:10px;line-height:1.55;color:#555d54}.detail h4{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:#8a9088;margin:15px 0 6px}
+.hero{height:150px;border-radius:14px;background:#e7eae3 center/cover;margin:10px 0}.badge{display:inline-block;font-size:7.5px;padding:5px 7px;background:#edf0e9;border-radius:999px;margin:2px}
+.warning{padding:10px;border-radius:10px;background:#f5f0df;color:#695c37;font-size:8px;line-height:1.45}
+.legend{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:9;background:rgba(255,255,252,.94);border:1px solid var(--hair);border-radius:999px;padding:7px 11px;display:flex;gap:9px;font-size:7px;box-shadow:0 8px 25px #0000000b;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}.line{display:inline-block;width:16px;border-top:1.5px solid #777;margin-right:4px;vertical-align:middle}.dash{border-top-style:dashed}.dotline{border-top-style:dotted}
+.loading{position:absolute;inset:0;display:grid;place-items:center;background:var(--paper);z-index:60;font-size:11px;color:#777}.hint{position:absolute;left:50%;bottom:50px;transform:translateX(-50%);font-size:7px;color:#929890;z-index:8;pointer-events:none}.small{font-size:7px!important;color:#888!important}
+</style></head>
+<body><div class="app">
+<aside class="sidebar"><a class="brand-icon" href="../../index.html"><i class="fa-solid fa-diagram-project"></i></a><nav class="icon-nav">
 <a href="../../index.html" class="icon-nav-item"><i class="fa-solid fa-house"></i></a>
 <a href="../network-01/index.html" class="icon-nav-item"><i class="fa-solid fa-city"></i></a>
 <a href="index.html" class="icon-nav-item active"><i class="fa-solid fa-leaf"></i></a>
 </nav></aside>
 <main class="main">
 <div id="loading" class="loading">Cargando base RIBB y construyendo el enjambre…</div>
-<div class="title"><h1>Enjambre de interacciones bióticas</h1><p>RIBB · Jardín Botánico de Bogotá · base diciembre 2024</p></div>
-
+<canvas id="swarm"></canvas>
+<div class="title"><h1>Enjambre de interacciones bióticas</h1><p>RIBB · Jardín Botánico de Bogotá · diciembre 2024</p></div>
 <aside class="panel filters">
-<h3>Filtros de la red</h3>
+<h3>Explorar</h3>
 <input id="search" class="search" placeholder="Buscar taxón…">
-<span class="label">Cobertura inicial</span>
-<div class="checks" id="districtGroup">
-<button class="btn active" data-v="SI">Reportadas en el Distrito</button>
-<button class="btn" data-v="ALL">Toda la base</button>
-</div>
-
-<span class="label">Tipo de interacción</span>
-<select id="interaction"><option value="ALL">Todas</option></select>
-
-<span class="label">Origen</span>
-<div class="checks" id="originGroup">
-<button class="btn active" data-v="ALL">Todos</button><button class="btn" data-v="Nativa">Nativa</button><button class="btn" data-v="No nativa">No nativa</button>
-</div>
-
-<span class="label">Calidad documental</span>
-<div class="checks" id="qualityGroup">
-<button class="btn active" data-v="ALL">Todas</button><button class="btn" data-v="Alta">Alta</button><button class="btn" data-v="Media">Media</button><button class="btn" data-v="Baja">Baja</button>
-</div>
-
-<button class="reset" id="reset">Restablecer enjambre</button>
-<div class="stats">
-<div class="stat"><b id="nodeCount">0</b><span>taxones visibles</span></div>
-<div class="stat"><b id="edgeCount">0</b><span>registros visibles</span></div>
-</div>
-<p class="small" id="datasetMeta"></p>
+<span class="label">Cobertura</span><div class="checks" id="district"><button class="btn active" data-v="SI">Distrito</button><button class="btn" data-v="ALL">Toda la base</button></div>
+<span class="label">Interacción</span><select id="interaction"><option value="ALL">Todas</option></select>
+<span class="label">Origen</span><div class="checks" id="origin"><button class="btn active" data-v="ALL">Todos</button><button class="btn" data-v="Nativa">Nativa</button><button class="btn" data-v="No nativa">No nativa</button></div>
+<span class="label">Calidad</span><div class="checks" id="quality"><button class="btn active" data-v="ALL">Todas</button><button class="btn" data-v="Alta">Alta</button><button class="btn" data-v="Media">Media</button><button class="btn" data-v="Baja">Baja</button></div>
+<button id="reset" class="reset">Restablecer</button>
+<div class="stats"><div class="stat"><b id="nodes">0</b><span>taxones</span></div><div class="stat"><b id="edges">0</b><span>registros</span></div></div>
+<p id="meta" class="small"></p>
 </aside>
-
-<aside class="panel detail" id="detail"><button class="closeDetail" id="closeDetail" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
-<h2>Cómo leer la red</h2>
-<p>El enjambre representa registros individuales de interacción. Haz clic en una especie para aislar su vecindad o en una línea para abrir la evidencia concreta de esa relación.</p>
-<div class="warning">Una interacción reportada en Bogotá no demuestra por sí sola presencia en Kennedy o en un humedal específico. La presencia local debe respaldarse con coordenadas, inventarios o registros del área de estudio.</div>
-<h4>Convenciones</h4>
-<p><b>Color</b> = tipo de interacción.<br><b>Estilo de línea</b> = calidad documental.<br><b>Tamaño del nodo</b> = cantidad de registros asociados.</p>
-</aside>
-
-<div id="cy"></div><div class="hint">Selecciona un nodo para aislar su red · selecciona una conexión para consultar la evidencia</div>
-<div class="legend">
-<span><i class="dot" style="background:#6f9569"></i>Visita floral</span>
-<span><i class="dot" style="background:#be8b57"></i>Herbivoría</span>
-<span><i class="dot" style="background:#b45f5f"></i>Depredación</span>
-<span><i class="dot" style="background:#648bb2"></i>Dispersión</span>
-<span><i class="dot" style="background:#8c73a5"></i>Parasitismo / otras</span>
-<span><i class="lineDemo"></i>Alta</span><span><i class="lineDemo dash"></i>Media</span><span><i class="lineDemo dotline"></i>Baja</span>
-</div>
+<aside id="detail" class="panel detail"><button id="close" class="close"><i class="fa-solid fa-xmark"></i></button><h2>Selecciona un elemento</h2><p>Haz clic en un nodo para aislar su vecindad o en una conexión para abrir la evidencia.</p></aside>
+<div class="hint">Nodo = especie · línea = evidencia de interacción</div>
+<div class="legend"><span><i class="dot" style="background:#6f9569"></i>Visita floral</span><span><i class="dot" style="background:#be8b57"></i>Herbivoría</span><span><i class="dot" style="background:#b45f5f"></i>Depredación</span><span><i class="dot" style="background:#648bb2"></i>Dispersión</span><span><i class="line"></i>Alta</span><span><i class="line dash"></i>Media</span><span><i class="line dotline"></i>Baja</span></div>
 </main></div>
-
-<script type="module">
-import {resolveSpeciesImage} from './image-resolver.js';
-
-const COLORS={
-"VISITA FLORAL":"#6f9569","HERBIVORÍA":"#be8b57","DEPREDACIÓN":"#b45f5f","DISPERSIÓN":"#648bb2",
-"OVIPOSICIÓN":"#9870a6","PARASITISMO":"#8c73a5","MUTUALISMO":"#5a9a90","EPIBIOSIS":"#6f88a1",
-"NIDIFICACIÓN":"#8f795f","ALELOPATÍA":"#78906c","HEMATOFAGIA":"#a06666","OTRAS INTERACCIONES":"#8a8a86"
-};
-const state={district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:""};
-let DATA=null,cy=null;
-
-function hashPos(s,w,h){
-  let a=2166136261,b=16777619;
-  for(let i=0;i<s.length;i++){a^=s.charCodeAt(i);a=Math.imul(a,b)}
-  const x=((a>>>0)%10000)/10000;
-  a=Math.imul(a^0x9e3779b9,2654435761);
-  const y=((a>>>0)%10000)/10000;
-  return {x:80+x*(w-160),y:80+y*(h-160)};
-}
-function edgeStyle(q){return q==="Alta"?"solid":q==="Media"?"dashed":"dotted"}
-function originMatch(n){
- if(state.origin==="ALL") return true;
- return (n.origin||"").toLowerCase().startsWith(state.origin.toLowerCase());
-}
-function recordMatch(r){
- if(state.district!=="ALL" && r.district!==state.district) return false;
- if(state.interaction!=="ALL" && r.title!==state.interaction) return false;
- if(state.quality!=="ALL" && r.q!==state.quality) return false;
- if(state.search){
-   const s=state.search.toLowerCase();
-   if(!r.s.toLowerCase().includes(s) && !r.t.toLowerCase().includes(s)) return false;
- }
- if(state.origin!=="ALL"){
-   const sn=DATA.nodeById.get(r.s),tn=DATA.nodeById.get(r.t);
-   if(!originMatch(sn)&&!originMatch(tn)) return false;
- }
- return true;
-}
-function buildGraph(){
- const visible=DATA.records.filter(recordMatch);
- const ids=new Set();
- visible.forEach(r=>{ids.add(r.s);ids.add(r.t)});
- const w=document.querySelector('#cy').clientWidth,h=document.querySelector('#cy').clientHeight;
- const elements=[];
- for(const id of ids){
-   const n=DATA.nodeById.get(id)||{id,n:1,origin:""};
-   const p=hashPos(id,w,h);
-   elements.push({data:{id,label:id,count:n.n,origin:n.origin},position:p});
- }
- visible.forEach(r=>elements.push({data:{id:r.id,source:r.s,target:r.t,title:r.title,quality:r.q,raw:r,color:COLORS[r.title]||"#888",lineStyle:edgeStyle(r.q)}}));
-
- if(cy) cy.destroy();
- cy=cytoscape({
-   container:document.getElementById('cy'),
-   elements,
-   layout:{name:'preset',fit:true,padding:55},
-   pixelRatio:'auto',
-   style:[
-    {selector:'node',style:{
-      'label':'','font-size':7,'text-wrap':'wrap','text-max-width':86,'text-valign':'bottom','text-margin-y':7,
-      'width':'mapData(count,1,550,7,30)','height':'mapData(count,1,550,7,30)',
-      'background-color':'#879682','border-width':1,'border-color':'#fff','opacity':.83
-    }},
-    {selector:'edge',style:{
-      'width':.75,'line-color':'data(color)','curve-style':'straight','opacity':.13,'line-style':'data(lineStyle)'
-    }},
-    {selector:'.faded',style:{'opacity':.03}},
-    {selector:'node:active',style:{'label':'data(label)'}},\n    {selector:'.focus',style:{'opacity':1,'z-index':999,'border-width':3,'border-color':'#263326','label':'data(label)','font-size':8}},
-    {selector:'edge.focus',style:{'opacity':.95,'width':3}}
-   ]
- });
- cy.on('tap','node',evt=>showNode(evt.target));
- cy.on('tap','edge',evt=>showEdge(evt.target));
- cy.on('dbltap','edge',evt=>showEdge(evt.target));
- document.getElementById('nodeCount').textContent=ids.size.toLocaleString('es-CO');
- document.getElementById('edgeCount').textContent=visible.length.toLocaleString('es-CO');
-}
-function clearFocus(){cy.elements().removeClass('faded focus')}\nfunction openDetail(){document.getElementById('detail').classList.add('open')}\nfunction closeDetail(){document.getElementById('detail').classList.remove('open');if(cy)clearFocus()}
-function showNode(node){
- clearFocus();
- const hood=node.closedNeighborhood();
- cy.elements().difference(hood).addClass('faded');hood.addClass('focus');
- const n=DATA.nodeById.get(node.id())||{};
- const detail=document.getElementById('detail');
- detail.innerHTML=`<h2>${node.id()}</h2><div id="hero" class="hero"></div><div class="badges"><span class="badge">${n.origin||'Origen no indicado'}</span><span class="badge">${n.n||0} registros en la base</span><span class="badge">${node.degree()} conexiones visibles</span></div><h4>Lectura</h4><p>Este nodo se conecta con ${node.degree()} registros bajo los filtros actuales. La red resaltada permite leer su nicho relacional dentro del conjunto filtrado.</p><p class="small" id="photoCredit">Buscando imagen por nombre científico…</p>`;
- resolveSpeciesImage({id:node.id()}).then(im=>{
-   if(!im)return;
-   if(im.url)document.getElementById('hero').style.backgroundImage=`url("${im.url}")`;
-   document.getElementById('photoCredit').innerHTML=`Imagen: <a href="${im.sourceUrl||'#'}" target="_blank">${im.source||'fuente externa'}</a> ${im.attribution||''}`;
- });
-}
-function explain(r){
- const a=`<i>${r.s}</i>`,b=`<i>${r.t}</i>`;
- if(r.i==="Consume")return `${a} consume ${r.part?'<b>'+r.part+'</b> de ':''}${b}. RIBB clasifica este registro como <b>${r.title.toLowerCase()}</b>.`;
- if(r.i==="Dispersa"||r.i==="Dispersa a")return `${a} participa en la dispersión de ${b}. La relación está clasificada como <b>dispersión</b>.`;
- if(r.i==="Poliniza a")return `${a} participa en la polinización de ${b}.`;
- if(r.i==="Oviposita en")return `${a} usa a ${b} como sustrato de oviposición.`;
- if(r.i==="Parasita a")return `${a} parasita a ${b}.`;
- if(r.i==="Crece sobre")return `${a} crece sobre ${b}; RIBB registra esta relación como <b>${r.title.toLowerCase()}</b>.`;
- return `${a} mantiene una interacción registrada con ${b} clasificada como <b>${r.title.toLowerCase()}</b>.`;
-}
-function showEdge(edge){
- clearFocus();edge.addClass('focus');edge.source().addClass('focus');edge.target().addClass('focus');
- cy.elements().not(edge).not(edge.source()).not(edge.target()).addClass('faded');
- const r=edge.data('raw'),d=document.getElementById('detail');
- d.innerHTML=`<h2>${r.s} ↔ ${r.t}</h2><div class="badges"><span class="badge">${r.title}</span><span class="badge">${r.i}</span><span class="badge">Calidad ${r.q}</span><span class="badge">${r.district==='SI'?'Reportada en el Distrito':'No marcada como reportada en el Distrito'}</span></div><h4>¿Por qué están conectadas?</h4><p>${explain(r)}</p><h4>Evidencia del registro</h4><p><b>Parte afectada:</b> ${r.part||'No especificada'}<br><b>Fecha:</b> ${r.date||'No indicada'}<br><b>Coordenadas:</b> ${r.coord||'No indicadas'}<br><b>Frecuencia:</b> ${r.freq||'No indicada'}</p><h4>Fuente</h4><p>${r.ref||'Sin referencia visible en este registro.'}</p>${r.obs?'<h4>Observación</h4><p>'+r.obs+'</p>':''}<div class="warning">Este registro sustenta la relación en RIBB. No debe interpretarse automáticamente como presencia en Kennedy si la localización no corresponde al área de estudio.</div>`;
-}
-function activateGroup(id,key){
- document.querySelectorAll('#'+id+' .btn').forEach(b=>b.onclick=()=>{
-   document.querySelectorAll('#'+id+' .btn').forEach(x=>x.classList.remove('active'));
-   b.classList.add('active');state[key]=b.dataset.v;buildGraph();
- });
-}
-function bind(){
- activateGroup('districtGroup','district');activateGroup('originGroup','origin');activateGroup('qualityGroup','quality');
- document.getElementById('interaction').onchange=e=>{state.interaction=e.target.value;buildGraph()};
- document.getElementById('search').oninput=e=>{state.search=e.target.value.trim();buildGraph()};
- document.getElementById('reset').onclick=()=>{
-   state.district='SI';state.interaction='ALL';state.origin='ALL';state.quality='ALL';state.search='';
-   document.getElementById('search').value='';document.getElementById('interaction').value='ALL';
-   document.querySelectorAll('.btn').forEach(x=>x.classList.remove('active'));
-   document.querySelector('#districtGroup .btn[data-v="SI"]').classList.add('active');
-   document.querySelector('#originGroup .btn[data-v="ALL"]').classList.add('active');
-   document.querySelector('#qualityGroup .btn[data-v="ALL"]').classList.add('active');
-   buildGraph();
- };
-}
-async function init(){
- try{
-  const res=await fetch('../../assets/data/ribb_web.json',{cache:'no-store'});
-  if(!res.ok)throw new Error('Dataset aún no publicado');
-  DATA=await res.json();
-  DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));
-  const select=document.getElementById('interaction');
-  Object.keys(DATA.meta.interactionTypes||{}).sort().forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=`${k} (${DATA.meta.interactionTypes[k]})`;select.appendChild(o)});
-  document.getElementById('datasetMeta').textContent=`Base: ${DATA.meta.totalRecords.toLocaleString('es-CO')} registros · ${DATA.meta.districtRecords.toLocaleString('es-CO')} reportados en el Distrito · ${DATA.meta.taxa.toLocaleString('es-CO')} taxones.`;
-  bind();buildGraph();document.getElementById('loading').remove();
- }catch(err){
-  document.getElementById('loading').innerHTML='El dataset RIBB se está generando en GitHub Actions. Recarga esta página cuando termine el deployment.';
-  console.error(err);
- }
-}
-init();
-</script>
-</body>
-</html>
+<script>
+const COLORS={"VISITA FLORAL":"#6f9569","HERBIVORÍA":"#be8b57","DEPREDACIÓN":"#b45f5f","DISPERSIÓN":"#648bb2","OVIPOSICIÓN":"#9870a6","PARASITISMO":"#8c73a5","MUTUALISMO":"#5a9a90","OTRAS INTERACCIONES":"#8a8a86"};
+const state={district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:"",focus:null};
+let DATA=null,visible=[],nodes=[],nodeMap=new Map(),canvas,ctx,dpr=1,W=0,H=0;
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function resize(){dpr=devicePixelRatio||1;W=canvas.clientWidth;H=canvas.clientHeight;canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);layout();draw()}
+function layout(){for(const n of nodes){const a=(hash(n.id)%100000)/100000*Math.PI*2;const r=.10+.38*((hash(n.id+"r")%10000)/10000);n.x=W*.52+Math.cos(a)*Math.min(W,H)*r;n.y=H*.52+Math.sin(a)*Math.min(W,H)*r;n.radius=2+Math.min(10,Math.sqrt(n.n||1)*.35)}}
+function match(r){if(state.district!=="ALL"&&r.district!==state.district)return false;if(state.interaction!=="ALL"&&r.title!==state.interaction)return false;if(state.quality!=="ALL"&&r.q!==state.quality)return false;if(state.search){const q=state.search.toLowerCase();if(!r.s.toLowerCase().includes(q)&&!r.t.toLowerCase().includes(q))return false}if(state.origin!=="ALL"){const a=DATA.nodeById.get(r.s),b=DATA.nodeById.get(r.t);if(![(a?.origin||""),(b?.origin||"")].some(x=>x.toLowerCase().startsWith(state.origin.toLowerCase())))return false}return true}
+function rebuild(){visible=DATA.records.filter(match);const ids=new Set();visible.forEach(r=>{ids.add(r.s);ids.add(r.t)});nodes=[...ids].map(id=>({...DATA.nodeById.get(id),id}));nodeMap=new Map(nodes.map(n=>[n.id,n]));layout();document.querySelector("#nodes").textContent=nodes.length.toLocaleString("es-CO");document.querySelector("#edges").textContent=visible.length.toLocaleString("es-CO");draw()}
+function draw(){if(!ctx)return;ctx.clearRect(0,0,W,H);ctx.lineCap="round";for(const r of visible){const a=nodeMap.get(r.s),b=nodeMap.get(r.t);if(!a||!b)continue;const hot=state.focus&&(state.focus===r.id||state.focus===r.s||state.focus===r.t);const dim=state.focus&&!hot;ctx.globalAlpha=dim?.015:(hot?.9:.12);ctx.strokeStyle=COLORS[r.title]||"#8b8f88";ctx.lineWidth=hot?2:.55;ctx.setLineDash(r.q==="Media"?[4,4]:r.q==="Baja"?[1,4]:[]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}ctx.setLineDash([]);for(const n of nodes){const hot=state.focus===n.id;const connected=state.focus?visible.some(r=>(r.s===state.focus&&r.t===n.id)||(r.t===state.focus&&r.s===n.id)):false;ctx.globalAlpha=state.focus&&!(hot||connected)?.08:1;ctx.beginPath();ctx.fillStyle=hot?"#263826":"#7f947c";ctx.arc(n.x,n.y,hot?n.radius+4:n.radius,0,Math.PI*2);ctx.fill();if(hot){ctx.font="11px Inter,Arial";ctx.fillStyle="#20251f";ctx.textAlign="center";ctx.fillText(n.id,n.x,n.y+n.radius+18)}}ctx.globalAlpha=1}
+function nearestNode(x,y){let best=null,bd=18;for(const n of nodes){const d=Math.hypot(x-n.x,y-n.y);if(d<bd){bd=d;best=n}}return best}
+function segDist(px,py,a,b){const dx=b.x-a.x,dy=b.y-a.y,l2=dx*dx+dy*dy;if(!l2)return 999;let t=((px-a.x)*dx+(py-a.y)*dy)/l2;t=Math.max(0,Math.min(1,t));return Math.hypot(px-(a.x+t*dx),py-(a.y+t*dy))}
+function nearestEdge(x,y){let best=null,bd=6;for(const r of visible){const a=nodeMap.get(r.s),b=nodeMap.get(r.t);if(!a||!b)continue;const d=segDist(x,y,a,b);if(d<bd){bd=d;best=r}}return best}
+async function imageFor(name){try{const res=await fetch("https://api.inaturalist.org/v1/taxa/autocomplete?q="+encodeURIComponent(name)+"&per_page=5");const j=await res.json();const t=(j.results||[]).find(x=>(x.name||"").toLowerCase()===name.toLowerCase())||(j.results||[])[0];return t?.default_photo?.medium_url||""}catch{return""}}
+function bindClose(){const b=document.querySelector("#close");if(b)b.onclick=()=>{document.querySelector("#detail").classList.remove("open");state.focus=null;draw()}}
+function openNode(n){state.focus=n.id;draw();const d=document.querySelector("#detail");d.classList.add("open");d.innerHTML='<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button><h2>'+n.id+'</h2><div id="hero" class="hero"></div><span class="badge">'+(n.origin||"Origen no indicado")+'</span><span class="badge">'+(n.n||0)+' registros</span><h4>Lectura</h4><p>Se resaltan únicamente las relaciones directas de este taxón dentro del filtro actual.</p>';bindClose();imageFor(n.id).then(url=>{if(url){const h=document.querySelector("#hero");if(h)h.style.backgroundImage='url("'+url+'")'}})}
+function explain(r){if(r.i==="Consume")return "<i>"+r.s+"</i> consume "+(r.part?"<b>"+r.part+"</b> de ":"")+"<i>"+r.t+"</i>.";if(r.i==="Poliniza a")return "<i>"+r.s+"</i> participa en la polinización de <i>"+r.t+"</i>.";if(r.i==="Dispersa"||r.i==="Dispersa a")return "<i>"+r.s+"</i> participa en la dispersión de <i>"+r.t+"</i>.";return "<i>"+r.s+"</i> mantiene una interacción registrada con <i>"+r.t+"</i>."}
+function openEdge(r){state.focus=r.id;draw();const d=document.querySelector("#detail");d.classList.add("open");d.innerHTML='<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button><h2>'+r.s+' ↔ '+r.t+'</h2><span class="badge">'+r.title+'</span><span class="badge">Calidad '+r.q+'</span><h4>¿Por qué están conectadas?</h4><p>'+explain(r)+'</p><h4>Evidencia</h4><p><b>Parte:</b> '+(r.part||"No indicada")+'<br><b>Fecha:</b> '+(r.date||"No indicada")+'<br><b>Coordenadas:</b> '+(r.coord||"No indicadas")+'</p><h4>Fuente</h4><p>'+(r.ref||"Sin referencia visible")+'</p><div class="warning">Este registro no demuestra por sí solo presencia local en Kennedy.</div>';bindClose()}
+canvas=document.querySelector("#swarm");ctx=canvas.getContext("2d");canvas.addEventListener("click",e=>{const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;const n=nearestNode(x,y);if(n)return openNode(n);const ed=nearestEdge(x,y);if(ed)return openEdge(ed)});
+function group(id,key){document.querySelectorAll("#"+id+" .btn").forEach(b=>b.onclick=()=>{document.querySelectorAll("#"+id+" .btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");state[key]=b.dataset.v;state.focus=null;rebuild()})}
+async function init(){try{const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());if(!res.ok)throw new Error("HTTP "+res.status);DATA=await res.json();DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));const sel=document.querySelector("#interaction");Object.keys(DATA.meta.interactionTypes||{}).sort().forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k+" ("+DATA.meta.interactionTypes[k]+")";sel.appendChild(o)});document.querySelector("#meta").textContent="Base: "+DATA.meta.totalRecords.toLocaleString("es-CO")+" registros · "+DATA.meta.districtRecords.toLocaleString("es-CO")+" reportados en el Distrito.";group("district","district");group("origin","origin");group("quality","quality");sel.onchange=e=>{state.interaction=e.target.value;rebuild()};document.querySelector("#search").oninput=e=>{state.search=e.target.value.trim();rebuild()};document.querySelector("#reset").onclick=()=>location.reload();bindClose();rebuild();document.querySelector("#loading").remove()}catch(err){document.querySelector("#loading").innerHTML="No pude cargar la base RIBB. Error: "+err.message;console.error(err)}}
+addEventListener("resize",resize);resize();init();
+</script></body></html>
