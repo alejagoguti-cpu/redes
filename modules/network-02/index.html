@@ -2,60 +2,29 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Enjambre 3D · Interacciones bióticas RIBB</title>
+<title>Interacciones bióticas · Enjambre RIBB</title>
 <link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/sidebar.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://unpkg.com/cytoscape@3.30.3/dist/cytoscape.min.js"></script>
 <style>
-:root{
-  --bg:#f6f6f2;--ink:#1e241f;--muted:#767d75;--panel:rgba(255,255,252,.94);
-  --line:#dde2da;--accent:#405846;--shadow:0 16px 46px rgba(35,43,35,.08)
-}
-*{box-sizing:border-box}html,body{height:100%;margin:0}
-body{overflow:hidden;background:var(--bg);font-family:Inter,Arial,sans-serif;color:var(--ink)}
-.app{display:flex;height:100vh}.main{position:relative;flex:1;min-width:0;overflow:hidden}.sidebar{z-index:80}
-#webgl{position:absolute;inset:0;background:
- radial-gradient(circle at 52% 48%,#fff 0%,#fbfbf8 46%,#f0f2ec 100%)}
-#nodeLayer{position:absolute;inset:0;z-index:7;pointer-events:none;overflow:hidden}
-.taxon-node{
- position:absolute;left:0;top:0;border-radius:50%;transform:translate(-50%,-50%);
- border:2px solid rgba(255,255,255,.96);background:#dfe4dc;overflow:hidden;
- box-shadow:0 3px 12px rgba(33,42,33,.12);pointer-events:auto;cursor:pointer;
- transition:opacity .18s ease, box-shadow .18s ease, border-color .18s ease;
- will-change:transform,left,top
-}
-.taxon-node img{width:100%;height:100%;object-fit:cover;display:block}
-.taxon-node .initial{position:absolute;inset:0;display:grid;place-items:center;font-size:10px;font-weight:650;color:#4b5c4d;background:linear-gradient(145deg,#eef1ea,#cad5c8)}
-.taxon-node.loaded .initial{display:none}
-.taxon-node.selected{border-color:#293d2f;box-shadow:0 0 0 3px rgba(64,88,70,.16),0 6px 20px rgba(33,42,33,.18)}
-.taxon-node.dim{opacity:.09}
-.taxon-node.neighbor{opacity:1}
-.node-label{
- position:absolute;z-index:20;display:none;pointer-events:none;transform:translate(-50%,0);
- padding:5px 7px;border-radius:7px;background:rgba(29,35,30,.94);color:white;
- font-size:7.5px;line-height:1.2;white-space:nowrap
-}
-.masthead{position:absolute;z-index:12;top:19px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none}
-.masthead h1{margin:0;font-size:19px;font-weight:620;letter-spacing:-.015em}
-.masthead p{margin:5px 0 0;font-size:7px;text-transform:uppercase;letter-spacing:.13em;color:#888e86}
-.panel{position:absolute;z-index:30;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
-.filters{left:18px;top:18px;width:238px;padding:13px;border-radius:16px;max-height:calc(100vh - 36px);overflow:auto}
-.detail{right:18px;top:18px;bottom:18px;width:332px;padding:18px;border-radius:18px;overflow:auto;transform:translateX(calc(100% + 38px));opacity:0;pointer-events:none;transition:.24s ease}
-.detail.open{transform:none;opacity:1;pointer-events:auto}.close{position:absolute;right:12px;top:12px;width:28px;height:28px;border:0;border-radius:50%;background:#edf0e9;color:#586057;cursor:pointer}
-.sectionTitle{font-size:10.5px;font-weight:650;margin:0 0 9px}.label{display:block;font-size:6.7px;text-transform:uppercase;letter-spacing:.11em;color:#878d84;margin:11px 0 5px}
-.search,select{width:100%;border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 9px;font-size:8.5px;outline:none}.search:focus,select:focus{border-color:#859787}
-.chips{display:flex;gap:4px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 7px;font-size:7px;cursor:pointer;color:#5e655d}.chip.active{background:var(--accent);color:white;border-color:var(--accent)}
-.metrics{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:11px}.metric{background:#f0f2ec;border-radius:9px;padding:7px}.metric b{display:block;font-size:14px;font-weight:660}.metric span{font-size:6.7px;color:#7d837b}
-.reset{width:100%;margin-top:9px;border:0;background:#e8ebe5;color:#465044;border-radius:9px;padding:7px;font-size:7.5px;cursor:pointer}
-.meta{font-size:6.7px;line-height:1.45;color:#858a83;margin:8px 0 0}
-.toolbar{position:absolute;z-index:20;top:62px;left:50%;transform:translateX(-50%);display:flex;gap:4px;padding:4px;background:rgba(255,255,252,.92);border:1px solid var(--line);border-radius:999px;backdrop-filter:blur(14px)}
-.toolbar button{border:0;background:transparent;border-radius:999px;padding:6px 9px;font-size:7px;color:#626860;cursor:pointer}.toolbar button.active{background:#e4e8e1;color:#2f3c31}
-.legend{position:absolute;z-index:20;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:9px;align-items:center;padding:7px 11px;background:rgba(255,255,252,.94);border:1px solid var(--line);border-radius:999px;font-size:6.7px;color:#60665e;white-space:nowrap}
-.dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px}.sep{width:1px;height:12px;background:#d9ddd5}
-.detail h2{font-size:15.5px;font-weight:620;margin:0 34px 8px 0;font-style:italic}.detail h4{font-size:7px;text-transform:uppercase;letter-spacing:.11em;color:#858a82;margin:15px 0 6px}.detail p{font-size:9.5px;line-height:1.55;color:#555d54}
-.hero{height:164px;border-radius:12px;background:#e7eae3 center/cover;margin:10px 0}.badge{display:inline-block;padding:4px 6px;border-radius:999px;background:#ecefe8;font-size:7px;margin:2px;color:#596159}
-.evidence{border-top:1px solid #e0e3dc;padding-top:10px;margin-top:12px}.warning{margin-top:12px;padding:9px;border-radius:8px;background:#f4efe2;color:#6d613d;font-size:7.5px;line-height:1.45}
-.loading{position:absolute;inset:0;z-index:100;display:grid;place-items:center;background:#f6f6f2;color:#747a72;font-size:10px}
-.hint{position:absolute;z-index:19;left:50%;bottom:48px;transform:translateX(-50%);font-size:6.5px;color:#92978f;pointer-events:none}
+:root{--bg:#f3f4f1;--panel:#fffffff2;--ink:#222;--muted:#747870;--line:#dde0d9}
+*{box-sizing:border-box}html,body{margin:0;height:100%}body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink);overflow:hidden}
+.app{display:flex;height:100vh}.main{position:relative;flex:1;min-width:0}.sidebar{z-index:30}
+#cy{position:absolute;inset:0}.title{position:absolute;z-index:8;top:16px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none}
+.title h1{margin:0;font-size:18px;font-weight:650}.title p{margin:4px 0;font-size:10px;color:var(--muted)}
+.panel{position:absolute;z-index:12;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 35px #0001;backdrop-filter:blur(12px)}
+.filters{left:16px;top:16px;width:275px;padding:14px;max-height:calc(100vh - 32px);overflow:auto}.detail{right:16px;top:16px;bottom:16px;width:340px;padding:18px;overflow:auto}
+h3{font-size:12px;margin:0 0 10px}.label{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#858980;margin:12px 0 6px}
+.search,select{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px;font-size:10px}
+.checks{display:flex;gap:5px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:white;border-radius:999px;padding:6px 8px;font-size:8px;cursor:pointer}.btn.active{background:#2d332c;color:#fff}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}.stat{background:#f7f7f4;border-radius:10px;padding:8px}.stat b{display:block;font-size:16px}.stat span{font-size:8px;color:var(--muted)}
+.reset{width:100%;margin-top:10px;border:0;background:#61705d;color:white;border-radius:10px;padding:8px;font-size:9px;cursor:pointer}
+.detail h2{font-size:15px;margin:0 0 8px;font-style:italic}.detail p{font-size:10.5px;line-height:1.55;color:#555}.detail h4{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#777;margin:16px 0 6px}.hero{height:160px;border-radius:14px;background:#e7e9e2 center/cover;margin:10px 0}
+.badges{display:flex;flex-wrap:wrap;gap:5px}.badge{font-size:8px;padding:5px 7px;background:#eff1eb;border-radius:999px}.warning{padding:10px;border-radius:10px;background:#fff4db;color:#755a25;font-size:9px;line-height:1.4}
+.legend{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:9;background:#ffffffdf;border:1px solid var(--line);border-radius:14px;padding:8px 10px;display:flex;gap:10px;flex-wrap:wrap;max-width:60%;font-size:8px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}.lineDemo{display:inline-block;width:18px;border-top:2px solid #777;margin-right:4px;vertical-align:middle}.dash{border-top-style:dashed}.dotline{border-top-style:dotted}
+.loading{position:absolute;inset:0;display:grid;place-items:center;background:#f3f4f1;z-index:40;font-size:12px;color:#666}
+.small{font-size:8px!important;color:#80847b!important}
 </style>
 </head>
 <body>
@@ -66,379 +35,203 @@ body{overflow:hidden;background:var(--bg);font-family:Inter,Arial,sans-serif;col
 <a href="../../index.html" class="icon-nav-item"><i class="fa-solid fa-house"></i></a>
 <a href="../network-01/index.html" class="icon-nav-item"><i class="fa-solid fa-city"></i></a>
 <a href="index.html" class="icon-nav-item active"><i class="fa-solid fa-leaf"></i></a>
-</nav>
-</aside>
-
+</nav></aside>
 <main class="main">
-<div id="loading" class="loading">Construyendo el enjambre…</div>
-<div id="webgl"></div>
-<div id="nodeLayer"></div>
-<div id="nodeLabel" class="node-label"></div>
-
-<div class="masthead">
-<h1>Enjambre de interacciones bióticas</h1>
-<p>RIBB · Jardín Botánico de Bogotá · diciembre 2024</p>
-</div>
-
-<div class="toolbar">
-<button id="fitBtn"><i class="fa-solid fa-crosshairs"></i> Recentrar</button>
-<button id="rotateBtn"><i class="fa-solid fa-rotate"></i> Giro suave</button>
-</div>
+<div id="loading" class="loading">Cargando base RIBB y construyendo el enjambre…</div>
+<div class="title"><h1>Enjambre de interacciones bióticas</h1><p>RIBB · Jardín Botánico de Bogotá · base diciembre 2024</p></div>
 
 <aside class="panel filters">
-<h3 class="sectionTitle">Explorar la red</h3>
-<input id="search" class="search" placeholder="Buscar especie">
-<span class="label">Cobertura</span>
-<div class="chips" id="district">
-<button class="chip active" data-v="SI">Distrito</button><button class="chip" data-v="ALL">Base completa</button>
+<h3>Filtros de la red</h3>
+<input id="search" class="search" placeholder="Buscar taxón…">
+<span class="label">Cobertura inicial</span>
+<div class="checks" id="districtGroup">
+<button class="btn active" data-v="SI">Reportadas en el Distrito</button>
+<button class="btn" data-v="ALL">Toda la base</button>
 </div>
-<span class="label">Interacción</span>
+
+<span class="label">Tipo de interacción</span>
 <select id="interaction"><option value="ALL">Todas</option></select>
+
 <span class="label">Origen</span>
-<div class="chips" id="origin">
-<button class="chip active" data-v="ALL">Todos</button><button class="chip" data-v="Nativa">Nativa</button><button class="chip" data-v="No nativa">No nativa</button>
+<div class="checks" id="originGroup">
+<button class="btn active" data-v="ALL">Todos</button><button class="btn" data-v="Nativa">Nativa</button><button class="btn" data-v="No nativa">No nativa</button>
 </div>
-<span class="label">Calidad</span>
-<div class="chips" id="quality">
-<button class="chip active" data-v="ALL">Todas</button><button class="chip" data-v="Alta">Alta</button><button class="chip" data-v="Media">Media</button><button class="chip" data-v="Baja">Baja</button>
+
+<span class="label">Calidad documental</span>
+<div class="checks" id="qualityGroup">
+<button class="btn active" data-v="ALL">Todas</button><button class="btn" data-v="Alta">Alta</button><button class="btn" data-v="Media">Media</button><button class="btn" data-v="Baja">Baja</button>
 </div>
-<button class="reset" id="reset">Restablecer</button>
-<div class="metrics">
-<div class="metric"><b id="nodes">0</b><span>taxones visibles</span></div>
-<div class="metric"><b id="edges">0</b><span>registros visibles</span></div>
+
+<button class="reset" id="reset">Restablecer enjambre</button>
+<div class="stats">
+<div class="stat"><b id="nodeCount">0</b><span>taxones visibles</span></div>
+<div class="stat"><b id="edgeCount">0</b><span>registros visibles</span></div>
 </div>
-<p id="meta" class="meta"></p><p id="imgState" class="meta"></p>
+<p class="small" id="datasetMeta"></p>
 </aside>
 
-<aside id="detail" class="panel detail">
-<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>
-<h2>Lectura de la red</h2>
-<p>La forma del enjambre proviene de la topología real de RIBB. Las fotografías funcionan como nodos; las conexiones conservan la relación registrada entre Taxón 1 y Taxón 2.</p>
+<aside class="panel detail" id="detail">
+<h2>Cómo leer la red</h2>
+<p>El enjambre representa registros individuales de interacción. Haz clic en una especie para aislar su vecindad o en una línea para abrir la evidencia concreta de esa relación.</p>
+<div class="warning">Una interacción reportada en Bogotá no demuestra por sí sola presencia en Kennedy o en un humedal específico. La presencia local debe respaldarse con coordenadas, inventarios o registros del área de estudio.</div>
+<h4>Convenciones</h4>
+<p><b>Color</b> = tipo de interacción.<br><b>Estilo de línea</b> = calidad documental.<br><b>Tamaño del nodo</b> = cantidad de registros asociados.</p>
 </aside>
 
-<div class="hint">Arrastra para orbitar · rueda para acercar · selecciona una foto o conexión</div>
-
+<div id="cy"></div>
 <div class="legend">
-<span><i class="dot" style="background:#768e70"></i>Visita floral</span>
-<span><i class="dot" style="background:#a68461"></i>Herbivoría</span>
-<span><i class="dot" style="background:#9b6663"></i>Depredación</span>
-<span><i class="dot" style="background:#6f879c"></i>Dispersión</span>
-<span class="sep"></span><span>foto = taxón</span><span class="sep"></span><span>tamaño = frecuencia</span>
+<span><i class="dot" style="background:#6f9569"></i>Visita floral</span>
+<span><i class="dot" style="background:#be8b57"></i>Herbivoría</span>
+<span><i class="dot" style="background:#b45f5f"></i>Depredación</span>
+<span><i class="dot" style="background:#648bb2"></i>Dispersión</span>
+<span><i class="dot" style="background:#8c73a5"></i>Parasitismo / otras</span>
+<span><i class="lineDemo"></i>Alta</span><span><i class="lineDemo dash"></i>Media</span><span><i class="lineDemo dotline"></i>Baja</span>
 </div>
-</main>
-</div>
+</main></div>
 
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/"}}</script>
 <script type="module">
-const loading=document.querySelector("#loading");
-try{
-  const THREE=await import("three");
-  const {OrbitControls}=await import("three/addons/controls/OrbitControls.js");
+import {resolveSpeciesImage} from './image-resolver.js';
 
-  const PALETTE={
-    "VISITA FLORAL":0x768e70,"HERBIVORÍA":0xa68461,"DEPREDACIÓN":0x9b6663,"DISPERSIÓN":0x6f879c,
-    "OVIPOSICIÓN":0x8c7792,"PARASITISMO":0x806d83,"MUTUALISMO":0x668b84,"EPIBIOSIS":0x7d8991,
-    "NIDIFICACIÓN":0x8b7a68,"ALELOPATÍA":0x7e8d70,"HEMATOFAGIA":0x906b68,"OTRAS INTERACCIONES":0x8c8d87
-  };
+const COLORS={
+"VISITA FLORAL":"#6f9569","HERBIVORÍA":"#be8b57","DEPREDACIÓN":"#b45f5f","DISPERSIÓN":"#648bb2",
+"OVIPOSICIÓN":"#9870a6","PARASITISMO":"#8c73a5","MUTUALISMO":"#5a9a90","EPIBIOSIS":"#6f88a1",
+"NIDIFICACIÓN":"#8f795f","ALELOPATÍA":"#78906c","HEMATOFAGIA":"#a06666","OTRAS INTERACCIONES":"#8a8a86"
+};
+const state={district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:""};
+let DATA=null,cy=null;
 
-  const state={district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:"",auto:false,selected:null};
-  let DATA=null,visible=[],nodeList=[],nodeMap=new Map(),lineObj=null,edgeRecords=[],selectedArrow=null;
-  const nodeLayer=document.querySelector("#nodeLayer"),label=document.querySelector("#nodeLabel");
-
-  const scene=new THREE.Scene();scene.background=new THREE.Color(0xf6f6f2);scene.fog=new THREE.FogExp2(0xf6f6f2,.0075);
-  const camera=new THREE.PerspectiveCamera(44,1,.1,1000);camera.position.set(0,4,122);
-  const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
-  document.querySelector("#webgl").appendChild(renderer.domElement);
-
-  const controls=new OrbitControls(camera,renderer.domElement);
-  controls.enableDamping=true;controls.dampingFactor=.065;controls.minDistance=34;controls.maxDistance=230;controls.autoRotate=false;controls.autoRotateSpeed=.18;
-
-  const lineGroup=new THREE.Group();scene.add(lineGroup);
-  const overlayGroup=new THREE.Group();scene.add(overlayGroup);
-  const raycaster=new THREE.Raycaster();raycaster.params.Line.threshold=.8;
-  const pointer=new THREE.Vector2();
-
-  const imgCache=new Map(),imgQueue=[];let active=0,loaded=0,failed=0;const MAX=6;
-  let frameCount=0;
-
-  function matches(r){
-    if(state.district!=="ALL"&&r.district!==state.district)return false;
-    if(state.interaction!=="ALL"&&r.category!==state.interaction)return false;
-    if(state.quality!=="ALL"&&r.quality!==state.quality)return false;
-    if(state.search){
-      const q=state.search.toLowerCase();
-      if(!r.source.toLowerCase().includes(q)&&!r.target.toLowerCase().includes(q))return false;
-    }
-    if(state.origin!=="ALL"){
-      const a=DATA.nodeById.get(r.source),b=DATA.nodeById.get(r.target);
-      if(![(a?.origin||""),(b?.origin||"")].some(x=>x.toLowerCase().startsWith(state.origin.toLowerCase())))return false;
-    }
-    return true;
-  }
-
-  function positionFor(node){
-    const p=(state.district==="SI"?node.positionDistrict:node.positionAll)||node.positionAll||node.positionDistrict||[0,0,0];
-    const s=50;
-    return new THREE.Vector3(p[0]*s,p[1]*s,p[2]*s);
-  }
-
-  function clearLines(){
-    while(lineGroup.children.length){const o=lineGroup.children.pop();o.geometry?.dispose();o.material?.dispose()}
-    if(selectedArrow){overlayGroup.remove(selectedArrow);selectedArrow=null}
-  }
-
-  function clearNodes(){nodeLayer.innerHTML="";nodeList=[];nodeMap.clear()}
-
-  function build(){
-    clearLines();clearNodes();state.selected=null;
-    visible=DATA.records.filter(matches);
-    const ids=new Set();visible.forEach(r=>{ids.add(r.source);ids.add(r.target)});
-
-    nodeList=[...ids].map(id=>{
-      const src=DATA.nodeById.get(id)||{id,n:1,origin:"",dominantCategory:"OTRAS INTERACCIONES"};
-      return {...src,id,pos:positionFor(src),el:null,screen:null};
-    });
-    nodeMap=new Map(nodeList.map(n=>[n.id,n]));
-
-    const ranked=[...nodeList].sort((a,b)=>(b.n||0)-(a.n||0));
-    ranked.forEach((n,rank)=>createNodeElement(n,rank));
-
-    const positions=[],colors=[];edgeRecords=[];
-    for(const r of visible){
-      const a=nodeMap.get(r.source),b=nodeMap.get(r.target);if(!a||!b)continue;
-      positions.push(a.pos.x,a.pos.y,a.pos.z,b.pos.x,b.pos.y,b.pos.z);
-      const c=new THREE.Color(PALETTE[r.category]||0x8c8d87);
-      colors.push(c.r,c.g,c.b,c.r,c.g,c.b);edgeRecords.push(r);
-    }
-    const g=new THREE.BufferGeometry();
-    g.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));
-    g.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));
-    lineObj=new THREE.LineSegments(g,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.20,depthWrite:false}));
-    lineGroup.add(lineObj);
-
-    document.querySelector("#nodes").textContent=nodeList.length.toLocaleString("es-CO");
-    document.querySelector("#edges").textContent=visible.length.toLocaleString("es-CO");
-    queueAllImages(ranked);
-  }
-
-  function createNodeElement(n,rank){
-    const el=document.createElement("div");el.className="taxon-node";
-    const base=rank<24?42:rank<90?32:rank<260?24:17;
-    n.baseSize=base;
-    el.style.width=base+"px";el.style.height=base+"px";
-    el.innerHTML='<div class="initial">'+(n.id||"?").charAt(0).toUpperCase()+'</div>';
-    el.addEventListener("mouseenter",()=>showLabel(n));
-    el.addEventListener("mouseleave",()=>hideLabel());
-    el.addEventListener("click",ev=>{ev.stopPropagation();selectNode(n)});
-    nodeLayer.appendChild(el);n.el=el;
-    const cached=imgCache.get(n.id);
-    if(cached?.url)applyImage(n,cached.url);
-  }
-
-  function queueAllImages(ranked){
-    for(const n of ranked){
-      if(imgCache.get(n.id)?.url)continue;
-      if(imgCache.get(n.id)?.status)continue;
-      imgCache.set(n.id,{status:"queued"});imgQueue.push(n.id);
-    }
-    pumpImages();
-  }
-
-  async function resolveImage(name){
-    try{
-      const r=await fetch("https://api.inaturalist.org/v1/taxa/autocomplete?q="+encodeURIComponent(name)+"&per_page=6");
-      if(!r.ok)return"";
-      const j=await r.json();
-      const list=j.results||[];
-      const t=list.find(x=>(x.name||"").toLowerCase()===name.toLowerCase())||list[0];
-      return t?.default_photo?.medium_url||t?.default_photo?.square_url||"";
-    }catch{return""}
-  }
-
-  function pumpImages(){
-    while(active<MAX&&imgQueue.length){
-      const name=imgQueue.shift(),entry=imgCache.get(name);
-      if(!entry||entry.status!=="queued")continue;
-      entry.status="loading";active++;
-      resolveImage(name).then(url=>{
-        if(!url){entry.status="failed";failed++;return}
-        entry.status="loaded";entry.url=url;loaded++;
-        const n=nodeMap.get(name);if(n)applyImage(n,url);
-      }).finally(()=>{active--;updateImgState();pumpImages()});
-    }
-  }
-
-  function applyImage(n,url){
-    if(!n.el)return;
-    let img=n.el.querySelector("img");
-    if(!img){img=document.createElement("img");img.alt=n.id;n.el.prepend(img)}
-    img.onload=()=>n.el.classList.add("loaded");
-    img.onerror=()=>{};
-    img.src=url;
-  }
-
-  function updateImgState(){
-    document.querySelector("#imgState").textContent="Imágenes visibles: "+loaded.toLocaleString("es-CO")+" · sin imagen validada: "+failed;
-  }
-
-  function showLabel(n){
-    if(!n.screen)return;
-    label.style.display="block";label.style.left=n.screen.x+"px";label.style.top=(n.screen.y+n.screen.size/2+6)+"px";
-    label.textContent=n.id+" · "+(n.n||0)+" registros";
-  }
-  function hideLabel(){label.style.display="none"}
-
-  function updateNodeLayer(){
-    const rect=renderer.domElement.getBoundingClientRect();
-    const v=new THREE.Vector3();
-    for(const n of nodeList){
-      v.copy(n.pos).project(camera);
-      const x=(v.x*.5+.5)*rect.width,y=(-v.y*.5+.5)*rect.height;
-      const depth=(v.z+1)/2;
-      const scale=Math.max(.45,Math.min(1.45,1.3-depth*.55));
-      const size=n.baseSize*scale;
-      n.screen={x,y,size,depth};
-      const out=v.z>1||v.z<-1||x<-80||x>rect.width+80||y<-80||y>rect.height+80;
-      n.el.style.display=out?"none":"block";
-      if(!out){
-        n.el.style.left=x+"px";n.el.style.top=y+"px";
-        n.el.style.width=size+"px";n.el.style.height=size+"px";
-        n.el.style.zIndex=String(1000+Math.round((1-depth)*1000));
-      }
-    }
-  }
-
-  function clearSelection(){
-    state.selected=null;
-    nodeList.forEach(n=>n.el?.classList.remove("selected","dim","neighbor"));
-    if(lineObj)lineObj.material.opacity=.20;
-    if(selectedArrow){overlayGroup.remove(selectedArrow);selectedArrow=null}
-  }
-
-  function selectNode(n){
-    clearSelection();state.selected=n.id;
-    const neighbors=new Set([n.id]);
-    visible.forEach(r=>{if(r.source===n.id)neighbors.add(r.target);if(r.target===n.id)neighbors.add(r.source)});
-    nodeList.forEach(x=>{
-      if(x.id===n.id)x.el.classList.add("selected");
-      else if(neighbors.has(x.id))x.el.classList.add("neighbor");
-      else x.el.classList.add("dim");
-    });
-    if(lineObj)lineObj.material.opacity=.045;
-    const d=document.querySelector("#detail"),im=imgCache.get(n.id);d.classList.add("open");
-    d.innerHTML='<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>'+
-      '<h2>'+n.id+'</h2><div class="hero" '+(im?.url?'style="background-image:url(\''+im.url+'\')"':'')+'></div>'+
-      '<span class="badge">'+(n.origin||"Origen no indicado")+'</span>'+
-      '<span class="badge">'+(n.n||0)+' registros</span>'+
-      '<span class="badge">'+(n.dominantCategory||"Sin categoría")+'</span>'+
-      '<h4>Subred inmediata</h4><p>Se resaltan las especies relacionadas directamente con este taxón dentro de los filtros activos.</p>';
-    bindClose();
-  }
-
-  function showArrow(r){
-    if(r.direction!=="directed")return;
-    const a=nodeMap.get(r.source),b=nodeMap.get(r.target);if(!a||!b)return;
-    const dir=new THREE.Vector3().subVectors(b.pos,a.pos),len=dir.length();dir.normalize();
-    selectedArrow=new THREE.ArrowHelper(dir,a.pos,Math.max(1,len-1),PALETTE[r.category]||0x4b554c,2.1,1.05);
-    overlayGroup.add(selectedArrow);
-  }
-
-  function selectEdge(r){
-    clearSelection();state.selected=r.id;showArrow(r);
-    const a=nodeMap.get(r.source),b=nodeMap.get(r.target);
-    nodeList.forEach(n=>{
-      if(n.id===r.source||n.id===r.target)n.el.classList.add("selected");
-      else n.el.classList.add("dim");
-    });
-    if(lineObj)lineObj.material.opacity=.055;
-    const sign=r.direction==="directed"?" → ":" ↔ ";
-    const d=document.querySelector("#detail");d.classList.add("open");
-    d.innerHTML='<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>'+
-      '<h2>'+r.source+sign+r.target+'</h2>'+
-      '<span class="badge">'+r.category+'</span><span class="badge">'+r.verb+'</span><span class="badge">Calidad '+r.quality+'</span>'+
-      '<h4>Relación registrada</h4><p>'+r.phrase+'</p>'+
-      '<div class="evidence"><h4>Evidencia</h4><p><b>Dirección:</b> '+(r.direction==="directed"?"Taxón 1 → Taxón 2":r.direction==="symmetric"?"Simétrica":"Contextual")+
-      '<br><b>Parte afectada:</b> '+(r.part||"No indicada")+
-      '<br><b>Fecha:</b> '+(r.date||"No indicada")+
-      '<br><b>Coordenadas:</b> '+(r.coord||"No indicadas")+
-      '<br><b>Referencias:</b> '+(r.referenceCount||0)+'</p>'+
-      '<h4>Fuente</h4><p>'+(r.reference||"Sin referencia visible")+'</p></div>';
-    bindClose();
-  }
-
-  function bindClose(){
-    const b=document.querySelector("#close");
-    if(b)b.onclick=()=>{document.querySelector("#detail").classList.remove("open");clearSelection()};
-  }
-
-  function pointerToNdc(ev){
-    const r=renderer.domElement.getBoundingClientRect();
-    pointer.x=((ev.clientX-r.left)/r.width)*2-1;
-    pointer.y=-((ev.clientY-r.top)/r.height)*2+1;
-  }
-
-  renderer.domElement.addEventListener("click",ev=>{
-    if(ev.target!==renderer.domElement)return;
-    pointerToNdc(ev);raycaster.setFromCamera(pointer,camera);
-    if(lineObj){
-      const hits=raycaster.intersectObject(lineObj,false);
-      if(hits.length){
-        const r=edgeRecords[Math.floor(hits[0].index/2)];
-        if(r)selectEdge(r);
-      }
-    }
-  });
-
-  function groupFilter(id,key){
-    document.querySelectorAll("#"+id+" .chip").forEach(b=>b.onclick=()=>{
-      document.querySelectorAll("#"+id+" .chip").forEach(x=>x.classList.remove("active"));
-      b.classList.add("active");state[key]=b.dataset.v;build();
-    });
-  }
-
-  document.querySelector("#fitBtn").onclick=()=>{camera.position.set(0,4,122);controls.target.set(0,0,0);controls.update()};
-  document.querySelector("#rotateBtn").onclick=e=>{state.auto=!state.auto;controls.autoRotate=state.auto;e.currentTarget.classList.toggle("active",state.auto)};
-
-  function resize(){
-    const el=document.querySelector("#webgl"),w=el.clientWidth,h=el.clientHeight;
-    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
-  }
-  addEventListener("resize",resize);
-
-  const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());
-  if(!res.ok)throw new Error("Dataset HTTP "+res.status);
-  DATA=await res.json();DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));
-
-  const sel=document.querySelector("#interaction");
-  Object.keys(DATA.meta.interactionCategories||{}).sort().forEach(k=>{
-    const o=document.createElement("option");o.value=k;o.textContent=k+" ("+DATA.meta.interactionCategories[k]+")";sel.appendChild(o);
-  });
-
-  document.querySelector("#meta").textContent="Base: "+DATA.meta.totalRecords.toLocaleString("es-CO")+" registros · "+
-    DATA.meta.districtRecords.toLocaleString("es-CO")+" reportados en el Distrito · "+
-    DATA.meta.districtTaxa.toLocaleString("es-CO")+" taxones en la red distrital.";
-
-  groupFilter("district","district");groupFilter("origin","origin");groupFilter("quality","quality");
-  sel.onchange=e=>{state.interaction=e.target.value;build()};
-  document.querySelector("#search").oninput=e=>{state.search=e.target.value.trim();build()};
-  document.querySelector("#reset").onclick=()=>location.reload();
-
-  bindClose();resize();build();loading.remove();
-
-  function animate(){
-    controls.update();
-    renderer.render(scene,camera);
-    frameCount++;
-    if(frameCount%2===0)updateNodeLayer();
-    requestAnimationFrame(animate);
-  }
-  animate();
-
-}catch(err){
-  loading.innerHTML="No se pudo iniciar la visualización. "+err.message;
-  console.error(err);
+function hashPos(s,w,h){
+  let a=2166136261,b=16777619;
+  for(let i=0;i<s.length;i++){a^=s.charCodeAt(i);a=Math.imul(a,b)}
+  const x=((a>>>0)%10000)/10000;
+  a=Math.imul(a^0x9e3779b9,2654435761);
+  const y=((a>>>0)%10000)/10000;
+  return {x:80+x*(w-160),y:80+y*(h-160)};
 }
+function edgeStyle(q){return q==="Alta"?"solid":q==="Media"?"dashed":"dotted"}
+function originMatch(n){
+ if(state.origin==="ALL") return true;
+ return (n.origin||"").toLowerCase().startsWith(state.origin.toLowerCase());
+}
+function recordMatch(r){
+ if(state.district!=="ALL" && r.district!==state.district) return false;
+ if(state.interaction!=="ALL" && r.title!==state.interaction) return false;
+ if(state.quality!=="ALL" && r.q!==state.quality) return false;
+ if(state.search){
+   const s=state.search.toLowerCase();
+   if(!r.s.toLowerCase().includes(s) && !r.t.toLowerCase().includes(s)) return false;
+ }
+ if(state.origin!=="ALL"){
+   const sn=DATA.nodeById.get(r.s),tn=DATA.nodeById.get(r.t);
+   if(!originMatch(sn)&&!originMatch(tn)) return false;
+ }
+ return true;
+}
+function buildGraph(){
+ const visible=DATA.records.filter(recordMatch);
+ const ids=new Set();
+ visible.forEach(r=>{ids.add(r.s);ids.add(r.t)});
+ const w=document.querySelector('#cy').clientWidth,h=document.querySelector('#cy').clientHeight;
+ const elements=[];
+ for(const id of ids){
+   const n=DATA.nodeById.get(id)||{id,n:1,origin:""};
+   const p=hashPos(id,w,h);
+   elements.push({data:{id,label:id,count:n.n,origin:n.origin},position:p});
+ }
+ visible.forEach(r=>elements.push({data:{id:r.id,source:r.s,target:r.t,title:r.title,quality:r.q,raw:r,color:COLORS[r.title]||"#888",lineStyle:edgeStyle(r.q)}}));
+
+ if(cy) cy.destroy();
+ cy=cytoscape({
+   container:document.getElementById('cy'),
+   elements,
+   layout:{name:'preset',fit:true,padding:55},
+   pixelRatio:'auto',
+   style:[
+    {selector:'node',style:{
+      'label':'data(label)','font-size':6,'text-wrap':'wrap','text-max-width':70,'text-valign':'bottom','text-margin-y':5,
+      'width':'mapData(count,1,550,7,30)','height':'mapData(count,1,550,7,30)',
+      'background-color':'#879682','border-width':1,'border-color':'#fff','opacity':.83
+    }},
+    {selector:'edge',style:{
+      'width':1,'line-color':'data(color)','curve-style':'straight','opacity':.18,'line-style':'data(lineStyle)'
+    }},
+    {selector:'.faded',style:{'opacity':.03}},
+    {selector:'.focus',style:{'opacity':1,'z-index':999,'border-width':3,'border-color':'#263326'}},
+    {selector:'edge.focus',style:{'opacity':.95,'width':3}}
+   ]
+ });
+ cy.on('tap','node',evt=>showNode(evt.target));
+ cy.on('tap','edge',evt=>showEdge(evt.target));
+ cy.on('dbltap','edge',evt=>showEdge(evt.target));
+ document.getElementById('nodeCount').textContent=ids.size.toLocaleString('es-CO');
+ document.getElementById('edgeCount').textContent=visible.length.toLocaleString('es-CO');
+}
+function clearFocus(){cy.elements().removeClass('faded focus')}
+function showNode(node){
+ clearFocus();
+ const hood=node.closedNeighborhood();
+ cy.elements().difference(hood).addClass('faded');hood.addClass('focus');
+ const n=DATA.nodeById.get(node.id())||{};
+ const detail=document.getElementById('detail');
+ detail.innerHTML=`<h2>${node.id()}</h2><div id="hero" class="hero"></div><div class="badges"><span class="badge">${n.origin||'Origen no indicado'}</span><span class="badge">${n.n||0} registros en la base</span><span class="badge">${node.degree()} conexiones visibles</span></div><h4>Lectura</h4><p>Este nodo se conecta con ${node.degree()} registros bajo los filtros actuales. La red resaltada permite leer su nicho relacional dentro del conjunto filtrado.</p><p class="small" id="photoCredit">Buscando imagen por nombre científico…</p>`;
+ resolveSpeciesImage({id:node.id()}).then(im=>{
+   if(!im)return;
+   if(im.url)document.getElementById('hero').style.backgroundImage=`url("${im.url}")`;
+   document.getElementById('photoCredit').innerHTML=`Imagen: <a href="${im.sourceUrl||'#'}" target="_blank">${im.source||'fuente externa'}</a> ${im.attribution||''}`;
+ });
+}
+function explain(r){
+ const a=`<i>${r.s}</i>`,b=`<i>${r.t}</i>`;
+ if(r.i==="Consume")return `${a} consume ${r.part?'<b>'+r.part+'</b> de ':''}${b}. RIBB clasifica este registro como <b>${r.title.toLowerCase()}</b>.`;
+ if(r.i==="Dispersa"||r.i==="Dispersa a")return `${a} participa en la dispersión de ${b}. La relación está clasificada como <b>dispersión</b>.`;
+ if(r.i==="Poliniza a")return `${a} participa en la polinización de ${b}.`;
+ if(r.i==="Oviposita en")return `${a} usa a ${b} como sustrato de oviposición.`;
+ if(r.i==="Parasita a")return `${a} parasita a ${b}.`;
+ if(r.i==="Crece sobre")return `${a} crece sobre ${b}; RIBB registra esta relación como <b>${r.title.toLowerCase()}</b>.`;
+ return `${a} mantiene una interacción registrada con ${b} clasificada como <b>${r.title.toLowerCase()}</b>.`;
+}
+function showEdge(edge){
+ clearFocus();edge.addClass('focus');edge.source().addClass('focus');edge.target().addClass('focus');
+ cy.elements().not(edge).not(edge.source()).not(edge.target()).addClass('faded');
+ const r=edge.data('raw'),d=document.getElementById('detail');
+ d.innerHTML=`<h2>${r.s} ↔ ${r.t}</h2><div class="badges"><span class="badge">${r.title}</span><span class="badge">${r.i}</span><span class="badge">Calidad ${r.q}</span><span class="badge">${r.district==='SI'?'Reportada en el Distrito':'No marcada como reportada en el Distrito'}</span></div><h4>¿Por qué están conectadas?</h4><p>${explain(r)}</p><h4>Evidencia del registro</h4><p><b>Parte afectada:</b> ${r.part||'No especificada'}<br><b>Fecha:</b> ${r.date||'No indicada'}<br><b>Coordenadas:</b> ${r.coord||'No indicadas'}<br><b>Frecuencia:</b> ${r.freq||'No indicada'}</p><h4>Fuente</h4><p>${r.ref||'Sin referencia visible en este registro.'}</p>${r.obs?'<h4>Observación</h4><p>'+r.obs+'</p>':''}<div class="warning">Este registro sustenta la relación en RIBB. No debe interpretarse automáticamente como presencia en Kennedy si la localización no corresponde al área de estudio.</div>`;
+}
+function activateGroup(id,key){
+ document.querySelectorAll('#'+id+' .btn').forEach(b=>b.onclick=()=>{
+   document.querySelectorAll('#'+id+' .btn').forEach(x=>x.classList.remove('active'));
+   b.classList.add('active');state[key]=b.dataset.v;buildGraph();
+ });
+}
+function bind(){
+ activateGroup('districtGroup','district');activateGroup('originGroup','origin');activateGroup('qualityGroup','quality');
+ document.getElementById('interaction').onchange=e=>{state.interaction=e.target.value;buildGraph()};
+ document.getElementById('search').oninput=e=>{state.search=e.target.value.trim();buildGraph()};
+ document.getElementById('reset').onclick=()=>{
+   state.district='SI';state.interaction='ALL';state.origin='ALL';state.quality='ALL';state.search='';
+   document.getElementById('search').value='';document.getElementById('interaction').value='ALL';
+   document.querySelectorAll('.btn').forEach(x=>x.classList.remove('active'));
+   document.querySelector('#districtGroup .btn[data-v="SI"]').classList.add('active');
+   document.querySelector('#originGroup .btn[data-v="ALL"]').classList.add('active');
+   document.querySelector('#qualityGroup .btn[data-v="ALL"]').classList.add('active');
+   buildGraph();
+ };
+}
+async function init(){
+ try{
+  const res=await fetch('../../assets/data/ribb_web.json',{cache:'no-store'});
+  if(!res.ok)throw new Error('Dataset aún no publicado');
+  DATA=await res.json();
+  DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));
+  const select=document.getElementById('interaction');
+  Object.keys(DATA.meta.interactionTypes||{}).sort().forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=`${k} (${DATA.meta.interactionTypes[k]})`;select.appendChild(o)});
+  document.getElementById('datasetMeta').textContent=`Base: ${DATA.meta.totalRecords.toLocaleString('es-CO')} registros · ${DATA.meta.districtRecords.toLocaleString('es-CO')} reportados en el Distrito · ${DATA.meta.taxa.toLocaleString('es-CO')} taxones.`;
+  bind();buildGraph();document.getElementById('loading').remove();
+ }catch(err){
+  document.getElementById('loading').innerHTML='El dataset RIBB se está generando en GitHub Actions. Recarga esta página cuando termine el deployment.';
+  console.error(err);
+ }
+}
+init();
 </script>
 </body>
 </html>
