@@ -196,6 +196,7 @@ const state={
 };
 const sceneAnim={alpha:1,targetAlpha:1,zoomBoost:0,targetZoomBoost:0,spin:0,targetSpin:0,morph:1,targetMorph:1,burst:0,targetBurst:0,flash:0,targetFlash:0,busy:false,pending:null,lastApplied:null};
 const neonState={groups:new Set(),interaction:null,interactions:new Set(),strength:0,targetStrength:0};
+const storyState={scene:null,records:null,nodeIds:null,featured:new Set(),caption:""};
 
 let DATA=null,visible=[],nodes=[],nodeMap=new Map(),edgeScreen=[];
 let canvas=document.querySelector("#swarm"),ctx=canvas.getContext("2d"),tooltip=document.querySelector("#tooltip");
@@ -298,27 +299,27 @@ function match(r){
 }
 
 function rebuild(){
-  visible=DATA.records.filter(match);
+  if(storyState.scene&&storyState.records){
+    visible=[...storyState.records];
+  }else{
+    visible=DATA.records.filter(match);
+  }
+
   const ids=new Set();
   visible.forEach(r=>{ids.add(r.s);ids.add(r.t)});
 
-  // Some explanatory scenes intentionally isolate a trophic/taxonomic layer.
-  // Those nodes must remain visible even when no edge exists inside that layer.
-  if(state.includeIsolated){
-    const isolated=[...DATA.nodes]
-      .filter(n=>activeEco.has(ecoGroup(n.id)))
-      .sort((a,b)=>(b.n||0)-(a.n||0))
-      .slice(0,220);
-    isolated.forEach(n=>ids.add(n.id));
-  }
-
-  // Safety fallback: never leave the canvas blank after a valid scene change.
-  if(!ids.size){
+  if(storyState.scene&&storyState.nodeIds){
+    storyState.nodeIds.forEach(id=>ids.add(id));
+  }else if(state.includeIsolated){
     [...DATA.nodes]
       .filter(n=>activeEco.has(ecoGroup(n.id)))
       .sort((a,b)=>(b.n||0)-(a.n||0))
-      .slice(0,160)
+      .slice(0,220)
       .forEach(n=>ids.add(n.id));
+  }
+
+  if(!ids.size){
+    [...DATA.nodes].sort((a,b)=>(b.n||0)-(a.n||0)).slice(0,120).forEach(n=>ids.add(n.id));
   }
 
   nodes=[...ids].map(id=>{
@@ -441,7 +442,7 @@ function draw(){
     const depth=(a.z+b.z)/2;
     const edgeAlpha=dim?.012:(hot?.9:Math.max(.035,.10+(depth+1)*.035));
     ctx.globalAlpha=edgeAlpha*sceneAnim.alpha;
-    const edgeNeon=(neonState.interactions.size&&neonState.interactions.has(r.title))||(neonState.interaction&&r.title===neonState.interaction)||(!neonState.interactions.size&&!neonState.interaction&&(neonState.groups.has(ecoGroup(r.s))||neonState.groups.has(ecoGroup(r.t))));
+    const edgeNeon=(storyState.scene&&storyState.featured.size)|| (neonState.interactions.size&&neonState.interactions.has(r.title))||(neonState.interaction&&r.title===neonState.interaction)||(!neonState.interactions.size&&!neonState.interaction&&(neonState.groups.has(ecoGroup(r.s))||neonState.groups.has(ecoGroup(r.t))));
     ctx.strokeStyle=COLORS[r.title]||"#8b8f88";
     ctx.shadowColor=edgeNeon?(COLORS[r.title]||"#8b8f88"):"transparent";
     ctx.shadowBlur=edgeNeon?28*neonState.strength:0;
@@ -473,7 +474,7 @@ function draw(){
     ctx.globalAlpha=nodeAlpha*sceneAnim.alpha;
 
     const baseRadius=4+Math.min(12,Math.sqrt(n.n||1)*.42);
-    const radius=Math.max(3,baseRadius*p.scale);
+    const radius=Math.max(3,baseRadius*p.scale)*(storyState.featured.has(n.id)?1.32:1);
     n.drawRadius=radius;
 
     ctx.save();
@@ -496,7 +497,8 @@ function draw(){
     ctx.restore();
 
     ctx.globalAlpha=(dim?.08:1)*sceneAnim.alpha;
-    const nodeNeon=neonState.groups.has(ecoGroup(n.id));
+    const storyHot=storyState.featured.has(n.id);
+    const nodeNeon=storyHot||neonState.groups.has(ecoGroup(n.id));
     if((nodeNeon||neonState.interactions.size)&&sceneAnim.burst>.04){
       ctx.save();
       ctx.globalAlpha=Math.min(.42,sceneAnim.burst*.5)*sceneAnim.alpha;
@@ -507,7 +509,7 @@ function draw(){
       ctx.restore();
     }
     ctx.strokeStyle=hot?"#1f3d25":(ECO_COLORS[ecoGroup(n.id)]||"rgba(255,255,255,.96)");
-    ctx.shadowColor=nodeNeon?(ECO_COLORS[ecoGroup(n.id)]||"#8fd3a8"):"transparent";
+    ctx.shadowColor=nodeNeon?(storyHot?"#b7ffca":(ECO_COLORS[ecoGroup(n.id)]||"#8fd3a8")):"transparent";
     ctx.shadowBlur=nodeNeon?34*neonState.strength:0;
     const pulse=nodeNeon?(1+Math.sin(performance.now()*.004+(hash(n.id)%100)/10)*.10*neonState.strength):1;
     ctx.lineWidth=nodeNeon?Math.max(2.8,4.8*neonState.strength):(hot?3:Math.max(1,1.2*p.scale));
@@ -888,9 +890,93 @@ function resetNetworkState(){
 let networkDataReady=false;
 const pendingNetworkMessages=[];
 
+function topByConnectivity(records,limit=80){
+  const score=new Map();
+  records.forEach(r=>{score.set(r.s,(score.get(r.s)||0)+1);score.set(r.t,(score.get(r.t)||0)+1)});
+  return [...score.entries()].sort((a,b)=>b[1]-a[1]).slice(0,limit).map(x=>x[0]);
+}
+
+function representativeRecords(types,perType=3){
+  const out=[];
+  for(const type of types){
+    const pool=DATA.records.filter(r=>r.title===type);
+    const deg=new Map();
+    pool.forEach(r=>{deg.set(r.s,(deg.get(r.s)||0)+1);deg.set(r.t,(deg.get(r.t)||0)+1)});
+    pool.sort((a,b)=>((deg.get(b.s)||0)+(deg.get(b.t)||0))-((deg.get(a.s)||0)+(deg.get(a.t)||0)));
+    out.push(...pool.slice(0,perType));
+  }
+  return out;
+}
+
+function buildStoryScene(name){
+  const all=DATA.records;
+  if(name==="gis"){
+    const plantEvidence=all.filter(r=>r.title==="VISITA FLORAL"||r.title==="HERBIVORÍA");
+    const plantIds=new Set();
+    plantEvidence.forEach(r=>{
+      // In these interaction classes the resource/host side is usually the target in RIBB.
+      plantIds.add(r.t);
+    });
+    const ranked=[...plantIds].map(id=>DATA.nodeById.get(id)||{id,n:1}).sort((a,b)=>(b.n||0)-(a.n||0)).slice(0,110).map(n=>n.id);
+    return {records:[],nodeIds:new Set(ranked),featured:new Set(ranked.slice(0,18)),caption:"GIS · plantas y estructuras vegetales disponibles"};
+  }
+
+  if(name==="records"){
+    const types=["VISITA FLORAL","HERBIVORÍA","PARASITISMO"];
+    const recs=representativeRecords(types,7);
+    const ids=new Set();recs.forEach(r=>{ids.add(r.s);ids.add(r.t)});
+    return {records:recs,nodeIds:ids,featured:new Set([...ids]),caption:"Presencia · organismos asociados a tres procesos concretos"};
+  }
+
+  if(name==="ribb"){
+    const types=["VISITA FLORAL","HERBIVORÍA","DEPREDACIÓN","DISPERSIÓN"];
+    const recs=representativeRecords(types,4);
+    const ids=new Set();recs.forEach(r=>{ids.add(r.s);ids.add(r.t)});
+    return {records:recs,nodeIds:ids,featured:new Set([...ids]),caption:"RIBB · relaciones documentadas entre taxones"};
+  }
+
+  if(name==="evidence"){
+    const recs=all.filter(r=>r.q==="Alta").slice(0,140);
+    const ids=new Set(topByConnectivity(recs,90));
+    const kept=recs.filter(r=>ids.has(r.s)&&ids.has(r.t));
+    return {records:kept,nodeIds:ids,featured:new Set(topByConnectivity(kept,20)),caption:"Validación local · primero la evidencia de mayor calidad"};
+  }
+
+  if(name==="hyp"){
+    const recs=all.slice(0,500);
+    const ids=new Set(topByConnectivity(recs,150));
+    const kept=all.filter(r=>ids.has(r.s)&&ids.has(r.t)).slice(0,500);
+    return {records:kept,nodeIds:ids,featured:new Set(topByConnectivity(kept,28)),caption:"Modelo de nicho · especie + vegetación + espacio + interacción"};
+  }
+
+  return {records:null,nodeIds:null,featured:new Set(),caption:"Sistema completo"};
+}
+
+function setStoryScene(name){
+  const scene=buildStoryScene(name);
+  storyState.scene=name;
+  storyState.records=scene.records;
+  storyState.nodeIds=scene.nodeIds;
+  storyState.featured=scene.featured;
+  storyState.caption=scene.caption;
+  state.includeIsolated=false;
+  state.interaction="ALL";state.interactionSet=null;state.quality="ALL";state.focus=null;
+  rebuild();
+}
 function handleNetworkMessage(m){
   if(!m||typeof m!=="object")return;
   if(!networkDataReady){pendingNetworkMessages.push(m);return}
+  if(m.type==="storyScene"){
+    animateSceneChange(()=>{
+      setStoryScene(m.scene||null);
+      neonState.groups.clear();
+      neonState.interaction=null;
+      neonState.interactions=new Set(m.neonInteractions||[]);
+      neonState.targetStrength=1;
+      try{parent.postMessage({type:"sceneApplied",scene:m.scene||null,nodes:nodes.length,edges:visible.length},"*")}catch(e){}
+    },"story:"+String(m.scene));
+    return;
+  }
   if(m.type==="setScene"){
     const groups=(m.groups||Object.keys(ECO_LABELS)).filter(k=>ECO_LABELS[k]);
     const interactions=(m.interactions||[]).filter(Boolean);
@@ -914,7 +1000,7 @@ function handleNetworkMessage(m){
   }
   if(m.type==="setInteraction"){const v=m.value||"ALL";animateSceneChange(()=>{state.interactionSet=null;state.interaction=v;const sel=document.querySelector("#interaction");if(sel)sel.value=state.interaction;state.focus=null;rebuild()},"interaction:"+v)}
   if(m.type==="setQuality"){const v=m.value||"ALL";animateSceneChange(()=>{state.quality=v;state.focus=null;rebuild()},"quality:"+v)}
-  if(m.type==="resetNetwork"){neonState.groups.clear();neonState.interaction=null;neonState.interactions.clear();neonState.targetStrength=0;state.interactionSet=null;state.includeIsolated=false;animateSceneChange(()=>resetNetworkState(),"reset");}
+  if(m.type==="resetNetwork"){storyState.scene=null;storyState.records=null;storyState.nodeIds=null;storyState.featured.clear();neonState.groups.clear();neonState.interaction=null;neonState.interactions.clear();neonState.targetStrength=0;state.interactionSet=null;state.includeIsolated=false;animateSceneChange(()=>resetNetworkState(),"reset");}
   if(m.type==="focusTaxon"||m.type==="openTaxon"){
     const n=nodeMap.get(m.taxon)||DATA?.nodeById?.get(m.taxon);
     if(n){state.focus=n.id;if(m.type==="openTaxon")openNode(n);else draw()}
