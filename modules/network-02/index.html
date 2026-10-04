@@ -16,7 +16,7 @@
 .copy{min-width:0}.intro{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-right:20px}.eyebrow{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:700;margin-bottom:22px}.intro h1{font:600 clamp(48px,5.2vw,80px)/.94 "Space Grotesk",sans-serif;letter-spacing:-.055em;margin:0;max-width:680px;color:#22342a}.intro p{font-size:14px;line-height:1.65;color:#526057;max-width:590px;margin:24px 0 20px}.intro-actions{display:flex;gap:8px;flex-wrap:wrap}.intro-actions button,.intro-actions a{border:1px solid var(--line);background:#fff;border-radius:999px;padding:11px 15px;font-size:9px;font-weight:600;color:#34473a;text-decoration:none;cursor:pointer}.intro-actions .primary{background:var(--green);color:#fff;border-color:var(--green)}
 .step{min-height:78vh;display:flex;align-items:center;opacity:.24;transform:translateY(28px) scale(.985);transition:opacity .5s ease,transform .5s ease}.step.active{opacity:1;transform:translateY(0) scale(1)}.step-card{width:100%;max-width:520px;background:rgba(255,255,252,.94);border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 12px 40px rgba(31,42,34,.05);transition:box-shadow .5s ease,border-color .5s ease}.step.active .step-card{box-shadow:0 18px 54px rgba(31,42,34,.09);border-color:#b9c6ba}.step-no{font:700 9px/1 "Space Grotesk",sans-serif;color:var(--green);letter-spacing:.13em;margin-bottom:18px}.step h2{font:600 clamp(28px,3.2vw,46px)/1 "Space Grotesk",sans-serif;letter-spacing:-.04em;margin:0 0 14px}.step p{font-size:13px;line-height:1.6;color:#5b655d;margin:0 0 16px}.chips{display:flex;gap:7px;flex-wrap:wrap}.chips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px;font-size:9px;color:#516057;cursor:pointer}.chips button.active{background:var(--green);color:#fff;border-color:var(--green)}
 .network-rail{position:relative}.network-sticky{position:sticky;top:18px;height:calc(100vh - 36px);border:1px solid #d3dbd2;border-radius:30px;overflow:hidden;background:#fff;box-shadow:var(--shadow)}.network-sticky iframe{width:100%;height:100%;border:0;display:block;background:#fff}.network-overlay{position:absolute;left:18px;top:16px;z-index:4;display:flex;gap:7px;flex-wrap:wrap;pointer-events:none}.tag{background:rgba(255,255,252,.9);border:1px solid var(--line);border-radius:999px;padding:7px 9px;font-size:8px;color:#59645c;backdrop-filter:blur(10px)}.network-note{position:absolute;left:18px;right:18px;bottom:16px;z-index:4;background:rgba(255,255,252,.9);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:9px;line-height:1.45;color:#667168;backdrop-filter:blur(10px);pointer-events:none}
-.gallery{padding:88px 5vw;background:#162019;color:#eef3ef}.gallery-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:30px}.gallery h2{font:600 clamp(34px,4.5vw,64px)/.98 "Space Grotesk",sans-serif;letter-spacing:-.04em;margin:0;max-width:900px}.gallery p{max-width:520px;color:#b9c5bc;font-size:12px;line-height:1.55;margin:0}.photo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.photo-card{position:relative;aspect-ratio:1/1.15;border-radius:18px;overflow:hidden;background:#314237;cursor:pointer}.photo-card img{width:100%;height:100%;object-fit:cover;transition:.35s}.photo-card:hover img{transform:scale(1.06)}.photo-card:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.78))}.photo-card .meta{position:absolute;left:14px;right:14px;bottom:13px;z-index:2}.photo-card .meta b{display:block;font-size:12px;font-style:italic}.photo-card .meta span{font-size:8px;color:#c6d1c8}.final{padding:86px 5vw;background:#162019;color:#eef3ef;border-top:1px solid rgba(255,255,255,.08)}.final h2{font:600 clamp(34px,4.5vw,66px)/.98 "Space Grotesk",sans-serif;letter-spacing:-.04em;margin:0 0 15px;max-width:950px}.final p{max-width:760px;color:#bac5bc;font-size:13px;line-height:1.6}.final a{display:inline-block;margin-top:15px;color:#172019;background:#fff;text-decoration:none;padding:11px 15px;border-radius:999px;font-size:9px;font-weight:700}
+.gallery{padding:88px 5vw;background:#162019;color:#eef3ef}.gallery-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:30px}.gallery h2{font:600 clamp(34px,4.5vw,64px)/.98 "Space Grotesk",sans-serif;letter-spacing:-.04em;margin:0;max-width:900px}.gallery p{max-width:520px;color:#b9c5bc;font-size:12px;line-height:1.55;margin:0}.photo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.photo-card{position:relative;aspect-ratio:1/1.15;border-radius:18px;overflow:hidden;background:#314237;cursor:pointer;opacity:0;transform:translateY(26px) scale(.96);transition:opacity .55s ease,transform .55s ease,border-radius .35s ease}.gallery.in-view .photo-card{opacity:1;transform:translateY(0) scale(1)}.gallery.in-view .photo-card:nth-child(2){transition-delay:.05s}.gallery.in-view .photo-card:nth-child(3){transition-delay:.10s}.gallery.in-view .photo-card:nth-child(4){transition-delay:.15s}.gallery.in-view .photo-card:nth-child(5){transition-delay:.20s}.gallery.in-view .photo-card:nth-child(6){transition-delay:.25s}.gallery.in-view .photo-card:nth-child(7){transition-delay:.30s}.gallery.in-view .photo-card:nth-child(8){transition-delay:.35s}.gallery.in-view .photo-card:nth-child(9){transition-delay:.40s}.gallery.in-view .photo-card:nth-child(10){transition-delay:.45s}.gallery.in-view .photo-card:nth-child(n+11){transition-delay:.50s}.photo-card img{width:100%;height:100%;object-fit:cover;transition:.35s}.photo-card:hover img{transform:scale(1.08)}.photo-card:hover{border-radius:28px}.photo-card:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.78))}.photo-card .meta{position:absolute;left:14px;right:14px;bottom:13px;z-index:2}.photo-card .meta b{display:block;font-size:12px;font-style:italic}.photo-card .meta span{font-size:8px;color:#c6d1c8}.photo-card.selected{outline:2px solid #dfe8e0;outline-offset:3px}.gallery-note{margin-top:16px;font-size:9px;color:#9daaa0}.final{padding:86px 5vw;background:#162019;color:#eef3ef;border-top:1px solid rgba(255,255,255,.08)}.final h2{font:600 clamp(34px,4.5vw,66px)/.98 "Space Grotesk",sans-serif;letter-spacing:-.04em;margin:0 0 15px;max-width:950px}.final p{max-width:760px;color:#bac5bc;font-size:13px;line-height:1.6}.final a{display:inline-block;margin-top:15px;color:#172019;background:#fff;text-decoration:none;padding:11px 15px;border-radius:999px;font-size:9px;font-weight:700}
 @media(max-width:1050px){.scrolly{grid-template-columns:1fr;padding:24px}.network-rail{grid-row:1}.network-sticky{position:relative;top:auto;height:68vh}.intro{min-height:auto;padding:46px 0}.step{min-height:auto;margin:18px 0}.page{margin-left:58px}.photo-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -87,7 +87,7 @@
     <h2>Antes de ser nodos, son organismos.</h2>
     <p>Este collage recupera la lectura fotográfica de las especies. Haz clic en una para abrirla dentro de la misma red.</p>
   </div>
-  <div class="photo-grid" id="photoGrid"></div>
+  <div class="photo-grid" id="photoGrid"></div><div class="gallery-note">clic en una especie = abrir su ecosistema en la misma red</div>
 </section>
 
 <section class="final">
@@ -193,12 +193,28 @@ async function buildGallery(){
       const card=document.createElement("article");
       card.className="photo-card";
       card.innerHTML=(u?'<img src="'+u+'" alt="'+n.id+'">':'')+'<div class="meta"><b>'+n.id+'</b><span>'+(n.origin||"origen no indicado")+' · '+(n.n||0)+' registros</span></div>';
-      card.onclick=()=>send({type:"openTaxon",taxon:n.id});
+      card.onclick=()=>{
+        send({type:"openTaxon",taxon:n.id});
+        document.querySelector(".network-sticky")?.scrollIntoView({behavior:"smooth",block:"center"});
+      };
       grid.appendChild(card);
     }
   }catch(e){}
 }
 buildGallery();
+
+const gallerySection=document.querySelector(".gallery");
+const galleryObserver=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)gallerySection.classList.add("in-view")});
+},{threshold:.18});
+galleryObserver.observe(gallerySection);
+
+document.addEventListener("click",e=>{
+  const card=e.target.closest?.(".photo-card");
+  if(!card)return;
+  document.querySelectorAll(".photo-card").forEach(x=>x.classList.remove("selected"));
+  card.classList.add("selected");
+});
 </script>
 </body>
 </html>
