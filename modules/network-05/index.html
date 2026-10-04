@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Módulo 05 · Navegador Multiescalar & Red Biótica Circular</title>
+  <title>Módulo 05 · Navegador Multiescalar & Red Biótica Circular Interactiva</title>
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -36,15 +36,23 @@
   <style>
     #mynetwork {
       width: 100%;
-      height: 720px;
+      height: 740px;
       background-color: #000000;
-      transition: background-color 0.5s ease;
+      transition: all 0.5s ease;
       border-radius: 0.75rem;
       border: 1px solid #1E293B;
     }
     #mynetwork.isolated {
       background-color: #000000 !important;
-      box-shadow: inset 0 0 80px rgba(168, 85, 247, 0.35);
+      box-shadow: inset 0 0 100px rgba(168, 85, 247, 0.4);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
     }
   </style>
 </head>
@@ -60,7 +68,7 @@
         <span class="block text-xs uppercase tracking-widest text-emerald-400 font-semibold">Punto 5 | Modelamiento Dinámico y Simulación (Corte II)</span>
         <h1 class="text-2xl md:text-3xl font-extrabold text-white mt-1">De la Ruptura Urbana a la Regeneración Biótica en Kennedy</h1>
         <p class="text-slate-400 text-xs md:text-sm mt-1 max-w-4xl">
-          Visualización de Anillo Circular (Chord layout) con imágenes reales por espécimen, subredes bioluminiscentes en fondo negro (#000000) y simulación de enjambres (ABM).
+          Red interactiva en Anillo Circular (Chord Diagram) con avatares perimetrales, física responsiva, buscador en tiempo real y subredes bioluminiscentes en fondo negro (#000000).
         </p>
       </div>
       <div class="flex items-center gap-2">
@@ -76,7 +84,7 @@
     <div class="max-w-7xl mx-auto flex space-x-3 text-xs md:text-sm font-medium overflow-x-auto">
       <button onclick="scrollToAct('acto1')" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 whitespace-nowrap">Acto I: Donas & Censo</button>
       <button onclick="scrollToAct('acto2')" class="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 whitespace-nowrap">Acto II: Choque Urbano</button>
-      <button onclick="scrollToAct('acto3')" class="px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 whitespace-nowrap">Acto III: Anillo Circular & Subred</button>
+      <button onclick="scrollToAct('acto3')" class="px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 whitespace-nowrap">Acto III: Anillo Circular Interactivo</button>
       <button onclick="scrollToAct('acto4')" class="px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 whitespace-nowrap">Acto IV: Reglas ABM</button>
     </div>
   </nav>
@@ -109,26 +117,34 @@
 
     <!-- ACTO II & III -->
     <section id="acto3" class="space-y-6">
-      <div class="border-l-4 border-purple-500 pl-4">
-        <span class="text-xs font-bold text-purple-400 uppercase">Acto II & III</span>
-        <h2 class="text-2xl font-bold text-white">Red Biótica Circular (Anillo Perimetral & Arcos Neón)</h2>
-        <p class="text-slate-400 text-sm">Nodos dispuestos en anillo con imágenes y arcos multi-color cruzados. Haz clic en un nodo para aislar su subred en fondo negro absoluto (#000000).</p>
+      <div class="border-l-4 border-purple-500 pl-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-purple-400 uppercase">Acto II & III</span>
+          <h2 class="text-2xl font-bold text-white">Red Biótica Circular Multiescalar</h2>
+          <p class="text-slate-400 text-sm">Pasa el cursor sobre un nodo para iluminar sus conexiones o haz clic para aislar la subred egocéntrica.</p>
+        </div>
+
+        <!-- BUSCADOR DE ESPECIES -->
+        <div class="relative w-full md:w-72">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
+          <input type="text" id="searchInput" oninput="searchSpecies(this.value)" placeholder="Buscar especie o nodo..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500">
+        </div>
       </div>
 
       <!-- CONTROLES Y FILTROS -->
       <div class="flex flex-wrap gap-3 bg-slate-900 p-4 rounded-xl border border-slate-800 items-center justify-between">
-        <div class="flex flex-wrap gap-2">
-          <button onclick="setLayout('circular')" id="btnCircular" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow">⭕ Vista Anillo Circular</button>
-          <button onclick="setLayout('organic')" id="btnOrganic" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">🌌 Vista Orgánica ABM</button>
-          <span class="text-slate-600">|</span>
-          <button onclick="filterLayer('all')" class="px-3 py-1.5 text-xs rounded-lg bg-slate-800 text-white hover:bg-slate-700">Ver Todo</button>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="setLayout('circular')" id="btnCircular" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow">⭕ Anillo Circular</button>
+          <button onclick="setLayout('organic')" id="btnOrganic" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">🌌 Red Orgánica</button>
+          <span class="text-slate-700">|</span>
+          <button onclick="filterLayer('all')" class="px-3 py-1.5 text-xs rounded-lg bg-slate-800 text-white hover:bg-slate-700">Ver Todos (<span id="countAll">0</span>)</button>
           <button onclick="filterLayer('Plantae')" class="px-3 py-1.5 text-xs rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-800">Flora Nativa</button>
           <button onclick="filterLayer('Animalia')" class="px-3 py-1.5 text-xs rounded-lg bg-blue-950 text-blue-300 border border-blue-800">Avifauna</button>
-          <button onclick="filterLayer('Abiotico')" class="px-3 py-1.5 text-xs rounded-lg bg-rose-950 text-rose-300 border border-rose-800">Perturbación (>75dB)</button>
+          <button onclick="filterLayer('Abiotico')" class="px-3 py-1.5 text-xs rounded-lg bg-rose-950 text-rose-300 border border-rose-800">Perturbación Urbana</button>
         </div>
-        <div>
-          <button onclick="runKnockout()" class="px-4 py-1.5 text-xs font-bold rounded-lg bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/30">🔥 Knock-Out (Saúco)</button>
-          <button onclick="resetIsolation()" class="px-3 py-1.5 text-xs rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 ml-2">Restablecer Fondo</button>
+        <div class="flex items-center gap-2">
+          <button onclick="runKnockout()" class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-600/30">🔥 Simular Knock-Out (Saúco)</button>
+          <button onclick="resetIsolation()" class="px-3 py-1.5 text-xs rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">Restablecer Lienzo</button>
         </div>
       </div>
 
@@ -136,19 +152,22 @@
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div class="lg:col-span-3 relative">
           <div id="mynetwork"></div>
-          <div id="alertBanner" class="hidden absolute top-4 left-4 right-4 bg-red-950/90 border border-red-500 text-red-200 p-3 rounded-lg text-xs font-semibold backdrop-blur animate-pulse">
-            ⚠️ ALERTA DE FRAGILIDAD SÉPTICA: Al eliminar los nodos vegetales Hub (Saúco/Capulí), la Tingua Bogotana y el Cucarachero de Pantano pierden el 80% de su soporte trófico y refugio ("Colgando de un Hilo").
+          <div id="alertBanner" class="hidden absolute top-4 left-4 right-4 bg-red-950/95 border border-red-500 text-red-200 p-4 rounded-xl text-xs font-semibold backdrop-blur animate-pulse shadow-2xl">
+            <div class="flex items-center justify-between">
+              <span>⚠️ ALERTA DE FRAGILIDAD SÉPTICA: Al eliminar los nodos vegetales Hub (Saúco/Capulí), la Tingua Bogotana y el Cucarachero de Pantano pierden el 80% de su soporte trófico y refugio ("Colgando de un Hilo").</span>
+              <button onclick="resetIsolation()" class="ml-4 underline text-red-400 text-xs">Cerrar</button>
+            </div>
           </div>
         </div>
 
         <!-- TARJETA LATERAL DE ESPÉCIMEN -->
-        <div id="nodeDetailCard" class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-4">
+        <div id="nodeDetailCard" class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-4 max-h-[740px] overflow-y-auto custom-scrollbar">
           <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2 flex items-center justify-between">
             <span>Ficha del Espécimen</span>
-            <i class="fa-solid fa-leaf text-emerald-400"></i>
+            <i class="fa-solid fa-circle-info text-purple-400"></i>
           </h3>
-          <div id="cardContent" class="text-xs text-slate-400 space-y-3">
-            <p class="italic">Haz clic en cualquier nodo del anillo para desplegar la foto real en vivo, su nombre científico y su rol ecológico en Kennedy.</p>
+          <div id="cardContent" class="text-xs text-slate-400 space-y-4">
+            <p class="italic">Haz clic en cualquier espécimen del anillo circular para ver su imagen en vivo, nombre científico, rol en el ecosistema de Kennedy y sus reglas ABM de simulación.</p>
           </div>
         </div>
       </div>
@@ -207,13 +226,13 @@
     let nodesDataset = null;
     let edgesDataset = null;
     let fullData = null;
-    let currentLayout = 'circular';
+    let activeNodeId = null;
 
     const defaultImages = {
-      'Plantae': 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=150',
-      'Animalia': 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=150',
-      'Abiotico': 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=150',
-      'Microorganismos': 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=150'
+      'Plantae': 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=300',
+      'Animalia': 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=300',
+      'Abiotico': 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=300',
+      'Microorganismos': 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=300'
     };
 
     const edgeColors = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#F97316'];
@@ -222,8 +241,8 @@
       .then(res => res.json())
       .then(data => {
         fullData = data;
-        const stats = data.statistics_charts || {};
-        initCharts(stats);
+        document.getElementById('countAll').innerText = data.nodes ? data.nodes.length : 0;
+        initCharts(data.statistics_charts || {});
         initNetwork(data.nodes || [], data.edges || []);
       })
       .catch(err => {
@@ -279,7 +298,7 @@
 
     function initNetwork(nodes, edges) {
       const container = document.getElementById('mynetwork');
-      const radius = 340;
+      const radius = 350;
       const total = nodes.length;
 
       const formattedNodes = nodes.map((n, i) => {
@@ -297,9 +316,9 @@
           image: imgUrl,
           x: x,
           y: y,
-          size: n.is_hub ? 32 : 20,
+          size: n.is_hub ? 34 : 22,
           color: { border: n.color || (n.is_hub ? '#10B981' : '#3B82F6'), background: '#0D1B2A' },
-          font: { color: '#F1F5F9', size: 10, face: 'Inter', background: '#0F172AEE' }
+          font: { color: '#F8FAFC', size: 10, face: 'Inter', background: '#0F172AEE' }
         };
       });
 
@@ -307,7 +326,7 @@
         ...e,
         smooth: { type: 'curvedCW', roundness: 0.25 },
         width: e.weight ? Math.min(e.weight, 4) : 1.5,
-        color: e.color || edgeColors[idx % edgeColors.length]
+        color: { color: e.color || edgeColors[idx % edgeColors.length], highlight: '#A855F7', hover: '#38BDF8' }
       }));
 
       nodesDataset = new vis.DataSet(formattedNodes);
@@ -325,16 +344,65 @@
       network.on("click", function (params) {
         if (params.nodes.length > 0) {
           const selectedId = params.nodes[0];
+          activeNodeId = selectedId;
           isolateSubnetwork(selectedId);
           showNodeCard(selectedId);
+          network.focus(selectedId, { scale: 1.2, animation: { duration: 500, easingFunction: 'easeInOutQuad' } });
         } else {
           resetIsolation();
         }
       });
+
+      network.on("hoverNode", function (params) {
+        if (!activeNodeId) {
+          highlightHoverConnections(params.node);
+        }
+      });
+
+      network.on("blurNode", function () {
+        if (!activeNodeId) {
+          resetEdgeStyles();
+        }
+      });
+    }
+
+    function highlightHoverConnections(nodeId) {
+      const connectedEdges = network.getConnectedEdges(nodeId);
+      const allEdges = edgesDataset.get();
+      const updatedEdges = allEdges.map(e => ({
+        id: e.id,
+        width: connectedEdges.includes(e.id) ? 3.5 : 0.8,
+        opacity: connectedEdges.includes(e.id) ? 1 : 0.15
+      }));
+      edgesDataset.update(updatedEdges);
+    }
+
+    function resetEdgeStyles() {
+      const allEdges = edgesDataset.get();
+      const updatedEdges = allEdges.map(e => ({
+        id: e.id,
+        width: e.weight ? Math.min(e.weight, 4) : 1.5,
+        opacity: 1
+      }));
+      edgesDataset.update(updatedEdges);
+    }
+
+    function searchSpecies(query) {
+      if (!query.trim()) {
+        resetIsolation();
+        return;
+      }
+      const q = query.toLowerCase();
+      const match = fullData.nodes.find(n => n.label.toLowerCase().includes(q) || (n.scientific_name && n.scientific_name.toLowerCase().includes(q)));
+      if (match) {
+        activeNodeId = match.id;
+        isolateSubnetwork(match.id);
+        showNodeCard(match.id);
+        network.focus(match.id, { scale: 1.3, animation: true });
+      }
     }
 
     function setLayout(mode) {
-      currentLayout = mode;
       const btnCirc = document.getElementById('btnCircular');
       const btnOrg = document.getElementById('btnOrganic');
 
@@ -342,7 +410,7 @@
         btnCirc.className = 'px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow';
         btnOrg.className = 'px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700';
 
-        const radius = 340;
+        const radius = 350;
         const allNodes = nodesDataset.get();
         const total = allNodes.length;
 
@@ -357,6 +425,7 @@
 
         nodesDataset.update(updatedNodes);
         network.setOptions({ physics: { enabled: false } });
+        network.fit({ animation: { duration: 600 } });
       } else {
         btnOrg.className = 'px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 text-white shadow';
         btnCirc.className = 'px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700';
@@ -364,7 +433,7 @@
         network.setOptions({
           physics: {
             enabled: true,
-            forceAtlas2Based: { gravitationalConstant: -50, centralGravity: 0.01, springLength: 120 }
+            forceAtlas2Based: { gravitationalConstant: -60, centralGravity: 0.01, springLength: 130 }
           }
         });
       }
@@ -382,7 +451,7 @@
         if (connectedNodes.includes(n.id)) {
           return { ...n, opacity: 1, font: { color: '#A855F7', size: 12 } };
         } else {
-          return { ...n, opacity: 0.1, font: { color: '#334155', size: 8 } };
+          return { ...n, opacity: 0.08, font: { color: '#334155', size: 8 } };
         }
       });
 
@@ -390,6 +459,7 @@
     }
 
     function resetIsolation() {
+      activeNodeId = null;
       const container = document.getElementById('mynetwork');
       container.classList.remove('isolated');
       document.getElementById('alertBanner').classList.add('hidden');
@@ -397,34 +467,54 @@
       const allNodes = nodesDataset.get().map(n => ({
         ...n,
         opacity: 1,
-        font: { color: '#F1F5F9', size: 10 }
+        font: { color: '#F8FAFC', size: 10 }
       }));
       nodesDataset.update(allNodes);
+      resetEdgeStyles();
+      network.fit({ animation: { duration: 500 } });
     }
 
     function showNodeCard(nodeId) {
       const nodeObj = fullData.nodes.find(n => n.id === nodeId);
       if (!nodeObj) return;
 
+      const abmRule = (fullData.abm_rules || []).find(r => r.agent_type.toLowerCase().includes(nodeObj.group.toLowerCase()) || r.agent_type.toLowerCase().includes(nodeObj.label.toLowerCase()));
+
       const card = document.getElementById('cardContent');
       const imgUrl = nodeObj.image_url || defaultImages[nodeObj.group] || defaultImages['Plantae'];
       card.innerHTML = `
-        <img src="${imgUrl}" alt="${nodeObj.label}" class="w-full h-40 object-cover rounded-lg border border-slate-700 shadow-lg">
+        <div class="relative overflow-hidden rounded-xl border border-slate-700 shadow-xl group">
+          <img src="${imgUrl}" alt="${nodeObj.label}" class="w-full h-44 object-cover transform group-hover:scale-105 transition duration-500">
+          <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950 to-transparent p-3">
+            <span class="px-2 py-0.5 text-[10px] uppercase font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">${nodeObj.group}</span>
+          </div>
+        </div>
+
         <div>
           <h4 class="text-base font-bold text-white">${nodeObj.label}</h4>
           <p class="text-xs text-emerald-400 italic">${nodeObj.scientific_name || nodeObj.category || ''}</p>
         </div>
-        <div class="bg-slate-800/60 p-2.5 rounded border border-slate-700 space-y-1">
-          <p><span class="font-bold text-slate-300">Grupo:</span> ${nodeObj.group || ''}</p>
+
+        <div class="bg-slate-800/70 p-3 rounded-lg border border-slate-700 space-y-2 text-xs">
           <p><span class="font-bold text-slate-300">Ubicación:</span> ${nodeObj.location || 'Humedales El Burro, La Vaca y Techo'}</p>
+          <p><span class="font-bold text-slate-300">Centralidad de Grado:</span> <span class="text-amber-400 font-bold">${nodeObj.centrality_degree || 5}</span></p>
           <p><span class="font-bold text-slate-300">Función Biótica:</span> ${nodeObj.ecosystem_role || nodeObj.description || 'Elemento clave en la matriz hídrica y trófica.'}</p>
         </div>
+
+        ${abmRule ? `
+        <div class="bg-blue-950/60 p-3 rounded-lg border border-blue-800/80 space-y-1.5 text-xs">
+          <h5 class="font-bold text-blue-300 uppercase text-[10px]">Regla ABM de Agente:</h5>
+          <p class="text-slate-300"><span class="text-blue-400 font-bold">IF:</span> ${abmRule.if_condition}</p>
+          <p class="text-emerald-400"><span class="font-bold">THEN:</span> ${abmRule.then_action}</p>
+        </div>
+        ` : ''}
       `;
     }
 
     function runKnockout() {
       document.getElementById('alertBanner').classList.remove('hidden');
       isolateSubnetwork('sambucus_nigra');
+      network.focus('sambucus_nigra', { scale: 1.4, animation: true });
     }
 
     function filterLayer(group) {
