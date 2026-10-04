@@ -70,6 +70,13 @@ body.storymode{background:#050806;color:#eef6ef}
 body.storymode #swarm{background:radial-gradient(circle at 50% 50%,#101a13 0,#071009 48%,#020403 100%)}
 body.storymode .legend{background:rgba(5,9,6,.78);border-color:rgba(255,255,255,.08);color:#c9d5cb}
 body.storymode .legend .label,body.storymode .legend .small{color:#aebbb1}
+
+.subnet-edit-btn{position:absolute;right:68px;top:18px;z-index:30;border:1px solid #d9f3df;background:#dff4e4;color:#17301f;border-radius:999px;padding:10px 14px;font-size:8px;font-weight:800;cursor:pointer}
+.subnet-editor{position:absolute;right:18px;top:66px;z-index:25;width:280px;max-height:calc(100% - 100px);overflow:auto;background:rgba(13,19,15,.97);border:1px solid #ffffff22;border-radius:16px;padding:12px;color:#eef4ef;box-shadow:0 18px 50px #0008;backdrop-filter:blur(14px)}
+.subnet-editor.closed{display:none}.subnet-editor h3{font-size:12px;margin:0 0 9px}.subnet-editor .field{display:grid;grid-template-columns:74px 1fr;gap:8px;align-items:center;margin:7px 0}.subnet-editor label{font-size:7px;color:#9caaa0;text-transform:uppercase;letter-spacing:.08em}
+.subnet-editor input,.subnet-editor select,.subnet-editor textarea{width:100%;box-sizing:border-box;background:#07100a;color:#fff;border:1px solid #ffffff20;border-radius:8px;padding:7px;font:8px Inter,Arial}.subnet-editor textarea{height:96px;resize:vertical}
+.subnet-editor .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.subnet-editor button{border:1px solid #ffffff22;background:#ffffff0d;color:#fff;border-radius:999px;padding:7px 9px;font-size:7px;cursor:pointer}.subnet-editor button.primary{background:#dff4e4;color:#17301f;font-weight:800}
+.sub-node.editing{cursor:grab}.sub-node.editing:active{cursor:grabbing}.sub-node.selected .pic{box-shadow:0 0 0 4px #f0e48b,0 8px 28px #000}.subnet-svg .selected-edge{filter:drop-shadow(0 0 5px currentColor)}
 </style>
 </head>
 <body><div class="app">
@@ -160,6 +167,27 @@ body.storymode .legend .label,body.storymode .legend .small{color:#aebbb1}
 <div class="subnet-modal" id="subnetModal" aria-hidden="true">
   <div class="subnet-shell" role="dialog" aria-modal="true" aria-labelledby="subnetTitle">
     <button class="subnet-close" id="subnetClose" aria-label="Cerrar subred"><i class="fa-solid fa-xmark"></i></button>
+    <button class="subnet-edit-btn" id="subnetEditToggle"><i class="fa-solid fa-sliders"></i> editar</button>
+    <aside class="subnet-editor" id="subnetEditor">
+      <h3>Editar subred</h3>
+      <div class="field"><label>Nodo</label><select id="seNode"></select></div>
+      <div class="field"><label>X</label><input id="seX" type="number" min="2" max="98" step=".1"></div>
+      <div class="field"><label>Y</label><input id="seY" type="number" min="8" max="92" step=".1"></div>
+      <div class="field"><label>Tamaño</label><input id="seSize" type="range" min="36" max="110" step="2" value="58"></div>
+      <div class="field"><label>Vínculo</label><select id="seEdge"></select></div>
+      <div class="field"><label>Relación</label><select id="seRelation">
+        <option>VISITA FLORAL</option><option>HERBIVORÍA</option><option>DEPREDACIÓN</option><option>DISPERSIÓN</option><option>OVIPOSICIÓN</option><option>NIDIFICACIÓN</option><option>PARASITISMO</option><option>MUTUALISMO</option><option>OTRAS INTERACCIONES</option>
+      </select></div>
+      <div class="field"><label>Línea</label><select id="seLine"><option value="solid">continua</option><option value="dash">segmentada</option><option value="dot">punteada</option></select></div>
+      <div class="field"><label>Grosor</label><input id="seWidth" type="range" min=".6" max="5" step=".2" value="1.6"></div>
+      <div class="field"><label>Color</label><input id="seColor" type="color" value="#6f9569"></div>
+      <div class="row">
+        <button class="primary" id="seSave">guardar escena</button>
+        <button id="seRestore">restaurar nodos</button>
+        <button id="seReset">restablecer</button>
+      </div>
+      <textarea id="seJSON" readonly placeholder="JSON de la escena guardada"></textarea>
+    </aside>
     <div class="subnet-head">
       <div class="ey">Subred de interacción directa</div>
       <h2 id="subnetTitle">Especie seleccionada</h2>
@@ -720,80 +748,146 @@ function closeSubnetwork(){
 
 function openSubnetwork(n){
   const modal=document.querySelector("#subnetModal"),svg=document.querySelector("#subnetSvg"),holder=document.querySelector("#subnetNodes");
-  const graph=deepSubgraph(n.id,4,34), ids=graph.selected;
+  const graph=deepSubgraph(n.id,4,34),ids=graph.selected;
   document.querySelector("#subnetTitle").textContent=n.id;
   document.querySelector("#subnetSubtitle").textContent=(ids.length-1)+" organismos relacionados · "+graph.edges.length+" registros/vínculos · evidencia RIBB visible en la subred.";
-  svg.innerHTML='';holder.innerHTML='';
+  holder.innerHTML="";svg.innerHTML="";
   const NS="http://www.w3.org/2000/svg";
 
-  // Ecological territories across the canvas, inspired by an ecosystem map rather than radial rings.
-  const anchors={
-    birds:{x:18,y:23}, vertebrates:{x:18,y:67}, invert:{x:48,y:24},
-    plants:{x:55,y:68}, fungi:{x:79,y:68}, micro:{x:82,y:30}
-  };
-  const labels={
-    birds:"AVES",vertebrates:"OTROS VERTEBRADOS",invert:"INVERTEBRADOS",
-    plants:"PLANTAS Y VEGETACIÓN",fungi:"HONGOS",micro:"MICROORGANISMOS"
-  };
-  Object.entries(anchors).forEach(([k,p])=>{
-    if(!activeEco.has(k))return;
-    const t=document.createElementNS(NS,"text");t.setAttribute("x",p.x*10);t.setAttribute("y",p.y*6.5-55);
-    t.setAttribute("text-anchor","middle");t.setAttribute("fill",ECO_COLORS[k]);t.setAttribute("class","eco-zone-label");t.textContent=labels[k];svg.appendChild(t);
-  });
+  const savedKey="ribb-edit-scene:"+n.id;
+  let saved=null;try{saved=JSON.parse(localStorage.getItem(savedKey)||"null")}catch(e){}
+  const hidden=new Set(saved?.hidden||[]);
+  const sizes=new Map(Object.entries(saved?.sizes||{}).map(([k,v])=>[k,+v]));
+  const edgeStyles=new Map(Object.entries(saved?.edges||{}));
 
+  const anchors={birds:{x:18,y:23},vertebrates:{x:18,y:67},invert:{x:48,y:24},plants:{x:55,y:68},fungi:{x:79,y:68},micro:{x:82,y:30}};
   const pos=new Map();
   const buckets={micro:[],fungi:[],plants:[],invert:[],birds:[],vertebrates:[]};
-  ids.forEach(id=>(buckets[SPECIAL_ECO_GROUP[id]||ecoGroup(id)]||buckets.plants).push(id));
-
+  ids.forEach(id=>(buckets[SPECIAL_ECO_GROUP?.[id]||ecoGroup(id)]||buckets.plants).push(id));
   Object.entries(buckets).forEach(([eco,arr])=>{
-    const A=anchors[eco]; if(!A||!arr.length)return;
-    // deterministic sunflower cloud around each ecological anchor
+    const A=anchors[eco];if(!A||!arr.length)return;
     arr.forEach((id,i)=>{
-      const h=(hash(id+"sub")%10000)/10000;
-      const ang=i*2.399963+h*.8;
-      const rr=Math.sqrt(i+.35)*3.8;
-      let x=A.x+Math.cos(ang)*rr, y=A.y+Math.sin(ang)*rr*.78;
-      x=Math.max(7,Math.min(93,x));y=Math.max(13,Math.min(88,y));
-      pos.set(id,{x,y});
+      const h=(hash(id+"subedit")%10000)/10000,ang=i*2.399963+h*.8,rr=Math.sqrt(i+.45)*5.4;
+      let x=A.x+Math.cos(ang)*rr,y=A.y+Math.sin(ang)*rr*.82;
+      pos.set(id,{x:Math.max(7,Math.min(93,x)),y:Math.max(14,Math.min(86,y))});
     });
   });
+  if(ids.length===2){pos.set(ids[0],{x:36,y:48});pos.set(ids[1],{x:64,y:48})}
+  Object.entries(saved?.nodes||{}).forEach(([id,p])=>{if(pos.has(id))pos.set(id,{x:+p.x,y:+p.y})});
 
-  // The selected organism remains identifiable, but inside its ecological territory.
-  const rootEco=ecoGroup(n.id),rootAnchor=anchors[rootEco]||{x:50,y:50};
-  pos.set(n.id,{x:rootAnchor.x,y:rootAnchor.y});
+  let selectedNode=ids[0]||null,selectedEdge=graph.edges[0]?.id||null;
 
-  // Draw all cross-connections first.
-  for(const r of graph.edges){
-    const p1=pos.get(r.s),p2=pos.get(r.t);if(!p1||!p2)continue;
-    const line=document.createElementNS(NS,"line");
-    line.setAttribute("x1",p1.x*10);line.setAttribute("y1",p1.y*6.5);
-    line.setAttribute("x2",p2.x*10);line.setAttribute("y2",p2.y*6.5);
-    line.setAttribute("stroke",COLORS[r.title]||"#8c73a5");
-    line.setAttribute("stroke-width",r.s===n.id||r.t===n.id?"2":"1.15");
-    line.setAttribute("stroke-opacity",r.s===n.id||r.t===n.id?".9":".58");
-    if(r.q==="Media")line.setAttribute("stroke-dasharray","7 6");
-    if(r.q==="Baja")line.setAttribute("stroke-dasharray","2 7");
-    svg.appendChild(line);
+  const defs=document.createElementNS(NS,"defs");
+  svg.appendChild(defs);
+
+  function edgeId(r,i){return r.id||("edge-"+i+"-"+r.s+"-"+r.t)}
+  graph.edges.forEach((r,i)=>{if(!r.id)r.id=edgeId(r,i)});
+
+  function renderEdges(){
+    [...svg.querySelectorAll("[data-subedge]")].forEach(x=>x.remove());
+    graph.edges.forEach(r=>{
+      if(hidden.has(r.s)||hidden.has(r.t))return;
+      const p1=pos.get(r.s),p2=pos.get(r.t);if(!p1||!p2)return;
+      const st=edgeStyles.get(r.id)||{};
+      const relation=st.relation||r.title||"OTRAS INTERACCIONES";
+      const color=st.color||COLORS[relation]||COLORS[r.title]||"#8c73a5";
+      const line=document.createElementNS(NS,"line");
+      line.dataset.subedge=r.id;
+      line.setAttribute("x1",p1.x*10);line.setAttribute("y1",p1.y*6.5);
+      line.setAttribute("x2",p2.x*10);line.setAttribute("y2",p2.y*6.5);
+      line.setAttribute("stroke",color);line.style.color=color;
+      line.setAttribute("stroke-width",String(st.width||1.6));
+      line.setAttribute("stroke-opacity",".88");
+      const ls=st.line||((r.q==="Media")?"dash":(r.q==="Baja"?"dot":"solid"));
+      if(ls==="dash")line.setAttribute("stroke-dasharray","8 5");
+      if(ls==="dot")line.setAttribute("stroke-dasharray","2 6");
+      if(r.id===selectedEdge)line.classList.add("selected-edge");
+      line.style.pointerEvents="stroke";line.style.cursor="pointer";
+      line.addEventListener("click",ev=>{ev.stopPropagation();selectedEdge=r.id;syncEditor();renderEdges()});
+      svg.appendChild(line);
+    });
   }
 
-  for(const id of ids){
-    const p=pos.get(id);if(!p)continue;
+  const nodeEls=new Map();
+  ids.forEach(id=>{
+    const p=pos.get(id);if(!p)return;
     const nd=nodeMap.get(id)||DATA.nodeById.get(id)||{id,n:0,origin:""};
-    const d=graph.depth.get(id)||0, eco=SPECIAL_ECO_GROUP[id]||ecoGroup(id), el=document.createElement("div");
-    el.className="sub-node"+(id===n.id?" center":"");
-    el.style.left=p.x+"%";el.style.top=p.y+"%";
+    const eco=SPECIAL_ECO_GROUP?.[id]||ecoGroup(id),el=document.createElement("div");
+    el.className="sub-node editing";el.dataset.node=id;
     const degree=graph.edges.filter(e=>e.s===id||e.t===id).length;
-    const size=id===n.id?88:(degree>=5?68:degree>=3?58:48);
+    const size=sizes.get(id)||(degree>=5?68:degree>=3?58:50);
     const direct=graph.edges.filter(r=>(r.s===n.id&&r.t===id)||(r.t===n.id&&r.s===id));
     const relTexts=direct.map(r=>r.i).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
     const coords=direct.map(r=>r.coord).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
     const statuses=direct.map(r=>r.status).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
-    const relation=id===n.id?"Copetón · especie de partida":(relTexts.length?relTexts.join(" · "):ECO_LABELS[eco]);
-    const metadata=(coords.length?coords.join(" / "):"")+(statuses.length?((coords.length?"<br>":"")+statuses.join(" · ")):"");
-    el.innerHTML='<div class="pic" style="border-color:'+(ECO_COLORS[eco]||'#fff')+';width:'+size+'px;height:'+size+'px;">'+id.charAt(0).toUpperCase()+'</div><div class="nm">'+id+'</div><div class="rel">'+relation+(metadata?"<br>"+metadata:"")+'</div>';
-    el.addEventListener("click",()=>{if(id!==n.id){openSubnetwork(nd);openNode(nd,false)}});
-    holder.appendChild(el);ensureNodePhoto(id,el.querySelector(".pic"));
+    const relation=id===n.id?(SPECIAL_NETWORKS?.[n.id]?"Especie de partida":ECO_LABELS[eco]):(relTexts.length?relTexts.join(" · "):ECO_LABELS[eco]);
+    const meta=[coords.join(" / "),statuses.join(" · ")].filter(Boolean).join("<br>");
+    el.innerHTML='<div class="pic" style="border-color:'+(ECO_COLORS[eco]||"#fff")+';width:'+size+'px;height:'+size+'px">'+id.charAt(0).toUpperCase()+'</div><div class="nm">'+id+'</div><div class="rel">'+relation+(meta?"<br>"+meta:"")+'</div>';
+    el.style.left=p.x+"%";el.style.top=p.y+"%";
+    if(hidden.has(id))el.style.display="none";
+    holder.appendChild(el);nodeEls.set(id,el);ensureNodePhoto(id,el.querySelector(".pic"));
+
+    el.addEventListener("click",ev=>{ev.stopPropagation();selectedNode=id;syncEditor();refreshSelection()});
+    el.addEventListener("dblclick",ev=>{ev.preventDefault();ev.stopPropagation();hidden.add(id);el.style.display="none";renderEdges();syncJSON()});
+    el.addEventListener("pointerdown",ev=>{
+      ev.preventDefault();ev.stopPropagation();selectedNode=id;syncEditor();refreshSelection();el.setPointerCapture(ev.pointerId);
+      const move=mv=>{
+        const rect=holder.getBoundingClientRect();
+        const x=Math.max(3,Math.min(97,(mv.clientX-rect.left)/rect.width*100));
+        const y=Math.max(10,Math.min(90,(mv.clientY-rect.top)/rect.height*100));
+        pos.set(id,{x,y});el.style.left=x+"%";el.style.top=y+"%";
+        document.querySelector("#seX").value=x.toFixed(1);document.querySelector("#seY").value=y.toFixed(1);
+        renderEdges();
+      };
+      const up=()=>{el.removeEventListener("pointermove",move);el.removeEventListener("pointerup",up)};
+      el.addEventListener("pointermove",move);el.addEventListener("pointerup",up);
+    });
+  });
+
+  function refreshSelection(){
+    nodeEls.forEach((el,id)=>el.classList.toggle("selected",id===selectedNode));
   }
+  function syncEditor(){
+    const ns=document.querySelector("#seNode"),es=document.querySelector("#seEdge");
+    ns.innerHTML=ids.map(id=>'<option value="'+id.replaceAll('"','&quot;')+'">'+id+'</option>').join("");
+    ns.value=selectedNode||"";
+    es.innerHTML=graph.edges.map(r=>'<option value="'+r.id.replaceAll('"','&quot;')+'">'+r.s+' → '+r.t+'</option>').join("");
+    es.value=selectedEdge||"";
+    const p=pos.get(selectedNode);if(p){document.querySelector("#seX").value=p.x.toFixed(1);document.querySelector("#seY").value=p.y.toFixed(1);document.querySelector("#seSize").value=sizes.get(selectedNode)||50}
+    const edge=graph.edges.find(r=>r.id===selectedEdge);
+    if(edge){
+      const st=edgeStyles.get(edge.id)||{};
+      document.querySelector("#seRelation").value=st.relation||edge.title||"OTRAS INTERACCIONES";
+      document.querySelector("#seLine").value=st.line||((edge.q==="Media")?"dash":(edge.q==="Baja"?"dot":"solid"));
+      document.querySelector("#seWidth").value=st.width||1.6;
+      document.querySelector("#seColor").value=st.color||COLORS[edge.title]||"#8c73a5";
+    }
+    refreshSelection();
+  }
+  function syncJSON(){
+    const nodesObj={};pos.forEach((p,id)=>nodesObj[id]={x:+p.x.toFixed(2),y:+p.y.toFixed(2)});
+    const sizesObj={};sizes.forEach((v,id)=>sizesObj[id]=v);
+    const edgesObj={};edgeStyles.forEach((v,id)=>edgesObj[id]=v);
+    const data={root:n.id,nodes:nodesObj,sizes:sizesObj,hidden:[...hidden],edges:edgesObj};
+    document.querySelector("#seJSON").value=JSON.stringify(data,null,2);
+    return data;
+  }
+
+  document.querySelector("#seNode").onchange=e=>{selectedNode=e.target.value;syncEditor()};
+  const moveInput=()=>{const p=pos.get(selectedNode);if(!p)return;p.x=+document.querySelector("#seX").value;p.y=+document.querySelector("#seY").value;const el=nodeEls.get(selectedNode);if(el){el.style.left=p.x+"%";el.style.top=p.y+"%"}renderEdges()};
+  document.querySelector("#seX").oninput=moveInput;document.querySelector("#seY").oninput=moveInput;
+  document.querySelector("#seSize").oninput=e=>{sizes.set(selectedNode,+e.target.value);const pic=nodeEls.get(selectedNode)?.querySelector(".pic");if(pic){pic.style.width=e.target.value+"px";pic.style.height=e.target.value+"px"}};
+  document.querySelector("#seEdge").onchange=e=>{selectedEdge=e.target.value;syncEditor();renderEdges()};
+  const edgeInput=()=>{if(!selectedEdge)return;edgeStyles.set(selectedEdge,{relation:document.querySelector("#seRelation").value,line:document.querySelector("#seLine").value,width:+document.querySelector("#seWidth").value,color:document.querySelector("#seColor").value});renderEdges()};
+  ["seRelation","seLine","seWidth","seColor"].forEach(id=>document.querySelector("#"+id).oninput=edgeInput);
+  document.querySelector("#seSave").onclick=()=>{const data=syncJSON();localStorage.setItem(savedKey,JSON.stringify(data))};
+  document.querySelector("#seRestore").onclick=()=>{hidden.clear();nodeEls.forEach(el=>el.style.display="");renderEdges();syncJSON()};
+  document.querySelector("#seReset").onclick=()=>{localStorage.removeItem(savedKey);openSubnetwork(n)};
+  document.querySelector("#subnetEditToggle").onclick=()=>document.querySelector("#subnetEditor").classList.toggle("closed");
+
+  document.querySelector("#subnetEditor").classList.remove("closed");
+  renderEdges();syncEditor();syncJSON();
+  document.querySelector(".subnet-note").textContent="arrastrar = mover · clic línea = editar · doble clic nodo = ocultar";
   modal.classList.add("open");modal.setAttribute("aria-hidden","false");
 }
 
