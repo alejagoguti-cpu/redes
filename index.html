@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KENNEDY ECO-CYBERNETICS · Kepler.gl Full Suite</title>
+  <title>KENNEDY ECO-CYBERNETICS · VisNetwork ForceAtlas2Based & Kepler.gl</title>
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -18,7 +18,7 @@
   <link href="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/deck.gl@8.9.33/dist.min.js"></script>
 
-  <!-- VisNetwork para Grafos Circular -->
+  <!-- VisNetwork para Grafos -->
   <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   <!-- Chart.js para Donas -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -33,9 +33,9 @@
             sans: ['Inter', 'sans-serif']
           },
           colors: {
-            keplerDark: '#1E2430',
-            keplerSidebar: '#293243',
-            keplerBorder: '#3A4659',
+            keplerDark: '#11151C',
+            keplerCard: '#1E2430',
+            keplerBorder: '#293243',
             neonGreen: '#10B981',
             neonViolet: '#A855F7',
             neonCyan: '#06B6D4',
@@ -48,13 +48,13 @@
 
   <style>
     body {
-      background-color: #11151C;
+      background-color: #0B0E14;
       color: #F3F4F6;
     }
     #mynetwork {
       width: 100%;
       height: 760px;
-      background-color: #0B0E14;
+      background-color: #080B10;
       border-radius: 1rem;
       border: 1px solid #293243;
     }
@@ -86,44 +86,65 @@
     }
   </style>
 </head>
-<body class="bg-[#11151C] font-sans leading-relaxed selection:bg-emerald-500 selection:text-white">
+<body class="bg-[#0B0E14] font-sans leading-relaxed selection:bg-emerald-500 selection:text-white">
 
-  <!-- REBRANDED KEPLER.GL HEADER -->
+  <!-- HEADER NARRATIVO & FILTROS SOLICITADOS -->
   <header class="border-b border-[#293243] bg-[#1E2430]/95 backdrop-blur-md px-6 py-4 sticky top-0 z-50">
-    <div class="max-w-[1700px] mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-      <div class="flex items-center gap-4">
-        <div class="bg-gradient-to-r from-emerald-500 to-cyan-500 text-white p-2.5 rounded-xl shadow-lg shadow-emerald-500/20">
-          <i class="fa-solid fa-earth-americas text-xl"></i>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-xl lg:text-2xl font-extrabold font-mono text-white">KEPLER.GL ECO-SUITE</h1>
-            <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">FULL INTERACTIVE PLATFORM</span>
+    <div class="max-w-[1700px] mx-auto space-y-4">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="bg-gradient-to-r from-emerald-500 to-cyan-500 text-white p-2.5 rounded-xl shadow-lg shadow-emerald-500/20">
+            <i class="fa-solid fa-diagram-project text-xl"></i>
           </div>
-          <p class="text-xs text-slate-400 font-mono">Humedales de Kennedy · Bogotá D.C. | 3D Arcs, Heatmaps, Hexagon Density & ABM Engine</p>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-xl lg:text-2xl font-extrabold font-mono text-white">KENNEDY ECO-CYBERNETICS</h1>
+              <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">180 NODOS · FORCEATLAS2</span>
+            </div>
+            <p class="text-xs text-slate-400 font-mono">Humedales de Kennedy · Bogotá D.C. | Distribución limpia sin amontonamiento & Filtros temáticos</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a href="red-biotica-enjambre-kennedy-v6.xlsx" download class="px-3.5 py-2 text-xs font-mono font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg transition flex items-center gap-2">
+            <i class="fa-solid fa-file-excel"></i> DARWIN CORE V6
+          </a>
         </div>
       </div>
 
-      <!-- BOTONES DE ACCIÓN PRINCIPALES -->
-      <div class="flex items-center gap-3">
-        <a href="red-biotica-enjambre-kennedy-v6.xlsx" download class="px-3.5 py-2 text-xs font-mono font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 transition flex items-center gap-2">
-          <i class="fa-solid fa-file-excel"></i> DARWIN CORE V6
-        </a>
+      <!-- BOTONES DE FILTRO SOLICITADOS EN LA CABECERA -->
+      <div class="flex items-center gap-2 overflow-x-auto pt-2 border-t border-[#293243]">
+        <span class="text-xs font-mono text-slate-400 font-bold uppercase mr-2 whitespace-nowrap"><i class="fa-solid fa-filter text-emerald-400"></i> Filtros de Capa:</span>
+        <button onclick="filterCategory('all')" id="btnFiltAll" class="px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-emerald-600 text-white shadow transition whitespace-nowrap">
+          🌐 Ver Red Macro Completa (180 Nodos)
+        </button>
+        <button onclick="filterCategory('Plantae')" id="btnFiltFlora" class="px-3.5 py-1.5 text-xs font-mono font-semibold rounded-xl bg-[#293243] text-emerald-300 border border-emerald-500/30 hover:bg-slate-700 transition whitespace-nowrap">
+          🌿 Solo Flora y Arbolado (108 Nodos)
+        </button>
+        <button onclick="filterCategory('Animalia')" id="btnFiltFauna" class="px-3.5 py-1.5 text-xs font-mono font-semibold rounded-xl bg-[#293243] text-blue-300 border border-blue-500/30 hover:bg-slate-700 transition whitespace-nowrap">
+          🐦 Solo Avifauna (38+ Nodos)
+        </button>
+        <button onclick="filterCategory('Microorganismos')" id="btnFiltMicro" class="px-3.5 py-1.5 text-xs font-mono font-semibold rounded-xl bg-[#293243] text-teal-300 border border-teal-500/30 hover:bg-slate-700 transition whitespace-nowrap">
+          🦠 Solo Microorganismos y Biota
+        </button>
+        <button onclick="filterCategory('Abiotico')" id="btnFiltAbiotico" class="px-3.5 py-1.5 text-xs font-mono font-semibold rounded-xl bg-[#293243] text-rose-300 border border-rose-500/30 hover:bg-slate-700 transition whitespace-nowrap">
+          ⚠️ Solo Factores Abióticos y Barreras Urbanas
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- PANELES Y CONTENEDOR PRINCIPAL KEPLER -->
+  <!-- PANELES Y CONTENEDOR PRINCIPAL -->
   <main class="max-w-[1700px] mx-auto px-4 py-6 space-y-6">
 
     <!-- SELECTOR DE VISTAS PRINCIPAL -->
     <div class="bg-[#1E2430] border border-[#293243] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-4 shadow-2xl">
       <div class="flex items-center gap-2 overflow-x-auto">
-        <button onclick="switchMainTab('kepler')" id="tabKeplerBtn" class="px-4 py-2 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow-lg flex items-center gap-2">
-          <i class="fa-solid fa-layer-group"></i> 🌍 Visor Geoespacial Kepler.gl (3D)
+        <button onclick="switchMainTab('chord')" id="tabChordBtn" class="px-4 py-2 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg flex items-center gap-2">
+          <i class="fa-solid fa-circle-nodes"></i> ⭕ Red VisNetwork (ForceAtlas2Based)
         </button>
-        <button onclick="switchMainTab('chord')" id="tabChordBtn" class="px-4 py-2 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700 transition flex items-center gap-2">
-          <i class="fa-solid fa-circle-nodes"></i> ⭕ Anillo Circular de Red
+        <button onclick="switchMainTab('kepler')" id="tabKeplerBtn" class="px-4 py-2 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700 transition flex items-center gap-2">
+          <i class="fa-solid fa-earth-americas"></i> 🌍 Visor Geoespacial Kepler.gl (3D)
         </button>
         <button onclick="switchMainTab('stats')" id="tabStatsBtn" class="px-4 py-2 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700 transition flex items-center gap-2">
           <i class="fa-solid fa-chart-pie"></i> 📊 Estadísticas JBB
@@ -133,7 +154,7 @@
       <div class="flex items-center gap-3">
         <div class="relative w-64">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-          <input type="text" id="searchInput" oninput="searchSpecies(this.value)" placeholder="Buscar espécimen en Kepler..." class="w-full bg-[#11151C] border border-[#3A4659] rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono">
+          <input type="text" id="searchInput" oninput="searchSpecies(this.value)" placeholder="Buscar espécimen..." class="w-full bg-[#11151C] border border-[#3A4659] rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono">
         </div>
         <button onclick="runKnockout()" class="px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-600/20 transition whitespace-nowrap">
           🔥 KNOCK-OUT
@@ -141,150 +162,17 @@
       </div>
     </div>
 
-    <!-- SECCIÓN 1: KEPLER.GL GEOSPATIAL SUITE CON SIDEBAR DE CAPAS & FILTROS COMPLETO -->
-    <section id="viewKepler" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      
-      <!-- PANEL SIDEBAR TIPO KEPLER.GL (IZQUIERDA) -->
-      <aside class="lg:col-span-3 bg-[#1E2430] border border-[#293243] rounded-2xl p-5 space-y-6 max-h-[760px] overflow-y-auto custom-scrollbar shadow-2xl">
-        <div class="border-b border-[#3A4659] pb-3 flex items-center justify-between">
-          <h2 class="text-sm font-mono font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-sliders text-emerald-400"></i> Panel de Control Kepler
-          </h2>
-          <span class="text-[10px] font-mono text-slate-400">v3.0 Engine</span>
-        </div>
-
-        <!-- TABS DE NAVEGACIÓN EN KEPLER SIDEBAR -->
-        <div class="grid grid-cols-4 gap-1 bg-[#11151C] p-1 rounded-xl text-[11px] font-mono text-center">
-          <button onclick="switchKeplerPanel('layers')" id="kpTabLayers" class="py-1.5 rounded-lg bg-emerald-600 text-white font-bold">Capas</button>
-          <button onclick="switchKeplerPanel('filters')" id="kpTabFilters" class="py-1.5 rounded-lg text-slate-400 hover:bg-slate-800">Filtros</button>
-          <button onclick="switchKeplerPanel('styles')" id="kpTabStyles" class="py-1.5 rounded-lg text-slate-400 hover:bg-slate-800">Estilo</button>
-          <button onclick="switchKeplerPanel('anim')" id="kpTabAnim" class="py-1.5 rounded-lg text-slate-400 hover:bg-slate-800">Tiempo</button>
-        </div>
-
-        <!-- PANEL DE CAPAS (LAYERS) -->
-        <div id="kpPanelLayers" class="space-y-4">
-          <div class="space-y-2">
-            <div class="flex items-center justify-between text-xs font-mono font-bold text-slate-200">
-              <span class="flex items-center gap-2"><i class="fa-solid fa-[#10B981] fa-route text-emerald-400"></i> Arcos 3D de Migración</span>
-              <input type="checkbox" id="chkArcs" checked onchange="updateKeplerLayers()" class="accent-emerald-500 w-4 h-4">
-            </div>
-            <div class="bg-[#11151C] p-3 rounded-xl border border-[#3A4659] space-y-2 text-[11px] font-mono">
-              <div class="flex justify-between"><span>Grosor de Arco:</span><span id="valArcWidth" class="text-emerald-400">4px</span></div>
-              <input type="range" min="1" max="10" value="4" oninput="document.getElementById('valArcWidth').innerText = this.value+'px'; updateKeplerLayers();" id="rngArcWidth" class="w-full accent-emerald-500">
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <div class="flex items-center justify-between text-xs font-mono font-bold text-slate-200">
-              <span class="flex items-center gap-2"><i class="fa-solid fa-hexagon-nodes text-purple-400"></i> Hexagon 3D Density Grid</span>
-              <input type="checkbox" id="chkHex" checked onchange="updateKeplerLayers()" class="accent-purple-500 w-4 h-4">
-            </div>
-            <div class="bg-[#11151C] p-3 rounded-xl border border-[#3A4659] space-y-2 text-[11px] font-mono">
-              <div class="flex justify-between"><span>Radio de Celda:</span><span id="valHexRadius" class="text-purple-400">200m</span></div>
-              <input type="range" min="50" max="500" step="50" value="200" oninput="document.getElementById('valHexRadius').innerText = this.value+'m'; updateKeplerLayers();" id="rngHexRadius" class="w-full accent-purple-500">
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <div class="flex items-center justify-between text-xs font-mono font-bold text-slate-200">
-              <span class="flex items-center gap-2"><i class="fa-solid fa-fire text-red-400"></i> Heatmap Ruido (>75dB)</span>
-              <input type="checkbox" id="chkHeatmap" checked onchange="updateKeplerLayers()" class="accent-red-500 w-4 h-4">
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <div class="flex items-center justify-between text-xs font-mono font-bold text-slate-200">
-              <span class="flex items-center gap-2"><i class="fa-solid fa-circle-dot text-cyan-400"></i> Scatterplot Nodos Hub</span>
-              <input type="checkbox" id="chkScatter" checked onchange="updateKeplerLayers()" class="accent-cyan-400 w-4 h-4">
-            </div>
-          </div>
-        </div>
-
-        <!-- PANEL DE FILTROS (SLIDERS MULTI-VARIABLE) -->
-        <div id="kpPanelFilters" class="space-y-4 hidden font-mono text-xs">
-          <div class="bg-[#11151C] p-3 rounded-xl border border-[#3A4659] space-y-2">
-            <div class="flex justify-between font-bold"><span>Centralidad de Grado Mínima:</span><span id="valFilterDegree" class="text-emerald-400">1</span></div>
-            <input type="range" min="1" max="10" value="1" oninput="document.getElementById('valFilterDegree').innerText = this.value; updateKeplerLayers();" id="rngFilterDegree" class="w-full accent-emerald-500">
-          </div>
-
-          <div class="bg-[#11151C] p-3 rounded-xl border border-[#3A4659] space-y-2">
-            <div class="flex justify-between font-bold"><span>Umbral de Ruido dB:</span><span id="valFilterNoise" class="text-red-400">75 dB</span></div>
-            <input type="range" min="50" max="90" value="75" oninput="document.getElementById('valFilterNoise').innerText = this.value+' dB'; updateKeplerLayers();" id="rngFilterNoise" class="w-full accent-red-500">
-          </div>
-        </div>
-
-        <!-- PANEL DE ESTILOS DE MAPA (MAP STYLES) -->
-        <div id="kpPanelStyles" class="space-y-3 hidden font-mono text-xs">
-          <h4 class="font-bold text-slate-200">Estilos de Mapa de Fondo:</h4>
-          <button onclick="setMapStyle('dark')" class="w-full py-2 px-3 rounded-xl bg-[#11151C] border border-emerald-500/40 text-emerald-400 text-left flex items-center justify-between font-bold">
-            <span>🖤 CartoDB Dark Matter</span>
-            <i class="fa-solid fa-check"></i>
-          </button>
-          <button onclick="setMapStyle('voyager')" class="w-full py-2 px-3 rounded-xl bg-[#11151C] border border-[#3A4659] text-slate-300 text-left flex items-center justify-between">
-            <span>🌙 CartoDB Voyager Night</span>
-          </button>
-          <button onclick="setMapStyle('light')" class="w-full py-2 px-3 rounded-xl bg-[#11151C] border border-[#3A4659] text-slate-300 text-left flex items-center justify-between">
-            <span>⚪ Positron Light Mode</span>
-          </button>
-        </div>
-
-        <!-- PANEL DE ANIMACIÓN & REPRODUCTOR TEMPORAL -->
-        <div id="kpPanelAnim" class="space-y-4 hidden font-mono text-xs">
-          <div class="bg-[#11151C] p-4 rounded-xl border border-[#3A4659] space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-200">Simulación Temporal (24h):</span>
-              <span id="timeDisplay" class="text-cyan-400 font-bold">12:00 PM</span>
-            </div>
-            <input type="range" min="0" max="24" value="12" id="timeRange" oninput="updateTimeDisplay(this.value)" class="w-full accent-cyan-400">
-            <div class="flex items-center gap-2 pt-1">
-              <button onclick="toggleTimeAnimation()" id="btnPlayTime" class="flex-1 py-1.5 rounded-lg bg-emerald-600 font-bold text-white hover:bg-emerald-500">
-                <i class="fa-solid fa-play mr-1"></i> Reproducir
-              </button>
-            </div>
-          </div>
-        </div>
-
-      </aside>
-
-      <!-- MAPA PRINCIPAL STAGE KEPLER (DERECHA - 9 COLS) -->
-      <div class="lg:col-span-9 relative">
-        <div id="keplerMapContainer">
-          <div id="mapDeckCanvas"></div>
-          
-          <!-- LEYENDA FLOTANTE OVERLAY -->
-          <div class="absolute bottom-6 left-6 bg-[#11151C]/90 backdrop-blur border border-[#3A4659] p-4 rounded-2xl text-xs font-mono space-y-2 z-10 shadow-2xl">
-            <div class="font-bold text-white flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-              Leyenda Kepler.gl 3D Engine:
-            </div>
-            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px]">
-              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Flora Nativa Hub</div>
-              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-cyan-400"></span> Avifauna Migratoria</div>
-              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-purple-500"></span> Bio-Conexión Trófica</div>
-              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-500"></span> Ruido Vehicular (>75dB)</div>
-            </div>
-          </div>
-
-          <!-- BOTONES DE PITCH CONTROLS OVERLAY -->
-          <div class="absolute top-6 right-6 bg-[#11151C]/90 backdrop-blur border border-[#3A4659] p-1.5 rounded-xl text-xs font-mono z-10 flex gap-2">
-            <button onclick="setMapPitch(60)" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold hover:bg-emerald-500">3D Tilt 60°</button>
-            <button onclick="setMapPitch(0)" class="px-3 py-1.5 rounded-lg bg-[#293243] text-slate-300 hover:bg-slate-700">2D Plano</button>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- SECCIÓN 2: RED EN ANILLO CIRCULAR (CHORD DIAGRAM) -->
-    <section id="viewChord" class="space-y-4 hidden">
+    <!-- VISTA PRINCIPAL: VISNETWORK RED 180 NODOS CON FORCEATLAS2BASED -->
+    <section id="viewChord" class="space-y-4">
       <div class="bg-[#1E2430] border border-[#293243] p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <span class="text-xs font-mono font-bold text-purple-400 uppercase tracking-widest">Relaciones Tróficas & Perturbación</span>
-          <h2 class="text-xl font-mono font-bold text-white">Anillo Circular Ecosistémico (Chord Layout)</h2>
+          <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">Motor de Física: solver = forceAtlas2Based</span>
+          <h2 class="text-xl font-mono font-bold text-white">Red Macro Ecosistémica (180 Nodos Distribuidos)</h2>
+          <p class="text-xs text-slate-400">Distribución limpia sin superposición. Haz clic en un nodo para aislar su subred en fondo negro (#000000).</p>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="setLayout('circular')" id="btnCircular" class="px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-purple-600 text-white shadow">⭕ Círculo</button>
-          <button onclick="setLayout('organic')" id="btnOrganic" class="px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700">🌌 Orgánico</button>
+          <button onclick="setLayout('organic')" id="btnOrganic" class="px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-purple-600 text-white shadow">🌌 ForceAtlas2Based</button>
+          <button onclick="setLayout('circular')" id="btnCircular" class="px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700">⭕ Anillo Circular</button>
         </div>
       </div>
 
@@ -305,13 +193,45 @@
             <i class="fa-solid fa-leaf text-emerald-400"></i>
           </h3>
           <div id="cardContent" class="text-xs text-slate-400 space-y-4 font-mono">
-            <p class="italic">Selecciona un nodo del anillo para ver la foto real en vivo, su nombre científico, rol en Kennedy y reglas condicionales ABM.</p>
+            <p class="italic">Selecciona un nodo del grafo para ver su foto real en vivo, nombre científico, rol en Kennedy y reglas ABM.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SECCIÓN 3: DONAS & CENSO JBB -->
+    <!-- VISTA 2: KEPLER.GL GEOSPATIAL SUITE 3D -->
+    <section id="viewKepler" class="grid grid-cols-1 lg:grid-cols-12 gap-6 hidden">
+      <aside class="lg:col-span-3 bg-[#1E2430] border border-[#293243] rounded-2xl p-5 space-y-6 max-h-[760px] overflow-y-auto custom-scrollbar shadow-2xl">
+        <div class="border-b border-[#3A4659] pb-3 flex items-center justify-between">
+          <h2 class="text-sm font-mono font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-emerald-400"></i> Panel Kepler.gl 3D
+          </h2>
+        </div>
+
+        <div class="space-y-4 text-xs font-mono">
+          <div class="flex items-center justify-between text-slate-200 font-bold">
+            <span>Arcos 3D Migración</span>
+            <input type="checkbox" id="chkArcs" checked onchange="updateKeplerLayers()" class="accent-emerald-500 w-4 h-4">
+          </div>
+          <div class="flex items-center justify-between text-slate-200 font-bold">
+            <span>Heatmap Ruido (>75dB)</span>
+            <input type="checkbox" id="chkHeatmap" checked onchange="updateKeplerLayers()" class="accent-red-500 w-4 h-4">
+          </div>
+          <div class="flex items-center justify-between text-slate-200 font-bold">
+            <span>Scatterplot Hubs</span>
+            <input type="checkbox" id="chkScatter" checked onchange="updateKeplerLayers()" class="accent-cyan-400 w-4 h-4">
+          </div>
+        </div>
+      </aside>
+
+      <div class="lg:col-span-9 relative">
+        <div id="keplerMapContainer">
+          <div id="mapDeckCanvas"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 3: DONAS & CENSO JBB -->
     <section id="viewStats" class="space-y-6 hidden">
       <div class="border-l-4 border-emerald-500 pl-4">
         <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">Acto I · Matriz Ecosistémica</span>
@@ -344,8 +264,6 @@
     let activeNodeId = null;
     let deckInstance = null;
     let maplibreMap = null;
-    let isAnimatingTime = false;
-    let timeTimer = null;
 
     const defaultImages = {
       'Plantae': 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=300',
@@ -366,231 +284,24 @@
       })
       .catch(err => console.error("Error cargando JSON:", err));
 
-    /* ================= KEPLER.GL ENGINE FULL SUITE ================= */
-    function initKeplerMap() {
-      const initialViewState = {
-        longitude: -74.155,
-        latitude: 4.628,
-        zoom: 13.5,
-        pitch: 45,
-        bearing: -15
-      };
-
-      maplibreMap = new maplibregl.Map({
-        container: 'mapDeckCanvas',
-        style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-        center: [-74.155, 4.628],
-        zoom: 13.5,
-        pitch: 45,
-        interactive: false
-      });
-
-      deckInstance = new deck.DeckGL({
-        container: 'mapDeckCanvas',
-        initialViewState: initialViewState,
-        controller: true,
-        onViewStateChange: ({viewState}) => {
-          maplibreMap.jumpTo({
-            center: [viewState.longitude, viewState.latitude],
-            zoom: viewState.zoom,
-            bearing: viewState.bearing,
-            pitch: viewState.pitch
-          });
-        }
-      });
-
-      updateKeplerLayers();
-    }
-
-    function updateKeplerLayers() {
-      if (!deckInstance) return;
-
-      const showArcs = document.getElementById('chkArcs').checked;
-      const showHex = document.getElementById('chkHex').checked;
-      const showHeatmap = document.getElementById('chkHeatmap').checked;
-      const showScatter = document.getElementById('chkScatter').checked;
-
-      const arcWidth = parseInt(document.getElementById('rngArcWidth').value) || 4;
-      const hexRadius = parseInt(document.getElementById('valHexRadius').innerText) || 200;
-      const minDegree = parseInt(document.getElementById('rngFilterDegree').value) || 1;
-
-      const layers = [];
-
-      // 1. ARCS LAYER 3D
-      if (showArcs) {
-        layers.push(new deck.ArcLayer({
-          id: 'arcs-layer-3d',
-          data: [
-            { from: [-74.155, 4.628], to: [-74.161, 4.621], color: [16, 185, 129] },
-            { from: [-74.155, 4.628], to: [-74.148, 4.635], color: [168, 85, 247] },
-            { from: [-74.145, 4.625], to: [-74.155, 4.628], color: [239, 68, 68] },
-            { from: [-74.161, 4.621], to: [-74.150, 4.618], color: [6, 182, 212] }
-          ],
-          getSourcePosition: d => d.from,
-          getTargetPosition: d => d.to,
-          getSourceColor: d => d.color,
-          getTargetColor: d => d.color,
-          getWidth: arcWidth
-        }));
-      }
-
-      // 2. HEXAGON DENSITY 3D LAYER
-      if (showHex) {
-        layers.push(new deck.HexagonLayer({
-          id: 'hexagon-layer-3d',
-          data: [
-            { position: [-74.155, 4.628] }, { position: [-74.156, 4.629] },
-            { position: [-74.161, 4.621] }, { position: [-74.160, 4.622] },
-            { position: [-74.148, 4.635] }, { position: [-74.145, 4.625] }
-          ],
-          getPosition: d => d.position,
-          radius: hexRadius,
-          elevationScale: 50,
-          extruded: true,
-          pickable: true
-        }));
-      }
-
-      // 3. SCATTERPLOT HUB LAYER
-      if (showScatter) {
-        layers.push(new deck.ScatterplotLayer({
-          id: 'scatterplot-hubs',
-          data: [
-            { position: [-74.155, 4.628], name: "Humedal El Burro", radius: 250, color: [16, 185, 129] },
-            { position: [-74.161, 4.621], name: "Humedal La Vaca", radius: 200, color: [6, 182, 212] },
-            { position: [-74.148, 4.635], name: "Humedal Techo", radius: 180, color: [168, 85, 247] }
-          ],
-          getPosition: d => d.position,
-          getFillColor: d => [...d.color, 200],
-          getRadius: d => d.radius,
-          pickable: true
-        }));
-      }
-
-      deckInstance.setProps({ layers });
-    }
-
-    function switchKeplerPanel(panel) {
-      document.getElementById('kpPanelLayers').classList.add('hidden');
-      document.getElementById('kpPanelFilters').classList.add('hidden');
-      document.getElementById('kpPanelStyles').classList.add('hidden');
-      document.getElementById('kpPanelAnim').classList.add('hidden');
-
-      document.getElementById('kpTabLayers').className = 'py-1.5 rounded-lg text-slate-400 hover:bg-slate-800';
-      document.getElementById('kpTabFilters').className = 'py-1.5 rounded-lg text-slate-400 hover:bg-slate-800';
-      document.getElementById('kpTabStyles').className = 'py-1.5 rounded-lg text-slate-400 hover:bg-slate-800';
-      document.getElementById('kpTabAnim').className = 'py-1.5 rounded-lg text-slate-400 hover:bg-slate-800';
-
-      if (panel === 'layers') {
-        document.getElementById('kpPanelLayers').classList.remove('hidden');
-        document.getElementById('kpTabLayers').className = 'py-1.5 rounded-lg bg-emerald-600 font-bold text-white';
-      } else if (panel === 'filters') {
-        document.getElementById('kpPanelFilters').classList.remove('hidden');
-        document.getElementById('kpTabFilters').className = 'py-1.5 rounded-lg bg-emerald-600 font-bold text-white';
-      } else if (panel === 'styles') {
-        document.getElementById('kpPanelStyles').classList.remove('hidden');
-        document.getElementById('kpTabStyles').className = 'py-1.5 rounded-lg bg-emerald-600 font-bold text-white';
-      } else if (panel === 'anim') {
-        document.getElementById('kpPanelAnim').classList.remove('hidden');
-        document.getElementById('kpTabAnim').className = 'py-1.5 rounded-lg bg-emerald-600 font-bold text-white';
-      }
-    }
-
-    function setMapStyle(styleKey) {
-      if (!maplibreMap) return;
-      const styles = {
-        dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-        voyager: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-        light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
-      };
-      if (styles[styleKey]) maplibreMap.setStyle(styles[styleKey]);
-    }
-
-    function updateTimeDisplay(val) {
-      const hrs = parseInt(val);
-      const ampm = hrs >= 12 ? 'PM' : 'AM';
-      const formatted = (hrs % 12 || 12) + ':00 ' + ampm;
-      document.getElementById('timeDisplay').innerText = formatted;
-    }
-
-    function toggleTimeAnimation() {
-      const btn = document.getElementById('btnPlayTime');
-      if (isAnimatingTime) {
-        clearInterval(timeTimer);
-        isAnimatingTime = false;
-        btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i> Reproducir';
-      } else {
-        isAnimatingTime = true;
-        btn.innerHTML = '<i class="fa-solid fa-pause mr-1"></i> Pausar';
-        timeTimer = setInterval(() => {
-          const rng = document.getElementById('timeRange');
-          let next = (parseInt(rng.value) + 1) % 25;
-          rng.value = next;
-          updateTimeDisplay(next);
-        }, 800);
-      }
-    }
-
-    function setMapPitch(pitch) {
-      if (deckInstance) {
-        deckInstance.setProps({
-          initialViewState: { longitude: -74.155, latitude: 4.628, zoom: 13.5, pitch: pitch, bearing: pitch > 0 ? -15 : 0 }
-        });
-      }
-    }
-
-    /* ================= MAIN TAB SWITCHER ================= */
-    function switchMainTab(tab) {
-      document.getElementById('viewKepler').classList.add('hidden');
-      document.getElementById('viewChord').classList.add('hidden');
-      document.getElementById('viewStats').classList.add('hidden');
-
-      document.getElementById('tabKeplerBtn').className = 'px-4 py-2 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700 transition flex items-center gap-2';
-      document.getElementById('tabChordBtn').className = 'px-4 py-2 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700 transition flex items-center gap-2';
-      document.getElementById('tabStatsBtn').className = 'px-4 py-2 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700 transition flex items-center gap-2';
-
-      if (tab === 'kepler') {
-        document.getElementById('viewKepler').classList.remove('hidden');
-        document.getElementById('tabKeplerBtn').className = 'px-4 py-2 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow-lg flex items-center gap-2';
-      } else if (tab === 'chord') {
-        document.getElementById('viewChord').classList.remove('hidden');
-        document.getElementById('tabChordBtn').className = 'px-4 py-2 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg flex items-center gap-2';
-        if (network) network.fit();
-      } else if (tab === 'stats') {
-        document.getElementById('viewStats').classList.remove('hidden');
-        document.getElementById('tabStatsBtn').className = 'px-4 py-2 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg flex items-center gap-2';
-      }
-    }
-
-    /* ================= VISNETWORK CHORD ENGINE ================= */
+    /* ================= VISNETWORK CON FORCEATLAS2BASED CONFIG ================= */
     function initNetwork(nodes, edges) {
       const container = document.getElementById('mynetwork');
-      const radius = 350;
-      const total = nodes.length;
 
-      const formattedNodes = nodes.map((n, i) => {
-        const angle = (2 * Math.PI * i) / total;
-        const x = radius * Math.cos(angle);
-        const y = radius * Math.sin(angle);
-        const imgUrl = n.image_url || defaultImages[n.group] || defaultImages['Plantae'];
-
-        return {
-          id: n.id,
-          label: n.label,
-          group: n.group,
-          shape: 'circularImage',
-          image: imgUrl,
-          x: x,
-          y: y,
-          size: n.is_hub ? 34 : 22,
-          color: { border: n.color || (n.is_hub ? '#10B981' : '#3B82F6'), background: '#0D1B2A' },
-          font: { color: '#F8FAFC', size: 10, face: 'Space Grotesk', background: '#0F172AEE' }
-        };
-      });
+      const formattedNodes = nodes.map(n => ({
+        id: n.id,
+        label: n.label,
+        group: n.group,
+        shape: 'circularImage',
+        image: n.image_url || defaultImages[n.group] || defaultImages['Plantae'],
+        size: n.is_hub ? 36 : 22,
+        color: { border: n.color || (n.is_hub ? '#10B981' : '#3B82F6'), background: '#0D1B2A' },
+        font: { color: '#F8FAFC', size: 11, face: 'Space Grotesk', background: '#0F172AEE' }
+      }));
 
       const formattedEdges = edges.map((e, idx) => ({
         ...e,
-        smooth: { type: 'curvedCW', roundness: 0.25 },
+        smooth: { type: 'continuous' },
         width: e.weight ? Math.min(e.weight, 4) : 1.5,
         color: { color: e.color || edgeColors[idx % edgeColors.length], highlight: '#A855F7', hover: '#38BDF8' }
       }));
@@ -598,10 +309,25 @@
       nodesDataset = new vis.DataSet(formattedNodes);
       edgesDataset = new vis.DataSet(formattedEdges);
 
+      // CONFIGURACIÓN DE FÍSICA FORCEATLAS2BASED SOLICITADA
       const options = {
         nodes: { borderWidth: 2, shadow: true },
-        edges: { smooth: { type: 'curvedCW', roundness: 0.25 } },
-        physics: { enabled: false },
+        edges: { smooth: { type: 'continuous' } },
+        physics: {
+          enabled: true,
+          solver: 'forceAtlas2Based',
+          forceAtlas2Based: {
+            gravitationalConstant: -90,
+            centralGravity: 0.005,
+            springLength: 140,
+            springConstant: 0.08,
+            damping: 0.4,
+            avoidOverlap: 1
+          },
+          maxVelocity: 50,
+          minVelocity: 0.1,
+          stabilization: { enabled: true, iterations: 200 }
+        },
         interaction: { hover: true, zoomView: true, dragView: true, dragNodes: true }
       };
 
@@ -613,11 +339,81 @@
           activeNodeId = selectedId;
           isolateSubnetwork(selectedId);
           showNodeCard(selectedId);
-          network.focus(selectedId, { scale: 1.2, animation: { duration: 500 } });
+          network.focus(selectedId, { scale: 1.3, animation: { duration: 500 } });
         } else {
           resetIsolation();
         }
       });
+    }
+
+    /* ================= FILTROS DE CATEGORÍA DE CABECERA SOLICITADOS ================= */
+    function filterCategory(cat) {
+      resetBtnStyles();
+
+      if (cat === 'all') {
+        document.getElementById('btnFiltAll').className = 'px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-emerald-600 text-white shadow transition whitespace-nowrap';
+        resetIsolation();
+        return;
+      }
+
+      if (cat === 'Plantae') {
+        document.getElementById('btnFiltFlora').className = 'px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-emerald-600 text-white shadow transition whitespace-nowrap';
+      } else if (cat === 'Animalia') {
+        document.getElementById('btnFiltFauna').className = 'px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-blue-600 text-white shadow transition whitespace-nowrap';
+      } else if (cat === 'Microorganismos') {
+        document.getElementById('btnFiltMicro').className = 'px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-teal-600 text-white shadow transition whitespace-nowrap';
+      } else if (cat === 'Abiotico') {
+        document.getElementById('btnFiltAbiotico').className = 'px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-rose-600 text-white shadow transition whitespace-nowrap';
+      }
+
+      const allNodes = fullData.nodes.map(n => ({
+        id: n.id,
+        hidden: n.group !== cat
+      }));
+      nodesDataset.update(allNodes);
+    }
+
+    function resetBtnStyles() {
+      document.getElementById('btnFiltAll').className = 'px-3.5 py-1.5 text-xs font-mono font-semibold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700 transition whitespace-nowrap';
+      document.getElementById('btnFiltFlora').className = 'px-3.5 py-1.5 text-xs font-mono font-semibold rounded-xl bg-[#293243] text-emerald-300 border border-emerald-500/30 hover:bg-slate-700 transition whitespace-nowrap';
+      document.getElementById('btnFiltFauna').className = 'px-3.5 py-1.5 text-xs font-mono font-semibold rounded-xl bg-[#293243] text-blue-300 border border-blue-500/30 hover:bg-slate-700 transition whitespace-nowrap';
+      document.getElementById('btnFiltMicro').className = 'px-3.5 py-1.5 text-xs font-mono font-semibold rounded-xl bg-[#293243] text-teal-300 border border-teal-500/30 hover:bg-slate-700 transition whitespace-nowrap';
+      document.getElementById('btnFiltAbiotico').className = 'px-3.5 py-1.5 text-xs font-mono font-semibold rounded-xl bg-[#293243] text-rose-300 border border-rose-500/30 hover:bg-slate-700 transition whitespace-nowrap';
+    }
+
+    function setLayout(mode) {
+      const btnCirc = document.getElementById('btnCircular');
+      const btnOrg = document.getElementById('btnOrganic');
+
+      if (mode === 'circular') {
+        btnCirc.className = 'px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-purple-600 text-white shadow';
+        btnOrg.className = 'px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700';
+
+        const radius = 350;
+        const allNodes = nodesDataset.get();
+        const total = allNodes.length;
+        const updatedNodes = allNodes.map((n, i) => {
+          const angle = (2 * Math.PI * i) / total;
+          return { id: n.id, x: radius * Math.cos(angle), y: radius * Math.sin(angle), hidden: false };
+        });
+        nodesDataset.update(updatedNodes);
+        network.setOptions({ physics: { enabled: false } });
+        network.fit();
+      } else {
+        btnOrg.className = 'px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-purple-600 text-white shadow';
+        btnCirc.className = 'px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700';
+
+        const allNodes = nodesDataset.get().map(n => ({ ...n, hidden: false }));
+        nodesDataset.update(allNodes);
+
+        network.setOptions({
+          physics: {
+            enabled: true,
+            solver: 'forceAtlas2Based',
+            forceAtlas2Based: { gravitationalConstant: -90, centralGravity: 0.005, springLength: 140, springConstant: 0.08, damping: 0.4, avoidOverlap: 1 }
+          }
+        });
+      }
     }
 
     function isolateSubnetwork(nodeId) {
@@ -628,13 +424,11 @@
       connectedNodes.push(nodeId);
 
       const allNodes = nodesDataset.get();
-      const updatedNodes = allNodes.map(n => {
-        if (connectedNodes.includes(n.id)) {
-          return { ...n, opacity: 1, font: { color: '#A855F7', size: 12 } };
-        } else {
-          return { ...n, opacity: 0.08, font: { color: '#334155', size: 8 } };
-        }
-      });
+      const updatedNodes = allNodes.map(n => ({
+        id: n.id,
+        opacity: connectedNodes.includes(n.id) ? 1 : 0.08,
+        font: { color: connectedNodes.includes(n.id) ? '#A855F7' : '#334155', size: connectedNodes.includes(n.id) ? 12 : 8 }
+      }));
 
       nodesDataset.update(updatedNodes);
     }
@@ -644,11 +438,14 @@
       const container = document.getElementById('mynetwork');
       container.classList.remove('isolated');
       document.getElementById('alertBanner').classList.add('hidden');
+      resetBtnStyles();
+      document.getElementById('btnFiltAll').className = 'px-3.5 py-1.5 text-xs font-mono font-bold rounded-xl bg-emerald-600 text-white shadow transition whitespace-nowrap';
 
       const allNodes = nodesDataset.get().map(n => ({
-        ...n,
+        id: n.id,
+        hidden: false,
         opacity: 1,
-        font: { color: '#F8FAFC', size: 10 }
+        font: { color: '#F8FAFC', size: 11 }
       }));
       nodesDataset.update(allNodes);
       network.fit({ animation: { duration: 500 } });
@@ -704,20 +501,66 @@
       network.focus('sambucus_nigra', { scale: 1.4, animation: true });
     }
 
-    function setLayout(mode) {
-      if (mode === 'circular') {
-        const radius = 350;
-        const allNodes = nodesDataset.get();
-        const total = allNodes.length;
-        const updatedNodes = allNodes.map((n, i) => {
-          const angle = (2 * Math.PI * i) / total;
-          return { id: n.id, x: radius * Math.cos(angle), y: radius * Math.sin(angle) };
-        });
-        nodesDataset.update(updatedNodes);
-        network.setOptions({ physics: { enabled: false } });
-        network.fit();
-      } else {
-        network.setOptions({ physics: { enabled: true, forceAtlas2Based: { gravitationalConstant: -60, centralGravity: 0.01, springLength: 130 } } });
+    function initKeplerMap() {
+      maplibreMap = new maplibregl.Map({
+        container: 'mapDeckCanvas',
+        style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+        center: [-74.155, 4.628],
+        zoom: 13.5,
+        pitch: 45,
+        interactive: false
+      });
+
+      deckInstance = new deck.DeckGL({
+        container: 'mapDeckCanvas',
+        initialViewState: { longitude: -74.155, latitude: 4.628, zoom: 13.5, pitch: 45, bearing: -15 },
+        controller: true,
+        onViewStateChange: ({viewState}) => {
+          maplibreMap.jumpTo({ center: [viewState.longitude, viewState.latitude], zoom: viewState.zoom, bearing: viewState.bearing, pitch: viewState.pitch });
+        }
+      });
+      updateKeplerLayers();
+    }
+
+    function updateKeplerLayers() {
+      if (!deckInstance) return;
+      deckInstance.setProps({
+        layers: [
+          new deck.ArcLayer({
+            id: 'arcs-layer-3d',
+            data: [
+              { from: [-74.155, 4.628], to: [-74.161, 4.621], color: [16, 185, 129] },
+              { from: [-74.155, 4.628], to: [-74.148, 4.635], color: [168, 85, 247] }
+            ],
+            getSourcePosition: d => d.from,
+            getTargetPosition: d => d.to,
+            getSourceColor: d => d.color,
+            getTargetColor: d => d.color,
+            getWidth: 4
+          })
+        ]
+      });
+    }
+
+    function switchMainTab(tab) {
+      document.getElementById('viewKepler').classList.add('hidden');
+      document.getElementById('viewChord').classList.add('hidden');
+      document.getElementById('viewStats').classList.add('hidden');
+
+      document.getElementById('tabKeplerBtn').className = 'px-4 py-2 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700 transition flex items-center gap-2';
+      document.getElementById('tabChordBtn').className = 'px-4 py-2 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700 transition flex items-center gap-2';
+      document.getElementById('tabStatsBtn').className = 'px-4 py-2 text-xs font-mono font-bold rounded-xl bg-[#293243] text-slate-300 hover:bg-slate-700 transition flex items-center gap-2';
+
+      if (tab === 'kepler') {
+        document.getElementById('viewKepler').classList.remove('hidden');
+        document.getElementById('tabKeplerBtn').className = 'px-4 py-2 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow-lg flex items-center gap-2';
+      } else if (tab === 'chord') {
+        document.getElementById('viewChord').classList.remove('hidden');
+        document.getElementById('tabChordBtn').className = 'px-4 py-2 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg flex items-center gap-2';
+        if (network) network.fit();
+      } else if (tab === 'stats') {
+        document.getElementById('viewStats').classList.remove('hidden');
+        document.getElementById('tabStatsBtn').className = 'px-4 py-2 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg flex items-center gap-2';
       }
     }
 
@@ -726,10 +569,7 @@
       if (Object.keys(interData).length > 0) {
         new Chart(document.getElementById('chartInteracciones'), {
           type: 'doughnut',
-          data: {
-            labels: Object.keys(interData),
-            datasets: [{ data: Object.values(interData), backgroundColor: ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444'] }]
-          },
+          data: { labels: Object.keys(interData), datasets: [{ data: Object.values(interData), backgroundColor: ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444'] }] },
           options: { plugins: { legend: { labels: { color: '#94A3B8', font: { size: 9 } } } } }
         });
       }
@@ -738,10 +578,7 @@
       if (Object.keys(kingdomData).length > 0) {
         new Chart(document.getElementById('chartReinos'), {
           type: 'doughnut',
-          data: {
-            labels: Object.keys(kingdomData),
-            datasets: [{ data: Object.values(kingdomData), backgroundColor: ['#059669', '#2563EB', '#0D9488', '#E11D48'] }]
-          },
+          data: { labels: Object.keys(kingdomData), datasets: [{ data: Object.values(kingdomData), backgroundColor: ['#059669', '#2563EB', '#0D9488', '#E11D48'] }] },
           options: { plugins: { legend: { labels: { color: '#94A3B8', font: { size: 9 } } } } }
         });
       }
@@ -750,10 +587,7 @@
       if (Object.keys(sourceData).length > 0) {
         new Chart(document.getElementById('chartFuentes'), {
           type: 'doughnut',
-          data: {
-            labels: Object.keys(sourceData),
-            datasets: [{ data: Object.values(sourceData), backgroundColor: ['#6366F1', '#8B5CF6', '#EC4899', '#14B8A6'] }]
-          },
+          data: { labels: Object.keys(sourceData), datasets: [{ data: Object.values(sourceData), backgroundColor: ['#6366F1', '#8B5CF6', '#EC4899', '#14B8A6'] }] },
           options: { plugins: { legend: { labels: { color: '#94A3B8', font: { size: 9 } } } } }
         });
       }
