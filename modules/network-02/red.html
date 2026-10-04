@@ -417,7 +417,8 @@ function draw(){
     const hot=state.focus&&(state.focus===r.id||state.focus===r.s||state.focus===r.t);
     const dim=state.focus&&!hot;
     const depth=(a.z+b.z)/2;
-    ctx.globalAlpha=dim?.012:(hot?.9:Math.max(.035,.10+(depth+1)*.035));
+    const edgeAlpha=dim?.012:(hot?.9:Math.max(.035,.10+(depth+1)*.035));
+    ctx.globalAlpha=edgeAlpha*sceneAnim.alpha;
     const edgeNeon=(neonState.interactions.size&&neonState.interactions.has(r.title))||(neonState.interaction&&r.title===neonState.interaction)||(!neonState.interactions.size&&!neonState.interaction&&(neonState.groups.has(ecoGroup(r.s))||neonState.groups.has(ecoGroup(r.t))));
     ctx.strokeStyle=COLORS[r.title]||"#8b8f88";
     ctx.shadowColor=edgeNeon?(COLORS[r.title]||"#8b8f88"):"transparent";
@@ -435,7 +436,8 @@ function draw(){
     const connected=state.focus?visible.some(r=>(r.s===state.focus&&r.t===n.id)||(r.t===state.focus&&r.s===n.id)):false;
     const hot=state.focus===n.id;
     const dim=state.focus&&!(hot||connected);
-    ctx.globalAlpha=dim?.08:Math.max(.35,.72+(p.z+1)*.14);
+    const nodeAlpha=dim?.08:Math.max(.35,.72+(p.z+1)*.14);
+    ctx.globalAlpha=nodeAlpha*sceneAnim.alpha;
 
     const baseRadius=4+Math.min(12,Math.sqrt(n.n||1)*.42);
     const radius=Math.max(3,baseRadius*p.scale);
@@ -460,7 +462,7 @@ function draw(){
     }
     ctx.restore();
 
-    ctx.globalAlpha=dim?.08:1;
+    ctx.globalAlpha=(dim?.08:1)*sceneAnim.alpha;
     const nodeNeon=neonState.groups.has(ecoGroup(n.id));
     ctx.strokeStyle=hot?"#1f3d25":(ECO_COLORS[ecoGroup(n.id)]||"rgba(255,255,255,.96)");
     ctx.shadowColor=nodeNeon?(ECO_COLORS[ecoGroup(n.id)]||"#8fd3a8"):"transparent";
@@ -470,7 +472,7 @@ function draw(){
 
     ctx.shadowBlur=0;ctx.shadowColor="transparent";
     if(hot||state.labels){
-      ctx.globalAlpha=hot?1:.72;
+      ctx.globalAlpha=(hot?1:.72)*sceneAnim.alpha;
       ctx.fillStyle="#253025";
       ctx.font=(hot?11:8)+"px Inter,Arial";
       ctx.textAlign="center";ctx.textBaseline="top";
@@ -484,7 +486,7 @@ function draw(){
 function animate(now){
   const dt=Math.min(32,now-lastFrame);lastFrame=now;
   if(state.auto&&!drag)state.yaw+=dt*.00008;
-  const ease=Math.min(1,dt*.012);
+  const ease=Math.min(1,dt*.016);
   sceneAnim.alpha+=(sceneAnim.targetAlpha-sceneAnim.alpha)*ease;
   sceneAnim.zoomBoost+=(sceneAnim.targetZoomBoost-sceneAnim.zoomBoost)*ease;
   sceneAnim.spin+=(sceneAnim.targetSpin-sceneAnim.spin)*ease;
@@ -781,23 +783,32 @@ function animateSceneChange(applyFn,key){
   sceneAnim.pending={applyFn,key};
   if(sceneAnim.busy)return;
   sceneAnim.busy=true;
-  const phaseOut=()=>{
-    sceneAnim.targetAlpha=.08;
-    sceneAnim.targetZoomBoost=.12;
-    sceneAnim.targetSpin=1;
+
+  sceneAnim.targetAlpha=.04;
+  sceneAnim.targetZoomBoost=.26;
+  sceneAnim.targetSpin=1.8;
+  neonState.targetStrength=0;
+
+  setTimeout(()=>{
+    const p=sceneAnim.pending;sceneAnim.pending=null;
+    if(p){p.applyFn();sceneAnim.lastApplied=p.key}
+
+    // New layer enters from a nearly invisible state and pulses into focus.
+    sceneAnim.alpha=Math.min(sceneAnim.alpha,.12);
+    sceneAnim.zoomBoost=.22;
+    sceneAnim.targetAlpha=1;
+    sceneAnim.targetZoomBoost=0;
+    sceneAnim.targetSpin=0;
+    if(neonState.groups.size||neonState.interactions.size||neonState.interaction){
+      neonState.strength=.05;
+      neonState.targetStrength=1;
+    }
+
     setTimeout(()=>{
-      const p=sceneAnim.pending;sceneAnim.pending=null;
-      if(p){p.applyFn();sceneAnim.lastApplied=p.key}
-      sceneAnim.targetAlpha=1;
-      sceneAnim.targetZoomBoost=0;
-      sceneAnim.targetSpin=0;
-      setTimeout(()=>{
-        sceneAnim.busy=false;
-        if(sceneAnim.pending)animateSceneChange(sceneAnim.pending.applyFn,sceneAnim.pending.key);
-      },420);
-    },260);
-  };
-  phaseOut();
+      sceneAnim.busy=false;
+      if(sceneAnim.pending)animateSceneChange(sceneAnim.pending.applyFn,sceneAnim.pending.key);
+    },760);
+  },360);
 }
 function applyEcoSet(list){
   activeEco.clear();
