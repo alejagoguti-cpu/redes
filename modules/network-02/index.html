@@ -2,68 +2,105 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Interacciones bióticas · Red 3D RIBB</title>
+<title>Atlas 3D · Interacciones bióticas RIBB</title>
 <link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/sidebar.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-:root{--bg:#f5f6f2;--ink:#20251f;--muted:#788078;--glass:rgba(255,255,252,.94);--line:#dce2d8;--green:#405b45}
-*{box-sizing:border-box}html,body{margin:0;height:100%}body{overflow:hidden;background:var(--bg);font-family:Inter,Arial,sans-serif;color:var(--ink)}
-.app{display:flex;height:100vh}.main{position:relative;flex:1;min-width:0}.sidebar{z-index:60}
-#webgl{position:absolute;inset:0}.title{position:absolute;z-index:8;top:18px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none}
-.title h1{margin:0;font-size:20px}.title p{margin:5px 0;font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:#8a9088}
-.panel{position:absolute;z-index:15;background:var(--glass);border:1px solid var(--line);box-shadow:0 18px 50px rgba(31,40,31,.10);backdrop-filter:blur(18px)}
-.filters{left:18px;top:18px;width:250px;padding:13px;border-radius:18px;max-height:calc(100vh - 36px);overflow:auto}
-.detail{right:18px;top:18px;bottom:18px;width:330px;padding:18px;border-radius:20px;overflow:auto;transform:translateX(calc(100% + 36px));opacity:0;pointer-events:none;transition:.25s}
-.detail.open{transform:none;opacity:1;pointer-events:auto}.close{position:absolute;right:12px;top:12px;border:0;border-radius:50%;width:28px;height:28px;background:#edf0e9;cursor:pointer}
-h3{font-size:11px;margin:0 0 9px}.label{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:#8a9088;margin:10px 0 5px}
-.search,select{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 9px;font-size:9px}
-.checks{display:flex;gap:4px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 7px;font-size:7.5px;cursor:pointer}.btn.active{background:var(--green);color:#fff;border-color:var(--green)}
-.stats{display:flex;gap:6px;margin-top:10px}.stat{flex:1;background:#f0f3ec;border-radius:10px;padding:7px}.stat b{display:block;font-size:14px}.stat span{font-size:7px;color:var(--muted)}
-.reset{width:100%;margin-top:9px;border:0;background:#e8ece4;color:#465044;border-radius:9px;padding:7px;font-size:8px;cursor:pointer}
-.viewbar{position:absolute;z-index:10;top:66px;left:50%;transform:translateX(-50%);display:flex;gap:5px;background:rgba(255,255,252,.9);border:1px solid var(--line);border-radius:999px;padding:5px}
-.viewbar button{border:0;background:transparent;border-radius:999px;padding:6px 9px;font-size:8px;color:#5d665b;cursor:pointer}.viewbar button.active{background:#e8ece4}
-.detail h2{font-size:16px;margin:0 34px 8px 0;font-style:italic}.detail p{font-size:10px;line-height:1.55;color:#555d54}.detail h4{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:#8a9088;margin:15px 0 6px}
-.hero{height:150px;border-radius:14px;background:#e7eae3 center/cover;margin:10px 0}.badge{display:inline-block;font-size:7.5px;padding:5px 7px;background:#edf0e9;border-radius:999px;margin:2px}
-.warning{padding:10px;border-radius:10px;background:#f5f0df;color:#695c37;font-size:8px;line-height:1.45}
-.legend{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:9;background:rgba(255,255,252,.94);border:1px solid var(--line);border-radius:999px;padding:7px 11px;display:flex;gap:9px;font-size:7px;white-space:nowrap}
-.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}.loading{position:absolute;inset:0;display:grid;place-items:center;background:var(--bg);z-index:70;font-size:11px;color:#777}
-.hint{position:absolute;left:50%;bottom:48px;transform:translateX(-50%);font-size:7px;color:#929890;z-index:8;pointer-events:none}.small{font-size:7px!important;color:#888!important}
+:root{--bg:#f3f2ed;--ink:#1d211d;--muted:#70766f;--panel:rgba(250,249,245,.94);--line:#d9ddd5;--accent:#3d5842}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{overflow:hidden;background:var(--bg);font-family:Inter,Arial,sans-serif;color:var(--ink)}
+.app{display:flex;height:100vh}.main{position:relative;flex:1;min-width:0}.sidebar{z-index:50}
+#webgl{position:absolute;inset:0;background:#f3f2ed}.masthead{position:absolute;z-index:8;left:50%;top:18px;transform:translateX(-50%);text-align:center;pointer-events:none}
+.masthead h1{margin:0;font-size:18px;font-weight:580;letter-spacing:-.015em}.masthead p{margin:5px 0 0;font-size:7px;text-transform:uppercase;letter-spacing:.14em;color:#868b84}
+.panel{position:absolute;z-index:14;background:var(--panel);border:1px solid rgba(211,216,207,.95);backdrop-filter:blur(18px)}
+.filters{left:18px;top:18px;width:235px;padding:14px;border-radius:14px;max-height:calc(100vh - 36px);overflow:auto;box-shadow:0 12px 34px rgba(29,37,28,.06)}
+.detail{right:18px;top:18px;bottom:18px;width:330px;padding:18px;border-radius:16px;overflow:auto;box-shadow:0 16px 42px rgba(29,37,28,.08);transform:translateX(calc(100% + 36px));opacity:0;pointer-events:none;transition:.24s ease}
+.detail.open{transform:none;opacity:1;pointer-events:auto}.close{position:absolute;right:12px;top:12px;width:28px;height:28px;border:0;border-radius:50%;background:#eceee8;color:#586057;cursor:pointer}
+.sectionTitle{font-size:10px;font-weight:650;margin:0 0 9px;letter-spacing:.02em}.label{display:block;font-size:6.8px;text-transform:uppercase;letter-spacing:.11em;color:#878c84;margin:11px 0 5px}
+.search,select{width:100%;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 9px;font-size:8.5px;outline:none}.search:focus,select:focus{border-color:#879686}
+.chips{display:flex;gap:4px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 7px;font-size:7px;cursor:pointer;color:#5f655d}.chip.active{background:#36483a;color:white;border-color:#36483a}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:11px}.metric{background:#efefe9;border-radius:8px;padding:7px}.metric b{display:block;font-size:13px;font-weight:650}.metric span{font-size:6.7px;color:#7d827b}
+.reset{width:100%;margin-top:9px;border:0;background:#e5e8e1;color:#465044;border-radius:8px;padding:7px;font-size:7.5px;cursor:pointer}
+.meta{font-size:6.7px;color:#858a83;line-height:1.45;margin-top:8px}
+.toolbar{position:absolute;z-index:10;top:61px;left:50%;transform:translateX(-50%);display:flex;gap:4px;padding:4px;background:rgba(248,247,242,.9);border:1px solid var(--line);border-radius:999px;backdrop-filter:blur(12px)}
+.toolbar button{border:0;background:transparent;border-radius:999px;padding:6px 9px;font-size:7px;color:#626860;cursor:pointer}.toolbar button.active{background:#e4e7df;color:#2e3b30}
+.legend{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:9;display:flex;gap:10px;align-items:center;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:rgba(248,247,242,.93);font-size:6.7px;color:#60665e;white-space:nowrap}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px}.legend .sep{width:1px;height:12px;background:#d8dcd4}
+.detail h2{font-size:15px;font-weight:600;margin:0 34px 8px 0;font-style:italic}.detail h4{font-size:7px;text-transform:uppercase;letter-spacing:.11em;color:#848981;margin:15px 0 6px}.detail p{font-size:9.5px;line-height:1.55;color:#555c54}
+.hero{height:156px;border-radius:11px;background:#e7e9e3 center/cover;margin:10px 0}.badge{display:inline-block;padding:4px 6px;border-radius:999px;background:#eceee8;font-size:7px;margin:2px;color:#596058}
+.evidence{border-top:1px solid #e0e3dc;padding-top:10px;margin-top:12px}.warning{margin-top:12px;padding:9px;border-radius:8px;background:#f3efe2;color:#6d613d;font-size:7.5px;line-height:1.45}
+.loading{position:absolute;inset:0;z-index:60;display:grid;place-items:center;background:#f3f2ed;color:#747a72;font-size:10px}.hint{position:absolute;z-index:8;left:50%;bottom:48px;transform:translateX(-50%);font-size:6.5px;color:#92978f;pointer-events:none}
+.tooltip{position:absolute;z-index:25;display:none;pointer-events:none;padding:6px 8px;border-radius:7px;background:rgba(27,32,27,.94);color:#fff;font-size:7px;max-width:200px}
 </style>
 </head>
-<body><div class="app">
-<aside class="sidebar"><a class="brand-icon" href="../../index.html"><i class="fa-solid fa-diagram-project"></i></a><nav class="icon-nav">
+<body>
+<div class="app">
+<aside class="sidebar">
+<a class="brand-icon" href="../../index.html"><i class="fa-solid fa-diagram-project"></i></a>
+<nav class="icon-nav">
 <a href="../../index.html" class="icon-nav-item"><i class="fa-solid fa-house"></i></a>
 <a href="../network-01/index.html" class="icon-nav-item"><i class="fa-solid fa-city"></i></a>
 <a href="index.html" class="icon-nav-item active"><i class="fa-solid fa-leaf"></i></a>
-</nav></aside>
-<main class="main">
-<div id="loading" class="loading">Inicializando escena 3D…</div>
-<div id="webgl"></div>
-<div class="title"><h1>Red 3D de interacciones bióticas</h1><p>RIBB · Jardín Botánico de Bogotá · diciembre 2024</p></div>
-<div class="viewbar">
-<button id="rotateBtn" class="active"><i class="fa-solid fa-rotate"></i> Giro</button>
-<button id="fitBtn"><i class="fa-solid fa-bullseye"></i> Centrar</button>
-</div>
-<aside class="panel filters">
-<h3>Explorar</h3>
-<input id="search" class="search" placeholder="Buscar taxón…">
-<span class="label">Cobertura</span><div class="checks" id="district"><button class="btn active" data-v="SI">Distrito</button><button class="btn" data-v="ALL">Toda la base</button></div>
-<span class="label">Interacción</span><select id="interaction"><option value="ALL">Todas</option></select>
-<span class="label">Origen</span><div class="checks" id="origin"><button class="btn active" data-v="ALL">Todos</button><button class="btn" data-v="Nativa">Nativa</button><button class="btn" data-v="No nativa">No nativa</button></div>
-<span class="label">Calidad</span><div class="checks" id="quality"><button class="btn active" data-v="ALL">Todas</button><button class="btn" data-v="Alta">Alta</button><button class="btn" data-v="Media">Media</button><button class="btn" data-v="Baja">Baja</button></div>
-<button id="reset" class="reset">Restablecer</button>
-<div class="stats"><div class="stat"><b id="nodes">0</b><span>taxones</span></div><div class="stat"><b id="edges">0</b><span>registros</span></div></div>
-<p id="meta" class="small"></p><p id="imgState" class="small"></p>
+</nav>
 </aside>
-<aside id="detail" class="panel detail"><button id="close" class="close"><i class="fa-solid fa-xmark"></i></button><h2>Selecciona un elemento</h2><p>Orbita alrededor de la red, acércate y selecciona una especie o conexión para consultar la evidencia.</p></aside>
-<div class="hint">Arrastra = orbitar · rueda = zoom · nodo = especie · línea = evidencia</div>
-<div class="legend">
-<span><i class="dot" style="background:#6f9569"></i>Visita floral</span>
-<span><i class="dot" style="background:#be8b57"></i>Herbivoría</span>
-<span><i class="dot" style="background:#b45f5f"></i>Depredación</span>
-<span><i class="dot" style="background:#648bb2"></i>Dispersión</span>
+
+<main class="main">
+<div id="loading" class="loading">Preparando atlas tridimensional…</div>
+<div id="webgl"></div>
+<div id="tooltip" class="tooltip"></div>
+
+<div class="masthead">
+<h1>Atlas tridimensional de interacciones bióticas</h1>
+<p>Red de Interacciones Bióticas de Bogotá · corte diciembre 2024</p>
 </div>
-</main></div>
+
+<div class="toolbar">
+<button id="fitBtn"><i class="fa-solid fa-crosshairs"></i> Recentrar</button>
+<button id="rotateBtn"><i class="fa-solid fa-rotate"></i> Rotación automática</button>
+</div>
+
+<aside class="panel filters">
+<h3 class="sectionTitle">Exploración</h3>
+<input id="search" class="search" placeholder="Buscar taxón por nombre científico">
+<span class="label">Cobertura</span>
+<div class="chips" id="district">
+<button class="chip active" data-v="SI">Distrito</button><button class="chip" data-v="ALL">Base completa</button>
+</div>
+<span class="label">Tipo de interacción</span>
+<select id="interaction"><option value="ALL">Todas las interacciones</option></select>
+<span class="label">Origen</span>
+<div class="chips" id="origin">
+<button class="chip active" data-v="ALL">Todos</button><button class="chip" data-v="Nativa">Nativa</button><button class="chip" data-v="No nativa">No nativa</button>
+</div>
+<span class="label">Calidad documental</span>
+<div class="chips" id="quality">
+<button class="chip active" data-v="ALL">Todas</button><button class="chip" data-v="Alta">Alta</button><button class="chip" data-v="Media">Media</button><button class="chip" data-v="Baja">Baja</button>
+</div>
+<button class="reset" id="reset">Restablecer vista</button>
+<div class="metrics">
+<div class="metric"><b id="nodes">0</b><span>taxones visibles</span></div>
+<div class="metric"><b id="edges">0</b><span>registros visibles</span></div>
+</div>
+<p id="meta" class="meta"></p>
+<p id="imgState" class="meta"></p>
+</aside>
+
+<aside id="detail" class="panel detail">
+<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>
+<h2>Lectura de la red</h2>
+<p>La posición tridimensional agrupa especies según el tipo de interacción dominante. La profundidad organiza relaciones, no representa ubicación geográfica.</p>
+</aside>
+
+<div class="hint">Arrastra para orbitar · rueda para aproximar · selecciona un nodo o una relación</div>
+
+<div class="legend">
+<span><i class="dot" style="background:#768e70"></i>Visita floral</span>
+<span><i class="dot" style="background:#a68461"></i>Herbivoría</span>
+<span><i class="dot" style="background:#9b6663"></i>Depredación</span>
+<span><i class="dot" style="background:#6f879c"></i>Dispersión</span>
+<span class="sep"></span><span>posición = interacción dominante</span><span class="sep"></span><span>tamaño = frecuencia de registros</span>
+</div>
+</main>
+</div>
 
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/"}}</script>
 <script type="module">
@@ -72,63 +109,135 @@ try{
   const THREE=await import("three");
   const {OrbitControls}=await import("three/addons/controls/OrbitControls.js");
 
-  const COLORS={"VISITA FLORAL":0x6f9569,"HERBIVORÍA":0xbe8b57,"DEPREDACIÓN":0xb45f5f,"DISPERSIÓN":0x648bb2,"OVIPOSICIÓN":0x9870a6,"PARASITISMO":0x8c73a5,"MUTUALISMO":0x5a9a90,"OTRAS INTERACCIONES":0x8a8a86};
-  const state={district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:"",focus:null,auto:true};
-  let DATA=null,visible=[],nodeData=[],nodeById=new Map(),meshes=[],edgeRecords=[],lineObj=null;
-  const scene=new THREE.Scene();scene.background=new THREE.Color(0xf5f6f2);scene.fog=new THREE.FogExp2(0xf5f6f2,0.0065);
-  const camera=new THREE.PerspectiveCamera(46,1,.1,1000);camera.position.set(0,0,135);
-  const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
+  const PALETTE={
+    "VISITA FLORAL":0x768e70,"HERBIVORÍA":0xa68461,"DEPREDACIÓN":0x9b6663,"DISPERSIÓN":0x6f879c,
+    "OVIPOSICIÓN":0x8c7792,"PARASITISMO":0x806d83,"MUTUALISMO":0x668b84,"EPIBIOSIS":0x7d8991,
+    "NIDIFICACIÓN":0x8b7a68,"ALELOPATÍA":0x7e8d70,"HEMATOFAGIA":0x906b68,"OTRAS INTERACCIONES":0x8c8d87
+  };
+  const CLUSTERS={
+    "VISITA FLORAL":new THREE.Vector3(-38,24,10),
+    "HERBIVORÍA":new THREE.Vector3(34,22,4),
+    "DEPREDACIÓN":new THREE.Vector3(30,-27,-10),
+    "DISPERSIÓN":new THREE.Vector3(-34,-24,-6),
+    "OVIPOSICIÓN":new THREE.Vector3(4,34,-30),
+    "PARASITISMO":new THREE.Vector3(0,-34,30),
+    "OTRAS INTERACCIONES":new THREE.Vector3(0,0,0)
+  };
+
+  const state={district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:"",auto:false};
+  let DATA=null,visible=[],nodeList=[],nodeMap=new Map(),sprites=[],edgeRecords=[],lineObj=null;
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0xf3f2ed);scene.fog=new THREE.FogExp2(0xf3f2ed,.008);
+  const camera=new THREE.PerspectiveCamera(43,1,.1,1000);camera.position.set(0,8,145);
+  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:"high-performance"});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
   document.querySelector("#webgl").appendChild(renderer.domElement);
-  const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.055;controls.minDistance=35;controls.maxDistance=260;controls.autoRotate=true;controls.autoRotateSpeed=.35;
-  scene.add(new THREE.AmbientLight(0xffffff,1.8));
-  const key=new THREE.DirectionalLight(0xffffff,3.2);key.position.set(40,60,80);scene.add(key);
-  const fill=new THREE.DirectionalLight(0xbfd2ba,1.5);fill.position.set(-50,-20,-40);scene.add(fill);
-  const group=new THREE.Group();scene.add(group);
-  const lineGroup=new THREE.Group();scene.add(lineGroup);
-  const sphereGeo=new THREE.SphereGeometry(1,14,10);
-  const raycaster=new THREE.Raycaster();raycaster.params.Line.threshold=.6;const pointer=new THREE.Vector2();
-  const textureLoader=new THREE.TextureLoader();textureLoader.crossOrigin="anonymous";
-  const imageCache=new Map();let loadedImgs=0,failedImgs=0,active=0;const queue=[];const MAX=6;
+  const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=42;controls.maxDistance=230;controls.autoRotate=false;controls.autoRotateSpeed=.25;
+  const networkGroup=new THREE.Group();scene.add(networkGroup);const lineGroup=new THREE.Group();scene.add(lineGroup);
+  const raycaster=new THREE.Raycaster();raycaster.params.Sprite={threshold:.35};raycaster.params.Line={threshold:.5};const pointer=new THREE.Vector2();
+  const textureCache=new Map();const queue=[];let active=0,loaded=0,failed=0;const MAX=5;
+  const tooltip=document.querySelector("#tooltip");
 
   function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
-  function position3D(id){const u=(hash(id)%100000)/100000,v=(hash(id+"z")%100000)/100000,w=(hash(id+"r")%100000)/100000;const theta=u*Math.PI*2,phi=Math.acos(2*v-1),r=24+42*Math.pow(w,.55);return new THREE.Vector3(r*Math.sin(phi)*Math.cos(theta),r*Math.cos(phi),r*Math.sin(phi)*Math.sin(theta))}
-  function matches(r){if(state.district!=="ALL"&&r.district!==state.district)return false;if(state.interaction!=="ALL"&&r.title!==state.interaction)return false;if(state.quality!=="ALL"&&r.q!==state.quality)return false;if(state.search){const q=state.search.toLowerCase();if(!r.s.toLowerCase().includes(q)&&!r.t.toLowerCase().includes(q))return false}if(state.origin!=="ALL"){const a=DATA.nodeById.get(r.s),b=DATA.nodeById.get(r.t);if(![(a?.origin||""),(b?.origin||"")].some(x=>x.toLowerCase().startsWith(state.origin.toLowerCase())))return false}return true}
-  function clearScene(){while(group.children.length){const o=group.children.pop();o.material?.dispose()}while(lineGroup.children.length){const o=lineGroup.children.pop();o.geometry?.dispose();o.material?.dispose()}meshes=[];edgeRecords=[]}
-  function rebuild(){
-    clearScene();visible=DATA.records.filter(matches);
-    const ids=new Set();visible.forEach(r=>{ids.add(r.s);ids.add(r.t)});
-    nodeData=[...ids].map(id=>({...DATA.nodeById.get(id),id,pos:position3D(id)}));nodeById=new Map(nodeData.map(n=>[n.id,n]));
-    for(const n of nodeData){const radius=1.1+Math.min(2.6,Math.sqrt(n.n||1)*.085);const mat=new THREE.MeshStandardMaterial({color:0x8aa083,roughness:.72,metalness:.02});const mesh=new THREE.Mesh(sphereGeo,mat);mesh.position.copy(n.pos);mesh.scale.setScalar(radius);mesh.userData={type:"node",node:n};group.add(mesh);meshes.push(mesh);queueImage(n,mesh)}
-    const positions=[],colors=[];edgeRecords=[];
-    for(const r of visible){const a=nodeById.get(r.s),b=nodeById.get(r.t);if(!a||!b)continue;positions.push(a.pos.x,a.pos.y,a.pos.z,b.pos.x,b.pos.y,b.pos.z);const c=new THREE.Color(COLORS[r.title]||0x8a8a86);colors.push(c.r,c.g,c.b,c.r,c.g,c.b);edgeRecords.push(r)}
-    const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));g.setAttribute("color",new THREE.Float32BufferAttribute(colors,3));
-    const m=new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.16,depthWrite:false});
-    lineObj=new THREE.LineSegments(g,m);lineGroup.add(lineObj);
-    document.querySelector("#nodes").textContent=nodeData.length.toLocaleString("es-CO");document.querySelector("#edges").textContent=visible.length.toLocaleString("es-CO");
+  function dominantType(id){
+    const c={};for(const r of visible){if(r.s===id||r.t===id)c[r.title]=(c[r.title]||0)+1}
+    return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||"OTRAS INTERACCIONES";
   }
-  function queueImage(n,mesh){if(imageCache.has(n.id)){const e=imageCache.get(n.id);if(e.texture){mesh.material.map=e.texture;mesh.material.color.set(0xffffff);mesh.material.needsUpdate=true}return}imageCache.set(n.id,{status:"queued"});queue.push({n,mesh});pump()}
-  async function findImage(name){try{const res=await fetch("https://api.inaturalist.org/v1/taxa/autocomplete?q="+encodeURIComponent(name)+"&per_page=5");if(!res.ok)return"";const j=await res.json();const t=(j.results||[]).find(x=>(x.name||"").toLowerCase()===name.toLowerCase())||(j.results||[])[0];return t?.default_photo?.medium_url||t?.default_photo?.square_url||""}catch{return""}}
-  function pump(){while(active<MAX&&queue.length){const {n,mesh}=queue.shift();const e=imageCache.get(n.id);if(!e||e.status!=="queued")continue;e.status="loading";active++;findImage(n.id).then(url=>{if(!url){e.status="failed";failedImgs++;return}textureLoader.load(url,tex=>{tex.colorSpace=THREE.SRGBColorSpace;e.status="loaded";e.texture=tex;e.url=url;loadedImgs++;if(mesh.material){mesh.material.map=tex;mesh.material.color.set(0xffffff);mesh.material.needsUpdate=true}updateImageState()},undefined,()=>{e.status="failed";failedImgs++;updateImageState()})}).finally(()=>{active--;updateImageState();pump()})}}
-  function updateImageState(){document.querySelector("#imgState").textContent="Fotos en esferas: "+loadedImgs.toLocaleString("es-CO")+" · sin foto validada: "+failedImgs}
-  function setPointer(ev){const rect=renderer.domElement.getBoundingClientRect();pointer.x=((ev.clientX-rect.left)/rect.width)*2-1;pointer.y=-((ev.clientY-rect.top)/rect.height)*2+1}
-  function openNode(n,mesh){state.focus=n.id;meshes.forEach(m=>{m.material.opacity=m===mesh?1:.18;m.material.transparent=true});if(lineObj)lineObj.material.opacity=.035;const d=document.querySelector("#detail");d.classList.add("open");const im=imageCache.get(n.id);const hero=im?.url?'style="background-image:url(\''+im.url+'\')"':"";d.innerHTML='<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button><h2>'+n.id+'</h2><div class="hero" '+hero+'></div><span class="badge">'+(n.origin||"Origen no indicado")+'</span><span class="badge">'+(n.n||0)+' registros</span><h4>Lectura</h4><p>Este nodo tiene una posición X/Y/Z real. Puedes orbitar alrededor de él y leer su profundidad dentro del enjambre.</p>';bindClose()}
+  function positionFor(id,dom){
+    const center=CLUSTERS[dom]||CLUSTERS["OTRAS INTERACCIONES"];
+    const h1=(hash(id)%10000)/10000,h2=(hash(id+"a")%10000)/10000,h3=(hash(id+"b")%10000)/10000;
+    const spread=17+22*h3;
+    const theta=h1*Math.PI*2,phi=Math.acos(2*h2-1);
+    return new THREE.Vector3(
+      center.x+spread*Math.sin(phi)*Math.cos(theta),
+      center.y+spread*.72*Math.cos(phi),
+      center.z+spread*Math.sin(phi)*Math.sin(theta)
+    );
+  }
+  function matches(r){
+    if(state.district!=="ALL"&&r.district!==state.district)return false;
+    if(state.interaction!=="ALL"&&r.title!==state.interaction)return false;
+    if(state.quality!=="ALL"&&r.q!==state.quality)return false;
+    if(state.search){const q=state.search.toLowerCase();if(!r.s.toLowerCase().includes(q)&&!r.t.toLowerCase().includes(q))return false}
+    if(state.origin!=="ALL"){const a=DATA.nodeById.get(r.s),b=DATA.nodeById.get(r.t);if(![(a?.origin||""),(b?.origin||"")].some(x=>x.toLowerCase().startsWith(state.origin.toLowerCase())))return false}
+    return true;
+  }
+  function disposeSprite(s){s.material?.map?.dispose();s.material?.dispose()}
+  function clearScene(){while(networkGroup.children.length)disposeSprite(networkGroup.children.pop());while(lineGroup.children.length){const o=lineGroup.children.pop();o.geometry?.dispose();o.material?.dispose()}sprites=[];edgeRecords=[]}
+  function makePlaceholderTexture(name,color){
+    const c=document.createElement("canvas");c.width=c.height=128;const x=c.getContext("2d");
+    x.clearRect(0,0,128,128);x.beginPath();x.arc(64,64,58,0,Math.PI*2);x.fillStyle="#f2f2ed";x.fill();x.lineWidth=5;x.strokeStyle="#ffffff";x.stroke();
+    x.beginPath();x.arc(64,64,50,0,Math.PI*2);x.fillStyle="#"+new THREE.Color(color).getHexString();x.globalAlpha=.28;x.fill();x.globalAlpha=1;
+    x.fillStyle="#344137";x.font="600 36px Arial";x.textAlign="center";x.textBaseline="middle";x.fillText((name||"?").charAt(0).toUpperCase(),64,65);
+    const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t;
+  }
+  function photoTexture(img){
+    const c=document.createElement("canvas");c.width=c.height=192;const x=c.getContext("2d");
+    x.clearRect(0,0,192,192);x.save();x.beginPath();x.arc(96,96,88,0,Math.PI*2);x.clip();
+    const s=Math.min(img.naturalWidth,img.naturalHeight),sx=(img.naturalWidth-s)/2,sy=(img.naturalHeight-s)/2;
+    x.drawImage(img,sx,sy,s,s,8,8,176,176);x.restore();
+    x.beginPath();x.arc(96,96,88,0,Math.PI*2);x.lineWidth=5;x.strokeStyle="#ffffff";x.stroke();
+    const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t;
+  }
+  function build(){
+    clearScene();visible=DATA.records.filter(matches);const ids=new Set();visible.forEach(r=>{ids.add(r.s);ids.add(r.t)});
+    nodeList=[...ids].map(id=>{const src=DATA.nodeById.get(id)||{id,n:1,origin:""};const dom=dominantType(id);return {...src,id,dom,pos:positionFor(id,dom)}});
+    nodeMap=new Map(nodeList.map(n=>[n.id,n]));
+    for(const n of nodeList){
+      const color=PALETTE[n.dom]||0x8c8d87;const tex=textureCache.get(n.id)?.texture||makePlaceholderTexture(n.id,color);
+      const mat=new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false,depthTest:true,opacity:.98});
+      const sp=new THREE.Sprite(mat);sp.position.copy(n.pos);const size=3.8+Math.min(6.5,Math.sqrt(n.n||1)*.23);sp.scale.set(size,size,1);sp.userData={type:"node",node:n};networkGroup.add(sp);sprites.push(sp);queueImage(n,sp);
+    }
+    const pos=[],cols=[];edgeRecords=[];
+    for(const r of visible){const a=nodeMap.get(r.s),b=nodeMap.get(r.t);if(!a||!b)continue;pos.push(a.pos.x,a.pos.y,a.pos.z,b.pos.x,b.pos.y,b.pos.z);const c=new THREE.Color(PALETTE[r.title]||0x8c8d87);cols.push(c.r,c.g,c.b,c.r,c.g,c.b);edgeRecords.push(r)}
+    const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));g.setAttribute("color",new THREE.Float32BufferAttribute(cols,3));
+    lineObj=new THREE.LineSegments(g,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.11,depthWrite:false}));lineGroup.add(lineObj);
+    document.querySelector("#nodes").textContent=nodeList.length.toLocaleString("es-CO");document.querySelector("#edges").textContent=visible.length.toLocaleString("es-CO");
+  }
+  async function imageUrl(name){try{const r=await fetch("https://api.inaturalist.org/v1/taxa/autocomplete?q="+encodeURIComponent(name)+"&per_page=5");if(!r.ok)return"";const j=await r.json();const t=(j.results||[]).find(x=>(x.name||"").toLowerCase()===name.toLowerCase())||(j.results||[])[0];return t?.default_photo?.medium_url||t?.default_photo?.square_url||""}catch{return""}}
+  function queueImage(n,sp){
+    const cached=textureCache.get(n.id);if(cached?.texture){sp.material.map=cached.texture;sp.material.needsUpdate=true;return}
+    if(cached?.status)return;textureCache.set(n.id,{status:"queued"});queue.push({n,sp});pump();
+  }
+  function pump(){
+    while(active<MAX&&queue.length){
+      const {n,sp}=queue.shift(),e=textureCache.get(n.id);if(!e||e.status!=="queued")continue;e.status="loading";active++;
+      imageUrl(n.id).then(url=>{
+        if(!url){e.status="failed";failed++;return}
+        const img=new Image();img.crossOrigin="anonymous";
+        img.onload=()=>{const tex=photoTexture(img);e.status="loaded";e.texture=tex;e.url=url;loaded++;if(sp.material){sp.material.map=tex;sp.material.needsUpdate=true}updateImageState()};
+        img.onerror=()=>{e.status="failed";failed++;updateImageState()};img.src=url;
+      }).finally(()=>{active--;updateImageState();pump()});
+    }
+  }
+  function updateImageState(){document.querySelector("#imgState").textContent="Imágenes taxonómicas cargadas: "+loaded.toLocaleString("es-CO")+" · sin imagen validada: "+failed}
+  function setPointer(ev){const r=renderer.domElement.getBoundingClientRect();pointer.x=((ev.clientX-r.left)/r.width)*2-1;pointer.y=-((ev.clientY-r.top)/r.height)*2+1}
+  function openNode(n,sp){
+    sprites.forEach(s=>s.material.opacity=s===sp?1:.14);if(lineObj)lineObj.material.opacity=.025;
+    const d=document.querySelector("#detail"),im=textureCache.get(n.id);d.classList.add("open");
+    d.innerHTML='<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button><h2>'+n.id+'</h2><div class="hero" '+(im?.url?'style="background-image:url(\''+im.url+'\')"':'')+'></div><span class="badge">'+(n.origin||"Origen no indicado")+'</span><span class="badge">'+(n.n||0)+' registros</span><span class="badge">'+n.dom+'</span><h4>Lectura espacial</h4><p>La especie se ubica dentro del conjunto asociado a <b>'+n.dom.toLowerCase()+'</b>, su interacción dominante en la selección actual. La posición no representa coordenadas geográficas.</p>';bindClose();
+  }
   function explain(r){if(r.i==="Consume")return "<i>"+r.s+"</i> consume "+(r.part?"<b>"+r.part+"</b> de ":"")+"<i>"+r.t+"</i>.";if(r.i==="Poliniza a")return "<i>"+r.s+"</i> participa en la polinización de <i>"+r.t+"</i>.";if(r.i==="Dispersa"||r.i==="Dispersa a")return "<i>"+r.s+"</i> participa en la dispersión de <i>"+r.t+"</i>.";return "<i>"+r.s+"</i> mantiene una interacción registrada con <i>"+r.t+"</i>."}
-  function openEdge(r){const d=document.querySelector("#detail");d.classList.add("open");d.innerHTML='<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button><h2>'+r.s+' ↔ '+r.t+'</h2><span class="badge">'+r.title+'</span><span class="badge">Calidad '+r.q+'</span><h4>¿Por qué están conectadas?</h4><p>'+explain(r)+'</p><h4>Evidencia</h4><p><b>Fecha:</b> '+(r.date||"No indicada")+'<br><b>Coordenadas:</b> '+(r.coord||"No indicadas")+'</p><h4>Fuente</h4><p>'+(r.ref||"Sin referencia visible")+'</p><div class="warning">Este registro no demuestra por sí solo presencia local en Kennedy.</div>';bindClose()}
-  function bindClose(){const b=document.querySelector("#close");if(b)b.onclick=()=>{document.querySelector("#detail").classList.remove("open");state.focus=null;meshes.forEach(m=>{m.material.opacity=1;m.material.transparent=false});if(lineObj)lineObj.material.opacity=.16}}
-  renderer.domElement.addEventListener("click",ev=>{setPointer(ev);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(meshes,false);if(hits.length)return openNode(hits[0].object.userData.node,hits[0].object);if(lineObj){const lh=raycaster.intersectObject(lineObj,false);if(lh.length){const idx=Math.floor(lh[0].index/2);const r=edgeRecords[idx];if(r)openEdge(r)}}});
-  function groupFilter(id,key){document.querySelectorAll("#"+id+" .btn").forEach(b=>b.onclick=()=>{document.querySelectorAll("#"+id+" .btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");state[key]=b.dataset.v;rebuild()})}
+  function openEdge(r){
+    const d=document.querySelector("#detail");d.classList.add("open");d.innerHTML='<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button><h2>'+r.s+' ↔ '+r.t+'</h2><span class="badge">'+r.title+'</span><span class="badge">Calidad '+r.q+'</span><h4>¿Por qué están conectadas?</h4><p>'+explain(r)+'</p><div class="evidence"><h4>Evidencia</h4><p><b>Fecha:</b> '+(r.date||"No indicada")+'<br><b>Coordenadas:</b> '+(r.coord||"No indicadas")+'<br><b>Parte afectada:</b> '+(r.part||"No indicada")+'</p><h4>Fuente</h4><p>'+(r.ref||"Sin referencia visible")+'</p></div><div class="warning">Un registro en Bogotá no demuestra por sí solo presencia en Kennedy. La presencia local requiere evidencia espacial específica.</div>';bindClose();
+  }
+  function bindClose(){const b=document.querySelector("#close");if(b)b.onclick=()=>{document.querySelector("#detail").classList.remove("open");sprites.forEach(s=>s.material.opacity=.98);if(lineObj)lineObj.material.opacity=.11}}
+  renderer.domElement.addEventListener("pointermove",ev=>{setPointer(ev);raycaster.setFromCamera(pointer,camera);const hit=raycaster.intersectObjects(sprites,false)[0];if(hit){const r=renderer.domElement.getBoundingClientRect(),n=hit.object.userData.node;tooltip.style.display="block";tooltip.style.left=(ev.clientX-r.left+14)+"px";tooltip.style.top=(ev.clientY-r.top+14)+"px";tooltip.textContent=n.id+" · "+n.dom}else tooltip.style.display="none"});
+  renderer.domElement.addEventListener("click",ev=>{setPointer(ev);raycaster.setFromCamera(pointer,camera);const h=raycaster.intersectObjects(sprites,false);if(h.length)return openNode(h[0].object.userData.node,h[0].object);if(lineObj){const lh=raycaster.intersectObject(lineObj,false);if(lh.length){const r=edgeRecords[Math.floor(lh[0].index/2)];if(r)openEdge(r)}}});
+  function groupFilter(id,key){document.querySelectorAll("#"+id+" .chip").forEach(b=>b.onclick=()=>{document.querySelectorAll("#"+id+" .chip").forEach(x=>x.classList.remove("active"));b.classList.add("active");state[key]=b.dataset.v;build()})}
+  document.querySelector("#fitBtn").onclick=()=>{camera.position.set(0,8,145);controls.target.set(0,0,0);controls.update()};
   document.querySelector("#rotateBtn").onclick=e=>{state.auto=!state.auto;controls.autoRotate=state.auto;e.currentTarget.classList.toggle("active",state.auto)};
-  document.querySelector("#fitBtn").onclick=()=>{camera.position.set(0,0,135);controls.target.set(0,0,0);controls.update()};
   function resize(){const el=document.querySelector("#webgl"),w=el.clientWidth,h=el.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
   addEventListener("resize",resize);
 
-  const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());if(!res.ok)throw new Error("Dataset HTTP "+res.status);DATA=await res.json();DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));
+  const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());if(!res.ok)throw new Error("Dataset HTTP "+res.status);
+  DATA=await res.json();DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));
   const sel=document.querySelector("#interaction");Object.keys(DATA.meta.interactionTypes||{}).sort().forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k+" ("+DATA.meta.interactionTypes[k]+")";sel.appendChild(o)});
   document.querySelector("#meta").textContent="Base: "+DATA.meta.totalRecords.toLocaleString("es-CO")+" registros · "+DATA.meta.districtRecords.toLocaleString("es-CO")+" reportados en el Distrito.";
   groupFilter("district","district");groupFilter("origin","origin");groupFilter("quality","quality");
-  sel.onchange=e=>{state.interaction=e.target.value;rebuild()};document.querySelector("#search").oninput=e=>{state.search=e.target.value.trim();rebuild()};document.querySelector("#reset").onclick=()=>location.reload();
-  bindClose();resize();rebuild();loading.remove();
+  sel.onchange=e=>{state.interaction=e.target.value;build()};document.querySelector("#search").oninput=e=>{state.search=e.target.value.trim();build()};document.querySelector("#reset").onclick=()=>location.reload();
+  bindClose();resize();build();loading.remove();
+
   function animate(){controls.update();renderer.render(scene,camera);requestAnimationFrame(animate)}animate();
-}catch(err){loading.innerHTML="No se pudo iniciar WebGL 3D. "+err.message;console.error(err)}
+}catch(err){loading.innerHTML="No se pudo iniciar la visualización 3D. "+err.message;console.error(err)}
 </script>
-</body></html>
+</body>
+</html>
