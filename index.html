@@ -1,218 +1,694 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redes & Ecosistemas · Desequilibrio Urbano</title>
+  <title>KENNEDY ECO-CYBERNETICS · Kepler.gl & Red Biótica</title>
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-  
-  <!-- Base Theme, Sidebar & Neon Network Ecosystem Styles -->
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/sidebar.css">
-  <link rel="stylesheet" href="css/kennedy-network.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Deck.gl & MapLibre GL para Kepler.gl Geospatial 3D Engine -->
+  <script src="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/deck.gl@8.9.33/dist.min.js"></script>
+
+  <!-- VisNetwork para Grafos Circular -->
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <!-- Chart.js para Donas -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['Space Grotesk', 'monospace'],
+            sans: ['Inter', 'sans-serif']
+          },
+          colors: {
+            cyberDark: '#030712',
+            cyberCard: '#0F172A',
+            cyberBorder: '#1E293B',
+            neonGreen: '#10B981',
+            neonViolet: '#A855F7',
+            neonCyan: '#06B6D4',
+            neonRed: '#EF4444'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #030712;
+      color: #F3F4F6;
+    }
+    #mynetwork {
+      width: 100%;
+      height: 740px;
+      background-color: #030712;
+      border-radius: 1.25rem;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    #mynetwork.isolated {
+      box-shadow: inset 0 0 140px rgba(168, 85, 247, 0.5);
+    }
+    #keplerMapContainer {
+      width: 100%;
+      height: 740px;
+      border-radius: 1.25rem;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    #mapDeckCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+  </style>
 </head>
-<body>
+<body class="bg-slate-950 font-sans leading-relaxed selection:bg-emerald-500 selection:text-white">
 
-  <div class="app-layout">
-
-    <!-- ================= BARRA LATERAL (SIDEBAR) ================= -->
-    <aside class="sidebar" id="appSidebar">
-      
-      <!-- Brand / Logo Icon -->
-      <a class="brand-icon" href="index.html" title="Redes · Inicio" aria-label="Inicio">
-        <i class="fa-solid fa-diagram-project"></i>
-      </a>
-
-      <!-- Primary Icon Navigation -->
-      <nav class="icon-nav" aria-label="Navegación Módulos de Red">
-        <a href="index.html" class="icon-nav-item active" data-tooltip="Inicio / Red Neón">
-          <i class="fa-solid fa-house"></i>
-        </a>
-        <a href="modules/network-01/index.html" class="icon-nav-item" data-tooltip="Módulo 01 · Escala Metropolitana">
-          <i class="fa-solid fa-city"></i>
-        </a>
-        <a href="modules/network-02/index.html" class="icon-nav-item" data-tooltip="Módulo 02 · Interacciones Bióticas">
-          <i class="fa-solid fa-leaf"></i>
-        </a>
-        <a href="modules/network-03/index.html" class="icon-nav-item" data-tooltip="Módulo 03 · Discurso vs Realidad">
-          <i class="fa-solid fa-eye"></i>
-        </a>
-        <a href="modules/network-04/index.html" class="icon-nav-item" data-tooltip="Módulo 04 · Macromodelos">
-          <i class="fa-solid fa-bullseye"></i>
-        </a>
-        <a href="modules/network-05/index.html" class="icon-nav-item" data-tooltip="Módulo 05 · Navegador Multiescalar">
-          <i class="fa-solid fa-magnifying-glass-location"></i>
-        </a>
-        <a href="modules/network-06/index.html" class="icon-nav-item" data-tooltip="Módulo 06 · Indicadores & ODS">
-          <i class="fa-solid fa-earth-americas"></i>
-        </a>
-        <a href="modules/network-07/index.html" class="icon-nav-item" data-tooltip="Módulo 07 · Simulador Interactivo">
-          <i class="fa-solid fa-flask"></i>
-        </a>
-        <a href="modules/network-08/index.html" class="icon-nav-item" data-tooltip="Módulo 08 · Simulación 3D">
-          <i class="fa-solid fa-cube"></i>
-        </a>
-      </nav>
-
-      <!-- Footer Action Icon -->
-      <div class="icon-nav-footer">
-        <a href="#settings" class="icon-nav-item" data-tooltip="Configuración">
-          <i class="fa-solid fa-gear"></i>
-        </a>
+  <!-- REBRANDED HERO HEADER -->
+  <header class="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md px-6 py-5 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div class="space-y-1">
+        <div class="flex items-center gap-3">
+          <span class="px-2.5 py-0.5 text-[10px] font-mono font-bold tracking-wider rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 uppercase flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            KEPLER.GL SPATIAL ENGINE v3.0
+          </span>
+          <span class="text-xs text-slate-500 font-mono">BOGOTÁ · KENNEDY HUMEDALES</span>
+        </div>
+        <h1 class="text-2xl lg:text-3xl font-extrabold font-mono tracking-tight text-white flex items-center gap-3">
+          <span class="bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-500 bg-clip-text text-transparent">
+            KENNEDY ECO-CYBERNETICS
+          </span>
+        </h1>
+        <p class="text-xs lg:text-sm text-slate-400 max-w-3xl">
+          Plataforma de inteligencia socioecológica (Humedales El Burro, La Vaca y Techo). Integración Kepler.gl / Deck.gl 3D, Anillo Circular de Especies y Reglas ABM.
+        </p>
       </div>
 
-    </aside>
-
-    <!-- ================= CONTENIDO PRINCIPAL ================= -->
-    <main class="main-content">
-      <header class="topbar">
-        <div class="topbar-title">
-          <i class="fa-solid fa-share-nodes"></i> Redes & Ecosistemas · Simulación Urbana
-        </div>
-      </header>
-
-      <!-- Network Interactive Stage -->
-      <div class="network-wrapper">
-        <div class="network-bg-grid"></div>
-
-        <div class="graph-stage" id="graphStage">
-          <!-- SVG Connections Layer -->
-          <svg class="network-svg-layer" id="networkSvgCanvas"></svg>
-
-          <!-- Central Orbital Node -->
-          <div class="central-orbital-node" id="centralKennedyNode">
-            <div class="orbital-ring r1"></div>
-            <div class="orbital-ring r2"></div>
-            <i class="fa-solid fa-circle-nodes"></i>
-            <div class="title" style="font-size: 11px; line-height: 1.25; padding: 0 8px;">Desequilibrio urbano por concentración de actividades</div>
-            <div class="hint-badge">Click para expandir</div>
-          </div>
-
-          <!-- Cluster Node 1 -->
-          <div class="cluster-node" data-cluster="1">
-            <span class="cluster-num">EJE 1</span>
-            <span class="cluster-label">Concentración Comercial, Logística e Industrial</span>
-          </div>
-
-          <!-- Cluster Node 2 -->
-          <div class="cluster-node" data-cluster="2">
-            <span class="cluster-num">EJE 2</span>
-            <span class="cluster-label">Colapso de Movilidad y Fricción de Flujos</span>
-          </div>
-
-          <!-- Cluster Node 3 -->
-          <div class="cluster-node" data-cluster="3">
-            <span class="cluster-num">EJE 3</span>
-            <span class="cluster-label">Basuras, Impermeabilización y Degradación Ambiental</span>
-          </div>
-
-          <!-- Glassmorphism Floating Detail Card -->
-          <div class="node-tooltip-card" id="nodeTooltipCard">
-            <div class="tt-header">
-              <i class="fa-solid fa-info-circle"></i>
-              <div class="tt-title">Detalle del Nodo</div>
-            </div>
-            <div class="tt-desc">Haz clic o pasa el cursor sobre los elementos de la red para explorar sus impactos.</div>
-          </div>
-
-        </div>
-
+      <!-- BOTONES DE ACCIÓN REBRANDED -->
+      <div class="flex items-center gap-3">
+        <a href="red-biotica-enjambre-kennedy-v6.xlsx" download class="px-4 py-2 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-600/20 transition flex items-center gap-2">
+          <i class="fa-solid fa-file-excel"></i> DARWIN CORE V6
+        </a>
       </div>
-    </main>
+    </div>
+  </header>
 
-  </div>
+  <!-- PANELES Y SELECTOR DE VISTA -->
+  <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
 
-  <!-- Sub-network Modal for Corabastos Logistics Chain -->
-  <div class="subnetwork-modal" id="subnetworkModal">
-    <div class="subnetwork-modal-header">
-      <div class="modal-title-group">
-        <i class="fa-solid fa-truck-ramp-box"></i>
+    <!-- SECTOR DE CONTROL DE VISTAS (KEPLER vs ANILLO vs DONAS) -->
+    <section class="bg-slate-900/80 border border-slate-800 backdrop-blur rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-2xl">
+      <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto">
+        <button onclick="switchMainTab('kepler')" id="tabKeplerBtn" class="px-4 py-2.5 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+          <i class="fa-solid fa-earth-americas"></i> 🌍 Kepler.gl Geoespacial 3D
+        </button>
+        <button onclick="switchMainTab('chord')" id="tabChordBtn" class="px-4 py-2.5 text-xs font-mono font-bold rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition flex items-center gap-2">
+          <i class="fa-solid fa-circle-nodes"></i> ⭕ Red Anillo Circular
+        </button>
+        <button onclick="switchMainTab('stats')" id="tabStatsBtn" class="px-4 py-2.5 text-xs font-mono font-bold rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie"></i> 📊 Donas & Censo JBB
+        </button>
+      </div>
+
+      <!-- BARRA DE BÚSQUEDA Y FILTRO -->
+      <div class="flex items-center gap-3 w-full md:w-auto">
+        <div class="relative flex-1 md:w-64">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-500 text-xs"></i>
+          <input type="text" id="searchInput" oninput="searchSpecies(this.value)" placeholder="Buscar espécimen en la red..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono">
+        </div>
+        <button onclick="runKnockout()" class="px-3.5 py-2 text-xs font-mono font-bold rounded-xl bg-red-600/90 hover:bg-red-600 text-white shadow-lg shadow-red-600/20 transition whitespace-nowrap">
+          🔥 KNOCK-OUT (SAÚCO)
+        </button>
+      </div>
+    </section>
+
+    <!-- VISTA 1: KEPLER.GL GEOSPATIAL 3D ENGINE -->
+    <section id="viewKepler" class="space-y-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-emerald-500 pl-4">
         <div>
-          <h2>Cadena Logística y Distribución Alimentaria de Corabastos</h2>
-          <p>Red socioecológica-técnica de abastecimiento, intermediación y distribución urbana</p>
+          <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">Kepler.gl / Deck.gl Spatial Core</span>
+          <h2 class="text-2xl font-mono font-bold text-white">Visor Geoespacial 3D · Humedales de Kennedy</h2>
+          <p class="text-xs text-slate-400">MapLibre + DeckGL 3D Arc Layer conectando parches ecológicos, avifauna y ruido vehicular (>75dB).</p>
         </div>
-      </div>
-      <button class="close-subnetwork-btn" id="closeSubnetworkBtn">
-        <i class="fa-solid fa-xmark"></i> Cerrar Sub-Red
-      </button>
-    </div>
 
-    <div class="subnetwork-stage" id="subnetworkStage" style="height: 520px; position: relative;">
-      <svg class="subnetwork-svg" id="subnetworkSvgCanvas"></svg>
-
-      <!-- Columna 1 (Izquierda): Agricultores & Consumidores -->
-      <div class="sub-col" id="col-1-top" style="position: absolute; left: 40px; top: 110px;">
-        <div class="sub-node-box node-green" id="sn-agricultores">
-          <i class="fa-solid fa-tractor"></i> Agricultores
+        <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl p-1.5 text-xs font-mono">
+          <button onclick="setMapPitch(45)" class="px-3 py-1 rounded-lg bg-slate-800 text-emerald-400 hover:bg-slate-700">3D Tilt (45°)</button>
+          <button onclick="setMapPitch(0)" class="px-3 py-1 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">2D Flat</button>
         </div>
       </div>
 
-      <div class="sub-col" id="col-1-bottom" style="position: absolute; left: 40px; top: 320px;">
-        <div class="sub-node-box node-green" id="sn-consumidores" style="padding: 12px 24px;">
-          <i class="fa-solid fa-users"></i> Consumidores
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- MAPA 3D STAGE -->
+        <div class="lg:col-span-3">
+          <div id="keplerMapContainer">
+            <div id="mapDeckCanvas"></div>
+            <!-- LEGEND OVERLAY -->
+            <div class="absolute bottom-4 left-4 bg-slate-950/90 backdrop-blur border border-slate-800 p-3.5 rounded-xl text-[11px] font-mono space-y-1.5 z-10 shadow-2xl">
+              <div class="font-bold text-white mb-1">Capas Arc 3D (Kepler.gl):</div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Flora Nativa Hubs</div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-cyan-400"></span> Rutas Avifauna & Agua</div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-purple-500"></span> Bio-Conexión Trófica</div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-500"></span> Perturbación Acústica (>75dB)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL DE CONTROL KEPLER -->
+        <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-5">
+          <h3 class="text-sm font-mono font-bold text-white border-b border-slate-800 pb-2 flex items-center justify-between">
+            <span>Control de Capas</span>
+            <i class="fa-solid fa-sliders text-emerald-400"></i>
+          </h3>
+
+          <div class="space-y-3 text-xs font-mono text-slate-300">
+            <label class="flex items-center justify-between bg-slate-950/60 p-3 rounded-xl border border-slate-800 cursor-pointer">
+              <span>Arcos de Migración (3D)</span>
+              <input type="checkbox" id="chkArcs" checked onchange="updateKeplerLayers()" class="accent-emerald-500 w-4 h-4">
+            </label>
+            <label class="flex items-center justify-between bg-slate-950/60 p-3 rounded-xl border border-slate-800 cursor-pointer">
+              <span>Heatmap de Ruido (>75dB)</span>
+              <input type="checkbox" id="chkHeatmap" checked onchange="updateKeplerLayers()" class="accent-red-500 w-4 h-4">
+            </label>
+            <label class="flex items-center justify-between bg-slate-950/60 p-3 rounded-xl border border-slate-800 cursor-pointer">
+              <span>Nodos Hubs Ecosistémicos</span>
+              <input type="checkbox" id="chkScatter" checked onchange="updateKeplerLayers()" class="accent-cyan-400 w-4 h-4">
+            </label>
+          </div>
+
+          <div class="bg-emerald-950/40 border border-emerald-500/30 p-3.5 rounded-xl text-xs space-y-1 font-mono">
+            <span class="font-bold text-emerald-400 block">Ubicación Georeferenciada:</span>
+            <p class="text-slate-300">Humedal El Burro: 4.628° N, -74.155° W</p>
+            <p class="text-slate-300">Humedal La Vaca: 4.621° N, -74.161° W</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 2: RED EN ANILLO CIRCULAR (CHORD DIAGRAM) -->
+    <section id="viewChord" class="space-y-4 hidden">
+      <div class="border-l-4 border-purple-500 pl-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono font-bold text-purple-400 uppercase tracking-widest">Relaciones Tróficas & Perturbación</span>
+          <h2 class="text-2xl font-mono font-bold text-white">Anillo Circular Ecosistémico (Chord Diagram)</h2>
+          <p class="text-xs text-slate-400">Haz clic en cualquier nodo para encender el fondo negro (#000000) e aislar su subred egocéntrica.</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="setLayout('circular')" id="btnCircular" class="px-3 py-1.5 text-xs font-mono font-semibold rounded-lg bg-purple-600 text-white shadow">⭕ Círculo</button>
+          <button onclick="setLayout('organic')" id="btnOrganic" class="px-3 py-1.5 text-xs font-mono font-semibold rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">🌌 Orgánico</button>
         </div>
       </div>
 
-      <!-- Columna 2 (Centro): 3 Transportes arriba & 5 Canales abajo -->
-      <div class="sub-col" id="col-2-top" style="position: absolute; left: 240px; top: 40px; gap: 14px;">
-        <div class="sub-node-box node-green" id="sn-acopiadores">
-          <i class="fa-solid fa-truck-pickup"></i> Mayoristas, Acopiadores rurales
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div class="lg:col-span-3 relative">
+          <div id="mynetwork"></div>
+          <div id="alertBanner" class="hidden absolute top-4 left-4 right-4 bg-red-950/95 border border-red-500 text-red-200 p-4 rounded-xl text-xs font-semibold backdrop-blur animate-pulse shadow-2xl">
+            <div class="flex items-center justify-between">
+              <span>⚠️ ALERTA DE FRAGILIDAD SÉPTICA: Al eliminar los nodos vegetales Hub (Saúco/Capulí), la Tingua Bogotana y el Cucarachero de Pantano pierden el 80% de su soporte trófico y refugio ("Colgando de un Hilo").</span>
+              <button onclick="resetIsolation()" class="ml-4 underline text-red-400 text-xs">Cerrar</button>
+            </div>
+          </div>
         </div>
-        <div class="sub-node-box node-green" id="sn-contrata-transporte">
-          <i class="fa-solid fa-truck-moving"></i> Contrata un transporte
-        </div>
-        <div class="sub-node-box node-green" id="sn-transporte-propio">
-          <i class="fa-solid fa-truck-front"></i> Transporte Propio
+
+        <!-- TARJETA LATERAL ESPÉCIMEN -->
+        <div id="nodeDetailCard" class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl space-y-4 max-h-[740px] overflow-y-auto custom-scrollbar">
+          <h3 class="text-sm font-mono font-bold text-white border-b border-slate-800 pb-2 flex items-center justify-between">
+            <span>Ficha del Espécimen</span>
+            <i class="fa-solid fa-leaf text-emerald-400"></i>
+          </h3>
+          <div id="cardContent" class="text-xs text-slate-400 space-y-4">
+            <p class="italic">Selecciona un nodo del mapa para ver la foto real en vivo, su nombre científico, rol en Kennedy y reglas condicionales ABM.</p>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="sub-col" id="col-2-bottom" style="position: absolute; left: 260px; top: 210px; gap: 8px;">
-        <div class="sub-node-box node-green" id="sn-tiendas">
-          <i class="fa-solid fa-store"></i> Tiendas / Microempresas
-        </div>
-        <div class="sub-node-box node-green" id="sn-supermercados">
-          <i class="fa-solid fa-cart-shopping"></i> Supermercados
-        </div>
-        <div class="sub-node-box node-green" id="sn-plazas">
-          <i class="fa-solid fa-truck-ramp-box"></i> Comercializadores/Distribuidores Plazas
-        </div>
-        <div class="sub-node-box node-green" id="sn-institucionales">
-          <i class="fa-solid fa-building"></i> Clientes Institucionales
-        </div>
-        <div class="sub-node-box node-green" id="sn-agroalimentarias">
-          <i class="fa-solid fa-industry"></i> Empresas Agroalimentarias
-        </div>
+    <!-- VISTA 3: DONAS & CENSO JBB -->
+    <section id="viewStats" class="space-y-6 hidden">
+      <div class="border-l-4 border-emerald-500 pl-4">
+        <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest">Acto I · Matriz Ecosistémica</span>
+        <h2 class="text-2xl font-mono font-bold text-white">Síntesis Estadística (Del Risco et al., 2022)</h2>
+        <p class="text-xs text-slate-400">Distribución de interacciones, reinos taxonómicos y orígenes de evidencia científica.</p>
       </div>
 
-      <!-- Columna 3 (Derecha): Mayoristas Corabastos arriba & Otros Mayoristas abajo -->
-      <div class="sub-col" id="col-3-top" style="position: absolute; left: 630px; top: 90px;">
-        <div class="sub-node-box node-green highlight-corabastos" id="sn-mayoristas-corabastos">
-          <i class="fa-solid fa-truck"></i> Mayoristas Corabastos
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
+          <h3 class="text-xs font-mono font-semibold text-slate-300 text-center mb-3">Tipos de Interacción (%)</h3>
+          <canvas id="chartInteracciones"></canvas>
+        </div>
+        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
+          <h3 class="text-xs font-mono font-semibold text-slate-300 text-center mb-3">Composición por Reinos (%)</h3>
+          <canvas id="chartReinos"></canvas>
+        </div>
+        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
+          <h3 class="text-xs font-mono font-semibold text-slate-300 text-center mb-3">Origen de Evidencia (%)</h3>
+          <canvas id="chartFuentes"></canvas>
         </div>
       </div>
+    </section>
 
-      <div class="sub-col" id="col-3-bottom" style="position: absolute; left: 630px; top: 320px;">
-        <div class="sub-node-box node-green" id="sn-otros-mayoristas">
-          <i class="fa-solid fa-truck-fast"></i> Otros Mayoristas Corabastos
+    <!-- ACTO IV: REGLAS ABM -->
+    <section id="acto4" class="space-y-6">
+      <div class="border-l-4 border-blue-500 pl-4">
+        <span class="text-xs font-mono font-bold text-blue-400 uppercase tracking-widest">Acto IV · Simulación de Enjambres</span>
+        <h2 class="text-2xl font-mono font-bold text-white">Inteligencia de Enjambre (Reglas ABM)</h2>
+        <p class="text-xs text-slate-400">Traducción de la red relacional en vectores de Atracción y Repulsión para NetLogo / Python Mesa.</p>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl overflow-x-auto shadow-2xl">
+        <table class="w-full text-left text-xs font-mono text-slate-300">
+          <thead class="text-slate-400 uppercase bg-slate-950/60 border-b border-slate-800">
+            <tr>
+              <th class="p-3">Tipo de Agente</th>
+              <th class="p-3">Entidad / Especie</th>
+              <th class="p-3">Regla de Atracción (Vector A)</th>
+              <th class="p-3">Regla de Repulsión (Vector R)</th>
+              <th class="p-3">Efecto Emergente Ecosistémico</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60">
+            <tr>
+              <td class="p-3 font-bold text-blue-400">Agente Móvil (Avifauna)</td>
+              <td class="p-3 italic">Rallus semiplumbeus (Tingua bogotana)</td>
+              <td class="p-3">Busca parches de Schoenoplectus / Typha con NDWI hídrico activo.</td>
+              <td class="p-3 text-red-400">Evita zonas con ruido >75 dB(A) y NDBI >70%. Tasa de huida = +85%.</td>
+              <td class="p-3">Concentración en parches núcleo; aislamiento del canal Av. Cali.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-emerald-400">Agente Fijo (Flora Hub)</td>
+              <td class="p-3 italic">Sambucus nigra (Saúco)</td>
+              <td class="p-3">Emite pulso de recurso trófico (frutos/néctar) en radio de 50m.</td>
+              <td class="p-3 text-amber-400">Sufre desecación si la Isla de Calor LST supera los 32°C.</td>
+              <td class="p-3">Soporta la mayor centralidad de grado del enjambre silvestre.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-bold text-teal-400">Agente Biótico (Microbio)</td>
+              <td class="p-3 italic">Nitrosomonas europaea</td>
+              <td class="p-3">Transforma amonio residual en nitrito en el biofiltro de La Vaca.</td>
+              <td class="p-3 text-red-400">Inhibida por presencia de plásticos inorgánicos o metales pesados.</td>
+              <td class="p-3">Mantiene la capacidad de depuración hídrica del humedal.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    let network = null;
+    let nodesDataset = null;
+    let edgesDataset = null;
+    let fullData = null;
+    let activeNodeId = null;
+    let deckInstance = null;
+    let maplibreMap = null;
+
+    const defaultImages = {
+      'Plantae': 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=300',
+      'Animalia': 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=300',
+      'Abiotico': 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=300',
+      'Microorganismos': 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=300'
+    };
+
+    const edgeColors = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#F97316'];
+
+    fetch('data-red-kennedy.json')
+      .then(res => res.json())
+      .then(data => {
+        fullData = data;
+        initCharts(data.statistics_charts || {});
+        initNetwork(data.nodes || [], data.edges || []);
+        initKeplerMap();
+      })
+      .catch(err => {
+        console.error("Error cargando JSON:", err);
+      });
+
+    /* ================= KEPLER.GL / DECK.GL ENGINE ================= */
+    function initKeplerMap() {
+      const initialViewState = {
+        longitude: -74.155,
+        latitude: 4.628,
+        zoom: 13.5,
+        pitch: 45,
+        bearing: -15
+      };
+
+      maplibreMap = new maplibregl.Map({
+        container: 'mapDeckCanvas',
+        style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+        center: [-74.155, 4.628],
+        zoom: 13.5,
+        pitch: 45,
+        interactive: false
+      });
+
+      const arcData = [
+        { from: [-74.155, 4.628], to: [-74.161, 4.621], color: [16, 185, 129] },
+        { from: [-74.155, 4.628], to: [-74.148, 4.635], color: [168, 85, 247] },
+        { from: [-74.145, 4.625], to: [-74.155, 4.628], color: [239, 68, 68] },
+        { from: [-74.161, 4.621], to: [-74.150, 4.618], color: [6, 182, 212] }
+      ];
+
+      const scatterData = [
+        { position: [-74.155, 4.628], name: "Humedal El Burro", radius: 250, color: [16, 185, 129] },
+        { position: [-74.161, 4.621], name: "Humedal La Vaca", radius: 200, color: [6, 182, 212] },
+        { position: [-74.148, 4.635], name: "Humedal Techo", radius: 180, color: [168, 85, 247] },
+        { position: [-74.145, 4.625], name: "Corredor Av. Cali (>75dB)", radius: 300, color: [239, 68, 68] }
+      ];
+
+      deckInstance = new deck.DeckGL({
+        container: 'mapDeckCanvas',
+        initialViewState: initialViewState,
+        controller: true,
+        onViewStateChange: ({viewState}) => {
+          maplibreMap.jumpTo({
+            center: [viewState.longitude, viewState.latitude],
+            zoom: viewState.zoom,
+            bearing: viewState.bearing,
+            pitch: viewState.pitch
+          });
+        },
+        layers: [
+          new deck.ArcLayer({
+            id: 'arcs-layer',
+            data: arcData,
+            getSourcePosition: d => d.from,
+            getTargetPosition: d => d.to,
+            getSourceColor: d => d.color,
+            getTargetColor: d => d.color,
+            getWidth: 4
+          }),
+          new deck.ScatterplotLayer({
+            id: 'scatterplot-layer',
+            data: scatterData,
+            getPosition: d => d.position,
+            getFillColor: d => [...d.color, 180],
+            getRadius: d => d.radius,
+            pickable: true
+          })
+        ]
+      });
+    }
+
+    function setMapPitch(pitch) {
+      if (deckInstance) {
+        deckInstance.setProps({
+          initialViewState: {
+            longitude: -74.155,
+            latitude: 4.628,
+            zoom: 13.5,
+            pitch: pitch,
+            bearing: pitch > 0 ? -15 : 0
+          }
+        });
+      }
+    }
+
+    function updateKeplerLayers() {
+      const showArcs = document.getElementById('chkArcs').checked;
+      const showScatter = document.getElementById('chkScatter').checked;
+
+      const layers = [];
+      if (showArcs) {
+        layers.push(new deck.ArcLayer({
+          id: 'arcs-layer',
+          data: [
+            { from: [-74.155, 4.628], to: [-74.161, 4.621], color: [16, 185, 129] },
+            { from: [-74.155, 4.628], to: [-74.148, 4.635], color: [168, 85, 247] },
+            { from: [-74.145, 4.625], to: [-74.155, 4.628], color: [239, 68, 68] }
+          ],
+          getSourcePosition: d => d.from,
+          getTargetPosition: d => d.to,
+          getSourceColor: d => d.color,
+          getTargetColor: d => d.color,
+          getWidth: 4
+        }));
+      }
+      if (showScatter) {
+        layers.push(new deck.ScatterplotLayer({
+          id: 'scatterplot-layer',
+          data: [
+            { position: [-74.155, 4.628], color: [16, 185, 129], radius: 250 },
+            { position: [-74.161, 4.621], color: [6, 182, 212], radius: 200 },
+            { position: [-74.148, 4.635], color: [168, 85, 247], radius: 180 }
+          ],
+          getPosition: d => d.position,
+          getFillColor: d => [...d.color, 180],
+          getRadius: d => d.radius
+        }));
+      }
+      deckInstance.setProps({ layers });
+    }
+
+    /* ================= TAB SWITCHER ================= */
+    function switchMainTab(tab) {
+      document.getElementById('viewKepler').classList.add('hidden');
+      document.getElementById('viewChord').classList.add('hidden');
+      document.getElementById('viewStats').classList.add('hidden');
+
+      document.getElementById('tabKeplerBtn').className = 'px-4 py-2.5 text-xs font-mono font-bold rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition flex items-center gap-2';
+      document.getElementById('tabChordBtn').className = 'px-4 py-2.5 text-xs font-mono font-bold rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition flex items-center gap-2';
+      document.getElementById('tabStatsBtn').className = 'px-4 py-2.5 text-xs font-mono font-bold rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition flex items-center gap-2';
+
+      if (tab === 'kepler') {
+        document.getElementById('viewKepler').classList.remove('hidden');
+        document.getElementById('tabKeplerBtn').className = 'px-4 py-2.5 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow-lg shadow-emerald-500/20 flex items-center gap-2';
+      } else if (tab === 'chord') {
+        document.getElementById('viewChord').classList.remove('hidden');
+        document.getElementById('tabChordBtn').className = 'px-4 py-2.5 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/20 flex items-center gap-2';
+        if (network) network.fit();
+      } else if (tab === 'stats') {
+        document.getElementById('viewStats').classList.remove('hidden');
+        document.getElementById('tabStatsBtn').className = 'px-4 py-2.5 text-xs font-mono font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/20 flex items-center gap-2';
+      }
+    }
+
+    /* ================= VISNETWORK CHORD ENGINE ================= */
+    function initNetwork(nodes, edges) {
+      const container = document.getElementById('mynetwork');
+      const radius = 350;
+      const total = nodes.length;
+
+      const formattedNodes = nodes.map((n, i) => {
+        const angle = (2 * Math.PI * i) / total;
+        const x = radius * Math.cos(angle);
+        const y = radius * Math.sin(angle);
+        const imgUrl = n.image_url || defaultImages[n.group] || defaultImages['Plantae'];
+
+        return {
+          id: n.id,
+          label: n.label,
+          group: n.group,
+          shape: 'circularImage',
+          image: imgUrl,
+          x: x,
+          y: y,
+          size: n.is_hub ? 34 : 22,
+          color: { border: n.color || (n.is_hub ? '#10B981' : '#3B82F6'), background: '#0D1B2A' },
+          font: { color: '#F8FAFC', size: 10, face: 'Space Grotesk', background: '#0F172AEE' }
+        };
+      });
+
+      const formattedEdges = edges.map((e, idx) => ({
+        ...e,
+        smooth: { type: 'curvedCW', roundness: 0.25 },
+        width: e.weight ? Math.min(e.weight, 4) : 1.5,
+        color: { color: e.color || edgeColors[idx % edgeColors.length], highlight: '#A855F7', hover: '#38BDF8' }
+      }));
+
+      nodesDataset = new vis.DataSet(formattedNodes);
+      edgesDataset = new vis.DataSet(formattedEdges);
+
+      const options = {
+        nodes: { borderWidth: 2, shadow: true },
+        edges: { smooth: { type: 'curvedCW', roundness: 0.25 } },
+        physics: { enabled: false },
+        interaction: { hover: true, zoomView: true, dragView: true, dragNodes: true }
+      };
+
+      network = new vis.Network(container, { nodes: nodesDataset, edges: edgesDataset }, options);
+
+      network.on("click", function (params) {
+        if (params.nodes.length > 0) {
+          const selectedId = params.nodes[0];
+          activeNodeId = selectedId;
+          isolateSubnetwork(selectedId);
+          showNodeCard(selectedId);
+          network.focus(selectedId, { scale: 1.2, animation: { duration: 500 } });
+        } else {
+          resetIsolation();
+        }
+      });
+    }
+
+    function isolateSubnetwork(nodeId) {
+      const container = document.getElementById('mynetwork');
+      container.classList.add('isolated');
+
+      const connectedNodes = network.getConnectedNodes(nodeId);
+      connectedNodes.push(nodeId);
+
+      const allNodes = nodesDataset.get();
+      const updatedNodes = allNodes.map(n => {
+        if (connectedNodes.includes(n.id)) {
+          return { ...n, opacity: 1, font: { color: '#A855F7', size: 12 } };
+        } else {
+          return { ...n, opacity: 0.08, font: { color: '#334155', size: 8 } };
+        }
+      });
+
+      nodesDataset.update(updatedNodes);
+    }
+
+    function resetIsolation() {
+      activeNodeId = null;
+      const container = document.getElementById('mynetwork');
+      container.classList.remove('isolated');
+      document.getElementById('alertBanner').classList.add('hidden');
+
+      const allNodes = nodesDataset.get().map(n => ({
+        ...n,
+        opacity: 1,
+        font: { color: '#F8FAFC', size: 10 }
+      }));
+      nodesDataset.update(allNodes);
+      network.fit({ animation: { duration: 500 } });
+    }
+
+    function showNodeCard(nodeId) {
+      const nodeObj = fullData.nodes.find(n => n.id === nodeId);
+      if (!nodeObj) return;
+
+      const card = document.getElementById('cardContent');
+      const imgUrl = nodeObj.image_url || defaultImages[nodeObj.group] || defaultImages['Plantae'];
+      card.innerHTML = `
+        <div class="relative overflow-hidden rounded-xl border border-slate-700 shadow-xl group">
+          <img src="${imgUrl}" alt="${nodeObj.label}" class="w-full h-44 object-cover transform group-hover:scale-105 transition duration-500">
+          <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950 to-transparent p-3">
+            <span class="px-2 py-0.5 text-[10px] font-mono uppercase font-bold rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">${nodeObj.group}</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Texto flotante en la brecha intermedia -->
-      <div class="subnetwork-note" style="position: absolute; left: 540px; top: 295px; width: 140px; font-size: 10px; color: #a0aec0; line-height: 1.2; text-align: center; font-style: italic;">
-        Dependiendo del producto y condiciones de oferta y demanda
-      </div>
+        <div>
+          <h4 class="text-base font-mono font-bold text-white">${nodeObj.label}</h4>
+          <p class="text-xs text-emerald-400 italic">${nodeObj.scientific_name || nodeObj.category || ''}</p>
+        </div>
 
-    </div>
-  </div>
+        <div class="bg-slate-800/70 p-3 rounded-xl border border-slate-700 space-y-2 text-xs font-mono">
+          <p><span class="font-bold text-slate-300">Ubicación:</span> ${nodeObj.location || 'Humedales El Burro, La Vaca y Techo'}</p>
+          <p><span class="font-bold text-slate-300">Centralidad:</span> <span class="text-amber-400 font-bold">${nodeObj.centrality_degree || 5}</span></p>
+          <p><span class="font-bold text-slate-300">Rol Biótico:</span> ${nodeObj.ecosystem_role || nodeObj.description || 'Elemento clave en la matriz hídrica.'}</p>
+        </div>
+      `;
+    }
 
-  <!-- Scripts -->
-  <script src="js/sidebar.js"></script>
-  <script src="js/kennedy-network.js"></script>
+    function searchSpecies(query) {
+      if (!query.trim()) {
+        resetIsolation();
+        return;
+      }
+      const q = query.toLowerCase();
+      const match = fullData.nodes.find(n => n.label.toLowerCase().includes(q) || (n.scientific_name && n.scientific_name.toLowerCase().includes(q)));
+      if (match) {
+        switchMainTab('chord');
+        activeNodeId = match.id;
+        isolateSubnetwork(match.id);
+        showNodeCard(match.id);
+        network.focus(match.id, { scale: 1.3, animation: true });
+      }
+    }
+
+    function runKnockout() {
+      switchMainTab('chord');
+      document.getElementById('alertBanner').classList.remove('hidden');
+      isolateSubnetwork('sambucus_nigra');
+      network.focus('sambucus_nigra', { scale: 1.4, animation: true });
+    }
+
+    function setLayout(mode) {
+      if (mode === 'circular') {
+        const radius = 350;
+        const allNodes = nodesDataset.get();
+        const total = allNodes.length;
+        const updatedNodes = allNodes.map((n, i) => {
+          const angle = (2 * Math.PI * i) / total;
+          return { id: n.id, x: radius * Math.cos(angle), y: radius * Math.sin(angle) };
+        });
+        nodesDataset.update(updatedNodes);
+        network.setOptions({ physics: { enabled: false } });
+        network.fit();
+      } else {
+        network.setOptions({ physics: { enabled: true, forceAtlas2Based: { gravitationalConstant: -60, centralGravity: 0.01, springLength: 130 } } });
+      }
+    }
+
+    function initCharts(stats) {
+      const interData = stats.interaction_types || stats.interactions_percentage || {};
+      if (Object.keys(interData).length > 0) {
+        new Chart(document.getElementById('chartInteracciones'), {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(interData),
+            datasets: [{ data: Object.values(interData), backgroundColor: ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444'] }]
+          },
+          options: { plugins: { legend: { labels: { color: '#94A3B8', font: { size: 9 } } } } }
+        });
+      }
+
+      const kingdomData = stats.taxonomic_kingdoms || stats.kingdoms_percentage || {};
+      if (Object.keys(kingdomData).length > 0) {
+        new Chart(document.getElementById('chartReinos'), {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(kingdomData),
+            datasets: [{ data: Object.values(kingdomData), backgroundColor: ['#059669', '#2563EB', '#0D9488', '#E11D48'] }]
+          },
+          options: { plugins: { legend: { labels: { color: '#94A3B8', font: { size: 9 } } } } }
+        });
+      }
+
+      const sourceData = stats.data_sources || stats.evidence_sources_percentage || {};
+      if (Object.keys(sourceData).length > 0) {
+        new Chart(document.getElementById('chartFuentes'), {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(sourceData),
+            datasets: [{ data: Object.values(sourceData), backgroundColor: ['#6366F1', '#8B5CF6', '#EC4899', '#14B8A6'] }]
+          },
+          options: { plugins: { legend: { labels: { color: '#94A3B8', font: { size: 9 } } } } }
+        });
+      }
+    }
+
+    function scrollToAct(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
 </body>
 </html>
