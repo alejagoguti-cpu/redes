@@ -6,6 +6,7 @@ on:
     paths:
       - "modules/network-02/build_web_data.py"
       - ".github/workflows/build-ribb-data.yml"
+      - "modules/network-02/build_taxon_images.py"
 permissions:
   contents: write
 jobs:
@@ -16,17 +17,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install openpyxl
+      - run: pip install openpyxl pillow
       - name: Download official RIBB workbook
         run: |
           mkdir -p assets/data
           curl -L --fail --retry 3 "https://redbiotica.jbb.gov.co/data/RIBB_v2024-12-30.xlsx" -o assets/data/RIBB_v2024-12-30.xlsx
       - name: Build compact web dataset
         run: python modules/network-02/build_web_data.py assets/data/RIBB_v2024-12-30.xlsx assets/data/ribb_web.json
+      - name: Build local taxon image cache
+        run: python modules/network-02/build_taxon_images.py
       - name: Commit generated dataset
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/data/ribb_web.json
+          git add assets/data/ribb_web.json assets/data/taxon_images.json assets/taxa
           git commit -m "data: actualizar dataset web RIBB" || exit 0
           git push
