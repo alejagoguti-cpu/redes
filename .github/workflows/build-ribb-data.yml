@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install openpyxl networkx numpy
+      - run: pip install openpyxl networkx numpy scipy
       - name: Download official RIBB workbook
         run: |
           mkdir -p assets/data
