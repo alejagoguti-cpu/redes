@@ -191,6 +191,7 @@ const state={
   focus:null, yaw:0.35,pitch:-0.16,zoom:1,auto:true,labels:false
 };
 const sceneAnim={alpha:1,targetAlpha:1,zoomBoost:0,targetZoomBoost:0,spin:0,targetSpin:0,busy:false,pending:null,lastApplied:null};
+const neonState={groups:new Set(),interaction:null,strength:0,targetStrength:0};
 
 let DATA=null,visible=[],nodes=[],nodeMap=new Map(),edgeScreen=[];
 let canvas=document.querySelector("#swarm"),ctx=canvas.getContext("2d"),tooltip=document.querySelector("#tooltip");
@@ -396,8 +397,11 @@ function draw(){
     const dim=state.focus&&!hot;
     const depth=(a.z+b.z)/2;
     ctx.globalAlpha=dim?.012:(hot?.9:Math.max(.035,.10+(depth+1)*.035));
+    const edgeNeon=(neonState.interaction&&r.title===neonState.interaction)||(!neonState.interaction&&(neonState.groups.has(ecoGroup(r.s))||neonState.groups.has(ecoGroup(r.t))));
     ctx.strokeStyle=COLORS[r.title]||"#8b8f88";
-    ctx.lineWidth=hot?2.2:Math.max(.35,.65+(depth*.18));
+    ctx.shadowColor=edgeNeon?(COLORS[r.title]||"#8b8f88"):"transparent";
+    ctx.shadowBlur=edgeNeon?12*neonState.strength:0;
+    ctx.lineWidth=edgeNeon?Math.max(1.4,2.2*neonState.strength):(hot?2.2:Math.max(.35,.65+(depth*.18)));
     ctx.setLineDash(linePattern(r.q));
     ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
     edgeScreen.push({r,a,b});
@@ -436,10 +440,14 @@ function draw(){
     ctx.restore();
 
     ctx.globalAlpha=dim?.08:1;
+    const nodeNeon=neonState.groups.has(ecoGroup(n.id));
     ctx.strokeStyle=hot?"#1f3d25":(ECO_COLORS[ecoGroup(n.id)]||"rgba(255,255,255,.96)");
-    ctx.lineWidth=hot?3:Math.max(1,1.2*p.scale);
+    ctx.shadowColor=nodeNeon?(ECO_COLORS[ecoGroup(n.id)]||"#8fd3a8"):"transparent";
+    ctx.shadowBlur=nodeNeon?18*neonState.strength:0;
+    ctx.lineWidth=nodeNeon?Math.max(2,3*neonState.strength):(hot?3:Math.max(1,1.2*p.scale));
     ctx.beginPath();ctx.arc(p.x,p.y,radius,0,Math.PI*2);ctx.stroke();
 
+    ctx.shadowBlur=0;ctx.shadowColor="transparent";
     if(hot||state.labels){
       ctx.globalAlpha=hot?1:.72;
       ctx.fillStyle="#253025";
@@ -459,6 +467,7 @@ function animate(now){
   sceneAnim.alpha+=(sceneAnim.targetAlpha-sceneAnim.alpha)*ease;
   sceneAnim.zoomBoost+=(sceneAnim.targetZoomBoost-sceneAnim.zoomBoost)*ease;
   sceneAnim.spin+=(sceneAnim.targetSpin-sceneAnim.spin)*ease;
+  neonState.strength+=(neonState.targetStrength-neonState.strength)*ease;
   state.yaw+=sceneAnim.spin*dt*.0005;
   draw();
   raf=requestAnimationFrame(animate);
@@ -788,9 +797,14 @@ function handleNetworkMessage(m){
   if(!m||typeof m!=="object")return;
   if(!networkDataReady){pendingNetworkMessages.push(m);return}
   if(m.type==="setEco")animateSceneChange(()=>applyEcoSet(m.groups),"eco:"+JSON.stringify(m.groups));
+  if(m.type==="setNeon"){
+    neonState.groups=new Set((m.groups||[]).filter(k=>ECO_LABELS[k]));
+    neonState.interaction=m.interaction||null;
+    neonState.targetStrength=(neonState.groups.size||neonState.interaction)?1:0;
+  }
   if(m.type==="setInteraction"){const v=m.value||"ALL";animateSceneChange(()=>{state.interaction=v;const sel=document.querySelector("#interaction");if(sel)sel.value=state.interaction;state.focus=null;rebuild()},"interaction:"+v)}
   if(m.type==="setQuality"){const v=m.value||"ALL";animateSceneChange(()=>{state.quality=v;state.focus=null;rebuild()},"quality:"+v)}
-  if(m.type==="resetNetwork")animateSceneChange(()=>resetNetworkState(),"reset");
+  if(m.type==="resetNetwork"){neonState.groups.clear();neonState.interaction=null;neonState.targetStrength=0;animateSceneChange(()=>resetNetworkState(),"reset");}
   if(m.type==="focusTaxon"||m.type==="openTaxon"){
     const n=nodeMap.get(m.taxon)||DATA?.nodeById?.get(m.taxon);
     if(n){state.focus=n.id;if(m.type==="openTaxon")openNode(n);else draw()}
