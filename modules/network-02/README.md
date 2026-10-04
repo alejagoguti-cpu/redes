@@ -1,12 +1,12 @@
 # Network 02 · Interacciones bióticas
 
-Este módulo prepara la base de datos para construir la primera red de interacciones entre especies del área de estudio.
+Este módulo prepara la base RIBB para construir la primera red de interacciones entre especies del área de estudio.
 
 ## Estructura respetada
 
 - `modules/network-01/`: se conserva sin cambios.
-- `modules/network-02/`: contiene el procesamiento específico de interacciones bióticas.
-- `assets/data/`: conserva la función prevista en el README raíz para datasets y salidas procesadas.
+- `modules/network-02/`: procesamiento y lógica de imágenes de interacciones bióticas.
+- `assets/data/`: base original y salidas derivadas.
 
 ## Base
 
@@ -18,41 +18,42 @@ Archivo esperado:
 assets/data/RIBB_v2024-12-30.xlsx
 ```
 
-El archivo original no se modifica.
+El original no se modifica.
 
 ## Procesamiento
-
-Ejecutar desde la raíz del repositorio:
 
 ```bash
 python modules/network-02/process_ribb.py
 ```
 
-Requiere Python 3 y `openpyxl`.
+Genera:
 
-El script genera:
+- `ribb_interacciones.csv`
+- `ribb_fuentes_calidad.csv`
+- `ribb_especies.csv`
+- `ribb_especies.json`
+- `ribb_resumen.json`
 
-- `assets/data/ribb_registros_limpios.csv`
-- `assets/data/ribb_fuentes_calidad.csv`
-- `assets/data/ribb_interacciones.csv`
-- `assets/data/ribb_resumen.json`
+El procesador lee las referencias 1–9 de cada registro, incluidas fechas, coordenadas y campos multimedia.
+
+## Especies e imágenes
+
+RIBB mezcla especies con taxones superiores. El catálogo marca `especie_probable` para evitar presentar categorías como `Insecta`, `Fungi` o `Bryophyta` como si fueran especies.
+
+Toda especie que se muestre como nodo o ficha debe tener una imagen específica. La resolución se hace al entrar en pantalla para no lanzar miles de solicitudes simultáneas:
+
+1. imagen ya registrada en los datos del proyecto;
+2. iNaturalist por nombre científico;
+3. Wikimedia Commons como respaldo.
+
+La fuente y atribución de la imagen deben conservarse en la ficha. Si no se puede resolver una imagen específica con confianza, la especie no entra a la visualización final hasta revisión; no se reemplaza por una foto genérica.
 
 ## Fuentes y calidad
 
-Cada registro conserva la referencia original disponible en RIBB y añade:
+La calidad es **completitud documental**, no veracidad ecológica:
 
-- fecha del registro, cuando existe;
-- localización, cuando existe;
-- fuente base oficial;
-- indicador de pertenencia textual al área de Kennedy;
-- nivel de calidad documental.
+- **Alta**: al menos 5 de 6 campos clave completos y referencia presente.
+- **Media**: al menos 4 de 6 campos clave completos y referencia presente.
+- **Baja**: menos de 4 campos o referencia ausente.
 
-La calidad se interpreta como **completitud de metadatos**, no como una validación de la veracidad ecológica del registro.
-
-- **Alta**: referencia, ambos taxones e interacción presentes, y al menos 5 de 6 campos clave completos.
-- **Media**: referencia presente y al menos 4 de 6 campos clave completos.
-- **Baja**: referencia ausente o menos de 4 campos clave completos.
-
-## Importante
-
-El filtro `en_area_kennedy` es una primera aproximación textual. Antes de usarlo como evidencia espacial final debe revisarse contra localidades, coordenadas o capas GIS disponibles.
+Campos: taxón 1, taxón 2, interacción, referencia, localización/coordenadas y fecha.
