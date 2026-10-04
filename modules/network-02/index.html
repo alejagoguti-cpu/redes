@@ -96,6 +96,33 @@ td{font-size:12px;line-height:1.45;color:#555f57}
 .sticky-progress a{width:7px;height:7px;border-radius:50%;background:#b7c0b8;border:1px solid #fff;box-shadow:0 0 0 1px #cfd5cf}
 .sticky-progress a:hover{background:var(--green)}
 .footer{padding:34px 7vw 48px;background:#152019;color:#dce5dd;font-size:11px;display:flex;justify-content:space-between;gap:20px}
+
+.interactive{cursor:pointer;transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease}
+.interactive:hover{transform:translateY(-3px);border-color:#afbbb0;box-shadow:0 12px 30px rgba(30,40,32,.07)}
+.interactive:focus-visible{outline:3px solid rgba(52,89,71,.22);outline-offset:3px}
+.interactive.active{border-color:var(--green);background:#f0f4ef;box-shadow:0 0 0 2px rgba(52,89,71,.08)}
+.inspector{margin-top:18px;border:1px solid var(--line);border-radius:16px;background:#fff;padding:20px;display:grid;grid-template-columns:150px 1fr;gap:22px;align-items:start;min-height:120px}
+.inspector-kicker{font:700 10px/1.4 "Space Grotesk",sans-serif;color:var(--green);letter-spacing:.08em;text-transform:uppercase}
+.inspector h3{margin:0 0 7px;font-size:19px}.inspector p{margin:0;color:#5f685f;font-size:12px;line-height:1.55}
+.layer-summary{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap}
+.layer-token{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:9px;color:#657066}
+.layer-token.on{background:#e9efe9;color:#2f513b;border-color:#b8c7ba}
+.source-detail,.workflow-detail,.hyp-detail{margin-top:18px;border:1px solid var(--line);border-radius:16px;background:#fff;padding:20px}
+.source-detail h3,.workflow-detail h3,.hyp-detail h3{margin:0 0 8px;font-size:18px}
+.source-detail p,.workflow-detail p,.hyp-detail p{margin:0;color:#5f675f;font-size:12px;line-height:1.6}
+.progress-track{height:4px;background:#e4e8e1;border-radius:999px;margin:22px 0 8px;overflow:hidden}
+.progress-fill{height:100%;width:16.66%;background:var(--green);transition:width .3s ease}
+.step.done{background:#edf2ed}.step.active{border-color:var(--green);background:#f5f8f4}
+.level-controls{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 16px}
+.level-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:9px;cursor:pointer}
+.level-btn.active{background:var(--green);color:#fff;border-color:var(--green)}
+.matrix-wrap tbody tr{transition:opacity .18s ease,background .18s ease}.matrix-wrap tbody tr.dimmed{display:none}
+.hyp-card{cursor:pointer;transition:.18s ease}.hyp-card:hover{transform:translateY(-3px);border-color:#b1bdb3}.hyp-card.active{border-color:var(--green);background:#f0f4ef}
+.hyp-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.hyp-actions button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:9px;cursor:pointer;color:#4d5b50}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease}.reveal.visible{opacity:1;transform:none}
+.sticky-progress a.active{background:var(--green);transform:scale(1.4)}
+@media(max-width:760px){.inspector{grid-template-columns:1fr}}
 @media(max-width:1100px){
   .grid-4{grid-template-columns:repeat(2,1fr)}
   .workflow{grid-template-columns:repeat(3,1fr)}
@@ -141,17 +168,17 @@ td{font-size:12px;line-height:1.45;color:#555f57}
     <h1>¿Cómo se organiza la vida en Kennedy?</h1>
     <p>Primera aproximación al modelado de nicho a partir de especies registradas, condiciones espaciales e interacciones documentadas. El punto de partida no es Bogotá en abstracto: es <strong>Kennedy</strong>, especialmente La Vaca, El Burro, Techo y la matriz urbana Corabastos–María Paz–Patio Bonito.</p>
     <div class="hero-meta">
-      <span class="pill">Área de estudio · Kennedy</span>
-      <span class="pill">GIS · arbolado y vegetación</span>
-      <span class="pill">eBird · iNaturalist · SiB · GBIF</span>
-      <span class="pill">RIBB · interacciones</span>
-      <span class="pill">Código Biosci · contraste</span>
+      <button class="pill interactive" type="button" data-scroll="#territorio">Área de estudio · Kennedy</button>
+      <button class="pill interactive" type="button" data-scroll="#gis">GIS · arbolado y vegetación</button>
+      <button class="pill interactive" type="button" data-scroll="#registros">eBird · iNaturalist · SiB · GBIF</button>
+      <button class="pill interactive" type="button" data-scroll="#ribb">RIBB · interacciones</button>
+      <button class="pill interactive" type="button" data-scroll="#hipotesis">Código Biosci · contraste</button>
     </div>
   </div>
   <div class="scrollcue"><i class="fa-solid fa-arrow-down"></i> seguir la investigación</div>
 </section>
 
-<section class="section alt" id="territorio">
+<section class="section alt reveal" id="territorio">
   <div class="section-head">
     <div class="kicker">01 · TERRITORIO</div>
     <div>
@@ -160,14 +187,18 @@ td{font-size:12px;line-height:1.45;color:#555f57}
     </div>
   </div>
   <div class="grid-4">
-    <article class="card geo-card"><div class="num">HUMEDAL 01</div><h3>La Vaca</h3><p>Parche ecológico inmerso en una matriz densamente urbanizada. Interesa verificar especies asociadas a borde, agua, vegetación y espacios de transición.</p></article>
-    <article class="card geo-card"><div class="num">HUMEDAL 02</div><h3>El Burro</h3><p>Permite contrastar interacciones bióticas con continuidad de vegetación, presión vial y bordes urbanos.</p></article>
-    <article class="card geo-card"><div class="num">HUMEDAL 03</div><h3>Techo</h3><p>Su escala y condición fragmentada hacen relevante preguntar qué interacciones se sostienen en parches pequeños.</p></article>
-    <article class="card geo-card"><div class="num">MATRIZ URBANA</div><h3>Corabastos · María Paz · Patio Bonito</h3><p>Concentra actividad logística, residuos, tráfico e impermeabilización. Aquí se examina cómo la matriz puede filtrar o favorecer ciertas especies.</p></article>
+    <article class="card geo-card interactive active" tabindex="0" role="button" data-place="La Vaca" data-place-text="Parche ecológico inmerso en una matriz densamente urbanizada. Aquí la pregunta es qué especies registradas coinciden con vegetación de borde, agua y zonas de transición, y cuáles de sus interacciones están documentadas."><div class="num">HUMEDAL 01</div><h3>La Vaca</h3><p>Parche ecológico inmerso en una matriz densamente urbanizada. Interesa verificar especies asociadas a borde, agua, vegetación y espacios de transición.</p></article>
+    <article class="card geo-card interactive" tabindex="0" role="button" data-place="El Burro" data-place-text="El Burro permite contrastar continuidad vegetal y borde urbano. La red debe preguntar si los taxones localmente registrados mantienen vínculos compatibles con la estructura vegetal y qué relaciones son sensibles a fragmentación o presión vial."><div class="num">HUMEDAL 02</div><h3>El Burro</h3><p>Permite contrastar interacciones bióticas con continuidad de vegetación, presión vial y bordes urbanos.</p></article>
+    <article class="card geo-card interactive" tabindex="0" role="button" data-place="Techo" data-place-text="Techo permite estudiar una red en un parche pequeño y altamente rodeado por urbanización. El interés es reconocer qué interacciones persisten, cuáles dependen de vegetación específica y cuáles necesitan mayor conectividad."><div class="num">HUMEDAL 03</div><h3>Techo</h3><p>Su escala y condición fragmentada hacen relevante preguntar qué interacciones se sostienen en parches pequeños.</p></article>
+    <article class="card geo-card interactive" tabindex="0" role="button" data-place="Corabastos · María Paz · Patio Bonito" data-place-text="La matriz urbana concentra tráfico, residuos, impermeabilización y actividad logística. Aquí se contrasta si esa condición favorece especies oportunistas, introduce recursos antropogénicos o reduce la continuidad necesaria para interacciones más especializadas."><div class="num">MATRIZ URBANA</div><h3>Corabastos · María Paz · Patio Bonito</h3><p>Concentra actividad logística, residuos, tráfico e impermeabilización. Aquí se examina cómo la matriz puede filtrar o favorecer ciertas especies.</p></article>
+  </div>
+  <div class="inspector" id="territoryInspector">
+    <div class="inspector-kicker">LECTURA ACTIVA</div>
+    <div><h3 id="territoryTitle">La Vaca</h3><p id="territoryText">Parche ecológico inmerso en una matriz densamente urbanizada. Aquí la pregunta es qué especies registradas coinciden con vegetación de borde, agua y zonas de transición, y cuáles de sus interacciones están documentadas.</p></div>
   </div>
 </section>
 
-<section class="section" id="gis">
+<section class="section reveal" id="gis">
   <div class="section-head">
     <div class="kicker">02 · BASE ESPACIAL</div>
     <div>
@@ -176,13 +207,20 @@ td{font-size:12px;line-height:1.45;color:#555f57}
     </div>
   </div>
   <div class="grid-3">
-    <div class="card"><div class="num">A</div><h3>Arbolado</h3><p><strong>Qué extraemos:</strong> especie o taxón cuando esté disponible, localización, densidad y continuidad. <br><br><strong>Para qué sirve:</strong> detectar recursos, hospederos, refugio y conectores.</p></div>
-    <div class="card"><div class="num">B</div><h3>Vegetación y bordes</h3><p><strong>Qué extraemos:</strong> coberturas, vegetación de borde y relación con cuerpos de agua. <br><br><strong>Para qué sirve:</strong> caracterizar condiciones espaciales compatibles con interacciones.</p></div>
-    <div class="card"><div class="num">C</div><h3>Matriz urbana</h3><p><strong>Qué extraemos:</strong> fragmentación, vías, espacios duros y discontinuidades. <br><br><strong>Para qué sirve:</strong> formular hipótesis sobre barreras, filtros y conectividad.</p></div>
+    <div class="card interactive layer-card active" tabindex="0" role="button" data-layer="Arbolado"><div class="num">A · ACTIVAR/DESACTIVAR</div><h3>Arbolado</h3><p><strong>Qué extraemos:</strong> especie o taxón cuando esté disponible, localización, densidad y continuidad. <br><br><strong>Para qué sirve:</strong> detectar recursos, hospederos, refugio y conectores.</p></div>
+    <div class="card interactive layer-card active" tabindex="0" role="button" data-layer="Vegetación y bordes"><div class="num">B · ACTIVAR/DESACTIVAR</div><h3>Vegetación y bordes</h3><p><strong>Qué extraemos:</strong> coberturas, vegetación de borde y relación con cuerpos de agua. <br><br><strong>Para qué sirve:</strong> caracterizar condiciones espaciales compatibles con interacciones.</p></div>
+    <div class="card interactive layer-card active" tabindex="0" role="button" data-layer="Matriz urbana"><div class="num">C · ACTIVAR/DESACTIVAR</div><h3>Matriz urbana</h3><p><strong>Qué extraemos:</strong> fragmentación, vías, espacios duros y discontinuidades. <br><br><strong>Para qué sirve:</strong> formular hipótesis sobre barreras, filtros y conectividad.</p></div>
+  </div>
+  <div class="layer-summary" id="layerSummary">
+    <span class="layer-token on">Arbolado</span><span class="layer-token on">Vegetación y bordes</span><span class="layer-token on">Matriz urbana</span>
+  </div>
+  <div class="inspector">
+    <div class="inspector-kicker">SÍNTESIS GIS</div>
+    <div><h3 id="gisTitle">Tres capas activas</h3><p id="gisText">La lectura combina recursos vegetales, estructura de borde y presión de la matriz urbana. Desactiva capas para ver cómo cambia la pregunta de nicho.</p></div>
   </div>
 </section>
 
-<section class="section alt" id="registros">
+<section class="section alt reveal" id="registros">
   <div class="section-head">
     <div class="kicker">03 · PRESENCIA</div>
     <div>
@@ -192,25 +230,31 @@ td{font-size:12px;line-height:1.45;color:#555f57}
   </div>
 
   <div class="sources">
-    <div class="source"><i class="fa-solid fa-dove"></i><div><h4>eBird Colombia</h4><p>Avistamientos de aves y hotspots. Se revisan lugar, fecha y ubicación del registro.</p></div></div>
-    <div class="source"><i class="fa-solid fa-camera"></i><div><h4>iNaturalist Colombia</h4><p>Observaciones georreferenciadas con identificación comunitaria, fecha y precisión espacial.</p></div></div>
-    <div class="source"><i class="fa-solid fa-database"></i><div><h4>SiB Colombia</h4><p>Conjuntos de datos nacionales y distritales con registros biológicos estructurados.</p></div></div>
-    <div class="source"><i class="fa-solid fa-earth-americas"></i><div><h4>GBIF Colombia</h4><p>Occurrences con coordenadas y metadatos; se valida el registro individual, no solo el nombre del dataset.</p></div></div>
-    <div class="source"><i class="fa-solid fa-tree"></i><div><h4>GIS arbolado / vegetación</h4><p>Permite comprobar condiciones vegetales y especies de plantas disponibles en el territorio.</p></div></div>
-    <div class="source"><i class="fa-solid fa-location-crosshairs"></i><div><h4>Criterio espacial</h4><p>Solo se clasifica como presencia local cuando la coordenada o geometría realmente intersecta el área de estudio.</p></div></div>
+    <div class="source interactive source-card active" tabindex="0" role="button" data-source="eBird Colombia" data-criterion="Úsalo para validar aves mediante hotspot o registro individual. Revisar fecha, ubicación del sitio y coherencia espacial con Kennedy; el hotspot por sí solo no demuestra presencia en el polígono exacto."><i class="fa-solid fa-dove"></i><div><h4>eBird Colombia</h4><p>Avistamientos de aves y hotspots. Se revisan lugar, fecha y ubicación del registro.</p></div></div>
+    <div class="source interactive source-card" tabindex="0" role="button" data-source="iNaturalist Colombia" data-criterion="Revisar coordenada, fecha, precisión y grado de identificación. Priorizar observaciones con identificación confiable y localización suficientemente precisa para intersectar el área de estudio."><i class="fa-solid fa-camera"></i><div><h4>iNaturalist Colombia</h4><p>Observaciones georreferenciadas con identificación comunitaria, fecha y precisión espacial.</p></div></div>
+    <div class="source interactive source-card" tabindex="0" role="button" data-source="SiB Colombia" data-criterion="Usar occurrence o datasets con registros individualizados. Validar coordenada, evento de muestreo, institución publicadora y fecha; no asignar todo un dataset a Kennedy si solo parte de sus registros está allí."><i class="fa-solid fa-database"></i><div><h4>SiB Colombia</h4><p>Conjuntos de datos nacionales y distritales con registros biológicos estructurados.</p></div></div>
+    <div class="source interactive source-card" tabindex="0" role="button" data-source="GBIF Colombia" data-criterion="Filtrar occurrences con coordenadas; revisar coordinateUncertaintyInMeters, basisOfRecord, fecha e identificación. El título del dataset no reemplaza la validación del registro individual."><i class="fa-solid fa-earth-americas"></i><div><h4>GBIF Colombia</h4><p>Occurrences con coordenadas y metadatos; se valida el registro individual, no solo el nombre del dataset.</p></div></div>
+    <div class="source interactive source-card" tabindex="0" role="button" data-source="GIS arbolado / vegetación" data-criterion="Aporta la condición espacial y, cuando exista, la identidad de especies vegetales. Sirve para cruzar hospederos, recursos florales, continuidad de cobertura y distancia entre parches."><i class="fa-solid fa-tree"></i><div><h4>GIS arbolado / vegetación</h4><p>Permite comprobar condiciones vegetales y especies de plantas disponibles en el territorio.</p></div></div>
+    <div class="source interactive source-card" tabindex="0" role="button" data-source="Criterio espacial" data-criterion="Regla de inclusión principal: una presencia es localmente confirmada solo si la geometría o coordenada intersecta el área de estudio con precisión suficiente."><i class="fa-solid fa-location-crosshairs"></i><div><h4>Criterio espacial</h4><p>Solo se clasifica como presencia local cuando la coordenada o geometría realmente intersecta el área de estudio.</p></div></div>
+  </div>
+  <div class="source-detail">
+    <h3 id="sourceTitle">eBird Colombia</h3>
+    <p id="sourceText">Úsalo para validar aves mediante hotspot o registro individual. Revisar fecha, ubicación del sitio y coherencia espacial con Kennedy; el hotspot por sí solo no demuestra presencia en el polígono exacto.</p>
   </div>
 
   <div class="workflow" style="margin-top:34px">
-    <div class="step"><b>PASO 01</b><h4>Descargar / consultar</h4><p>Reunir registros georreferenciados de las fuentes indicadas.</p></div>
-    <div class="step"><b>PASO 02</b><h4>Filtrar espacialmente</h4><p>Conservar registros que caigan dentro de Kennedy o del polígono específico de estudio.</p></div>
-    <div class="step"><b>PASO 03</b><h4>Revisar fecha</h4><p>Registrar antigüedad y temporalidad para evitar mezclar evidencia sin contexto.</p></div>
-    <div class="step"><b>PASO 04</b><h4>Revisar precisión</h4><p>Evaluar incertidumbre de coordenadas y calidad de identificación.</p></div>
-    <div class="step"><b>PASO 05</b><h4>Consolidar taxones</h4><p>Unificar nombres científicos y evitar duplicados taxonómicos.</p></div>
-    <div class="step"><b>PASO 06</b><h4>Pasar a RIBB</h4><p>Con la presencia validada, buscar relaciones documentadas.</p></div>
+    <div class="step interactive workflow-step active" tabindex="0" role="button" data-step="1"><b>PASO 01</b><h4>Descargar / consultar</h4><p>Reunir registros georreferenciados de las fuentes indicadas.</p></div>
+    <div class="step interactive workflow-step" tabindex="0" role="button" data-step="2"><b>PASO 02</b><h4>Filtrar espacialmente</h4><p>Conservar registros que caigan dentro de Kennedy o del polígono específico de estudio.</p></div>
+    <div class="step interactive workflow-step" tabindex="0" role="button" data-step="3"><b>PASO 03</b><h4>Revisar fecha</h4><p>Registrar antigüedad y temporalidad para evitar mezclar evidencia sin contexto.</p></div>
+    <div class="step interactive workflow-step" tabindex="0" role="button" data-step="4"><b>PASO 04</b><h4>Revisar precisión</h4><p>Evaluar incertidumbre de coordenadas y calidad de identificación.</p></div>
+    <div class="step interactive workflow-step" tabindex="0" role="button" data-step="5"><b>PASO 05</b><h4>Consolidar taxones</h4><p>Unificar nombres científicos y evitar duplicados taxonómicos.</p></div>
+    <div class="step interactive workflow-step" tabindex="0" role="button" data-step="6"><b>PASO 06</b><h4>Pasar a RIBB</h4><p>Con la presencia validada, buscar relaciones documentadas.</p></div>
   </div>
+  <div class="progress-track"><div class="progress-fill" id="workflowProgress"></div></div>
+  <div class="workflow-detail"><h3 id="workflowTitle">Paso 01 · Descargar / consultar</h3><p id="workflowText">Reunimos observaciones georreferenciadas de las fuentes indicadas. En esta etapa todavía no afirmamos presencia local: solo construimos el universo inicial de registros.</p></div>
 </section>
 
-<section class="section" id="ribb">
+<section class="section reveal" id="ribb">
   <div class="section-head">
     <div class="kicker">04 · INTERACCIONES</div>
     <div>
@@ -220,12 +264,12 @@ td{font-size:12px;line-height:1.45;color:#555f57}
   </div>
 
   <div class="logic">
-    <div class="logic-box">
+    <div class="logic-box interactive logic-card active" tabindex="0" role="button" data-logic="presence">
       <h3>Presencia territorial</h3>
       <p>Taxón con registro georreferenciado en Kennedy o dentro del polígono del área de estudio.</p>
     </div>
     <div class="arrow">→</div>
-    <div class="logic-box">
+    <div class="logic-box interactive logic-card" tabindex="0" role="button" data-logic="interaction">
       <h3>Interacción documentada</h3>
       <p>RIBB aporta el verbo específico de la relación: consume, poliniza a, dispersa, parasita a, oviposita en, crece sobre, entre otros.</p>
     </div>
@@ -234,7 +278,7 @@ td{font-size:12px;line-height:1.45;color:#555f57}
   <div class="callout"><strong>Importante:</strong> “VISITA FLORAL”, “HERBIVORÍA” o “DEPREDACIÓN” son categorías ecológicas generales. La relación puntual se conserva mediante el verbo y la dirección registrada entre Taxón 1 y Taxón 2.</div>
 </section>
 
-<section class="section alt">
+<section class="section alt reveal">
   <div class="section-head">
     <div class="kicker">05 · CONTRASTE</div>
     <div>
@@ -249,7 +293,7 @@ td{font-size:12px;line-height:1.45;color:#555f57}
   </div>
 </section>
 
-<section class="section" id="evidencia">
+<section class="section reveal" id="evidencia">
   <div class="section-head">
     <div class="kicker">06 · MATRIZ MAESTRA</div>
     <div>
@@ -258,25 +302,31 @@ td{font-size:12px;line-height:1.45;color:#555f57}
     </div>
   </div>
 
+  <div class="level-controls">
+  <button type="button" class="level-btn active" data-level-filter="all">Todos</button>
+  <button type="button" class="level-btn" data-level-filter="confirmado">Confirmado</button>
+  <button type="button" class="level-btn" data-level-filter="documentada">Documentada</button>
+  <button type="button" class="level-btn" data-level-filter="hipotesis">Hipótesis</button>
+  </div>
   <div class="matrix-wrap">
     <table>
       <thead><tr><th>Especie</th><th>Coordenada</th><th>Fecha</th><th>Fuente</th><th>Calidad</th><th>Condición espacial</th><th>Especie relacionada</th><th>Interacción</th><th>Nivel</th></tr></thead>
       <tbody>
-        <tr><td>Taxón A</td><td>Registro local</td><td>Fecha del registro</td><td>eBird / iNat / SiB / GBIF</td><td>Precisión + identificación</td><td>Humedal / arbolado / matriz</td><td>Taxón B</td><td>Verbo RIBB</td><td><span class="status ok">confirmado</span></td></tr>
-        <tr><td>Taxón A</td><td>Registro local</td><td>Fecha</td><td>Fuente geográfica</td><td>Media</td><td>Vegetación compatible</td><td>Taxón C</td><td>Interacción documentada fuera del sitio</td><td><span class="status mid">documentada</span></td></tr>
-        <tr><td>Taxón D</td><td>Presencia probable</td><td>—</td><td>Condición espacial</td><td>Pendiente</td><td>Corredor potencial</td><td>Taxón E</td><td>Relación posible</td><td><span class="status hyp">hipótesis</span></td></tr>
+        <tr data-level="confirmado"><td>Taxón A</td><td>Registro local</td><td>Fecha del registro</td><td>eBird / iNat / SiB / GBIF</td><td>Precisión + identificación</td><td>Humedal / arbolado / matriz</td><td>Taxón B</td><td>Verbo RIBB</td><td><span class="status ok">confirmado</span></td></tr>
+        <tr data-level="documentada"><td>Taxón A</td><td>Registro local</td><td>Fecha</td><td>Fuente geográfica</td><td>Media</td><td>Vegetación compatible</td><td>Taxón C</td><td>Interacción documentada fuera del sitio</td><td><span class="status mid">documentada</span></td></tr>
+        <tr data-level="hipotesis"><td>Taxón D</td><td>Presencia probable</td><td>—</td><td>Condición espacial</td><td>Pendiente</td><td>Corredor potencial</td><td>Taxón E</td><td>Relación posible</td><td><span class="status hyp">hipótesis</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="grid-3" style="margin-top:28px">
-    <div class="card"><div class="num">NIVEL 01</div><h3>Presencia local confirmada</h3><p>Registro georreferenciado cuya localización cae dentro del área de estudio.</p></div>
-    <div class="card"><div class="num">NIVEL 02</div><h3>Interacción documentada</h3><p>Relación respaldada por RIBB o fuente científica, aunque todavía no esté observada localmente.</p></div>
-    <div class="card"><div class="num">NIVEL 03</div><h3>Hipótesis territorial</h3><p>Relación posible derivada de coincidencia entre especies, vegetación y condiciones espaciales.</p></div>
+    <div class="card interactive evidence-card" tabindex="0" role="button" data-level-jump="confirmado"><div class="num">NIVEL 01 · FILTRAR</div><h3>Presencia local confirmada</h3><p>Registro georreferenciado cuya localización cae dentro del área de estudio.</p></div>
+    <div class="card interactive evidence-card" tabindex="0" role="button" data-level-jump="documentada"><div class="num">NIVEL 02 · FILTRAR</div><h3>Interacción documentada</h3><p>Relación respaldada por RIBB o fuente científica, aunque todavía no esté observada localmente.</p></div>
+    <div class="card interactive evidence-card" tabindex="0" role="button" data-level-jump="hipotesis"><div class="num">NIVEL 03 · FILTRAR</div><h3>Hipótesis territorial</h3><p>Relación posible derivada de coincidencia entre especies, vegetación y condiciones espaciales.</p></div>
   </div>
 </section>
 
-<section class="section alt" id="hipotesis">
+<section class="section alt reveal" id="hipotesis">
   <div class="section-head">
     <div class="kicker">07 · MODELO DE NICHO</div>
     <div>
@@ -286,14 +336,19 @@ td{font-size:12px;line-height:1.45;color:#555f57}
   </div>
 
   <div class="hypotheses">
-    <article class="hyp-card"><small>H1 · Humedales</small><h3>Nodos ecológicos</h3><p>La Vaca, El Burro y Techo podrían concentrar interacciones que dependen de vegetación de borde, agua y continuidad de coberturas.</p></article>
-    <article class="hyp-card"><small>H2 · Conectividad</small><h3>Vegetación como soporte</h3><p>Arbolado, separadores y parches vegetados podrían aumentar oportunidades de visita floral, refugio y dispersión entre fragmentos.</p></article>
-    <article class="hyp-card"><small>H3 · Matriz urbana</small><h3>Filtro y recurso</h3><p>Corabastos–María Paz–Patio Bonito podría favorecer especies oportunistas mientras limita relaciones más dependientes de coberturas continuas.</p></article>
-    <article class="hyp-card"><small>H4 · Presión</small><h3>Fragmentación y perturbación</h3><p>Vías, ruido e impermeabilización podrían coincidir con cambios en la conectividad de la red. Esto debe verificarse y no asumirse como causalidad.</p></article>
+    <article class="hyp-card" tabindex="0" role="button" data-hyp="H1" data-hyp-title="H1 · Nodos ecológicos" data-hyp-text="Comprobar si las interacciones verificadas se concentran dentro o cerca de La Vaca, El Burro y Techo, y si esa concentración coincide con vegetación de borde, agua y continuidad de cobertura."><small>H1 · Humedales</small><h3>Nodos ecológicos</h3><p>La Vaca, El Burro y Techo podrían concentrar interacciones que dependen de vegetación de borde, agua y continuidad de coberturas.</p></article>
+    <article class="hyp-card" tabindex="0" role="button" data-hyp="H2" data-hyp-title="H2 · Vegetación como soporte" data-hyp-text="Medir si taxones vinculados por visita floral, refugio o dispersión aparecen asociados a arbolado, separadores y otros parches que puedan funcionar como conectores entre fragmentos."><small>H2 · Conectividad</small><h3>Vegetación como soporte</h3><p>Arbolado, separadores y parches vegetados podrían aumentar oportunidades de visita floral, refugio y dispersión entre fragmentos.</p></article>
+    <article class="hyp-card" tabindex="0" role="button" data-hyp="H3" data-hyp-title="H3 · Filtro y recurso" data-hyp-text="Contrastar si la matriz Corabastos–María Paz–Patio Bonito concentra especies oportunistas o relaciones asociadas a recursos antropogénicos, frente a interacciones dependientes de vegetación continua."><small>H3 · Matriz urbana</small><h3>Filtro y recurso</h3><p>Corabastos–María Paz–Patio Bonito podría favorecer especies oportunistas mientras limita relaciones más dependientes de coberturas continuas.</p></article>
+    <article class="hyp-card" tabindex="0" role="button" data-hyp="H4" data-hyp-title="H4 · Fragmentación y perturbación" data-hyp-text="Cruzar conectividad de la red con vías, ruido e impermeabilización para detectar coincidencias espaciales. La coincidencia no se interpretará automáticamente como causalidad."><small>H4 · Presión</small><h3>Fragmentación y perturbación</h3><p>Vías, ruido e impermeabilización podrían coincidir con cambios en la conectividad de la red. Esto debe verificarse y no asumirse como causalidad.</p></article>
+  </div>
+  <div class="hyp-detail">
+    <h3 id="hypTitle">Selecciona una hipótesis</h3>
+    <p id="hypText">Haz clic sobre H1–H4 para ver qué tendría que comprobarse en el territorio.</p>
+    <div class="hyp-actions"><button type="button" id="goNetwork"><i class="fa-solid fa-share-nodes"></i> contrastar en la red</button></div>
   </div>
 </section>
 
-<section class="network-section" id="red">
+<section class="network-section reveal" id="red">
   <div class="network-intro">
     <div class="kicker">08 · RED INTERACTIVA</div>
     <h2>De la evidencia al enjambre.</h2>
@@ -311,5 +366,102 @@ td{font-size:12px;line-height:1.45;color:#555f57}
 </footer>
 </main>
 </div>
+
+<script>
+(() => {
+  const activate = (elements, target) => elements.forEach(el => el.classList.toggle('active', el === target));
+  const keyActivate = (el, fn) => el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); }
+  });
+
+  document.querySelectorAll('[data-scroll]').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelector(btn.dataset.scroll)?.scrollIntoView({behavior:'smooth', block:'start'});
+  }));
+
+  const geoCards=[...document.querySelectorAll('.geo-card')];
+  geoCards.forEach(card => {
+    const choose=()=>{activate(geoCards,card);document.querySelector('#territoryTitle').textContent=card.dataset.place;document.querySelector('#territoryText').textContent=card.dataset.placeText;};
+    card.addEventListener('click',choose);keyActivate(card,choose);
+  });
+
+  const layerCards=[...document.querySelectorAll('.layer-card')];
+  const updateLayers=()=>{
+    const on=layerCards.filter(c=>c.classList.contains('active')).map(c=>c.dataset.layer);
+    document.querySelector('#layerSummary').innerHTML=layerCards.map(c=>'<span class="layer-token '+(c.classList.contains('active')?'on':'')+'">'+c.dataset.layer+'</span>').join('');
+    const n=on.length;
+    document.querySelector('#gisTitle').textContent=n===3?'Tres capas activas':n===2?'Dos capas activas':n===1?'Una capa activa':'Sin capas activas';
+    document.querySelector('#gisText').textContent=n===0?'Sin capas espaciales no es posible formular una hipótesis de nicho defendible.':n===1?'La lectura queda parcial: puedes describir una condición, pero falta contexto para relacionarla con el sistema urbano.':n===2?'La comparación ya permite formular relaciones espaciales, aunque todavía falta una dimensión para completar la lectura.':'La lectura combina recursos vegetales, estructura de borde y presión de la matriz urbana.';
+  };
+  layerCards.forEach(card=>{
+    const toggle=()=>{card.classList.toggle('active');updateLayers();};
+    card.addEventListener('click',toggle);keyActivate(card,toggle);
+  });
+
+  const sourceCards=[...document.querySelectorAll('.source-card')];
+  sourceCards.forEach(card=>{
+    const choose=()=>{activate(sourceCards,card);document.querySelector('#sourceTitle').textContent=card.dataset.source;document.querySelector('#sourceText').textContent=card.dataset.criterion;};
+    card.addEventListener('click',choose);keyActivate(card,choose);
+  });
+
+  const workflowData=[
+    ['Paso 01 · Descargar / consultar','Reunimos observaciones georreferenciadas de las fuentes indicadas. En esta etapa todavía no afirmamos presencia local: solo construimos el universo inicial de registros.'],
+    ['Paso 02 · Filtrar espacialmente','Intersectamos los registros con Kennedy y, cuando el análisis lo requiera, con los polígonos de La Vaca, El Burro, Techo y la matriz Corabastos–María Paz–Patio Bonito.'],
+    ['Paso 03 · Revisar fecha','Guardamos la fecha y distinguimos registros recientes de evidencia histórica. La temporalidad permite evitar que todos los datos se interpreten como simultáneos.'],
+    ['Paso 04 · Revisar precisión','Evaluamos incertidumbre espacial, calidad de identificación y tipo de registro. Un punto impreciso no debe usarse para asignar presencia a un parche pequeño.'],
+    ['Paso 05 · Consolidar taxones','Normalizamos nombres científicos y evitamos duplicados, sin convertir categorías taxonómicas amplias en especies.'],
+    ['Paso 06 · Pasar a RIBB','Solo después del filtro territorial buscamos las relaciones documentadas entre los taxones seleccionados y conservamos verbo, dirección y fuente.']
+  ];
+  const steps=[...document.querySelectorAll('.workflow-step')];
+  steps.forEach((step,i)=>{
+    const choose=()=>{
+      steps.forEach((x,j)=>{x.classList.toggle('active',j===i);x.classList.toggle('done',j<i);});
+      document.querySelector('#workflowProgress').style.width=((i+1)/steps.length*100)+'%';
+      document.querySelector('#workflowTitle').textContent=workflowData[i][0];
+      document.querySelector('#workflowText').textContent=workflowData[i][1];
+    };
+    step.addEventListener('click',choose);keyActivate(step,choose);
+  });
+
+  const logicCards=[...document.querySelectorAll('.logic-card')];
+  logicCards.forEach(card=>{
+    const choose=()=>activate(logicCards,card);
+    card.addEventListener('click',choose);keyActivate(card,choose);
+  });
+
+  const filterLevel=(level)=>{
+    document.querySelectorAll('.level-btn').forEach(b=>b.classList.toggle('active',b.dataset.levelFilter===level));
+    document.querySelectorAll('.matrix-wrap tbody tr').forEach(row=>row.classList.toggle('dimmed',level!=='all'&&row.dataset.level!==level));
+  };
+  document.querySelectorAll('.level-btn').forEach(btn=>btn.addEventListener('click',()=>filterLevel(btn.dataset.levelFilter)));
+  document.querySelectorAll('.evidence-card').forEach(card=>{
+    const choose=()=>{filterLevel(card.dataset.levelJump);document.querySelector('.matrix-wrap').scrollIntoView({behavior:'smooth',block:'center'});};
+    card.addEventListener('click',choose);keyActivate(card,choose);
+  });
+
+  const hypCards=[...document.querySelectorAll('.hyp-card')];
+  hypCards.forEach(card=>{
+    const choose=()=>{
+      activate(hypCards,card);
+      document.querySelector('#hypTitle').textContent=card.dataset.hypTitle;
+      document.querySelector('#hypText').textContent=card.dataset.hypText;
+    };
+    card.addEventListener('click',choose);keyActivate(card,choose);
+  });
+  document.querySelector('#goNetwork')?.addEventListener('click',()=>document.querySelector('#red')?.scrollIntoView({behavior:'smooth'}));
+
+  const sections=[...document.querySelectorAll('.reveal')];
+  const revealObs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.08});
+  sections.forEach(s=>revealObs.observe(s));
+
+  const nav=[...document.querySelectorAll('.sticky-progress a')];
+  const observed=[...document.querySelectorAll('#territorio,#gis,#registros,#ribb,#evidencia,#hipotesis,#red')];
+  const navObs=new IntersectionObserver(entries=>{
+    entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio).slice(0,1).forEach(e=>{
+      nav.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id));
+    });
+  },{threshold:[.25,.5,.75]});
+  observed.forEach(s=>navObs.observe(s));
+})();
+</script>
 </body>
 </html>
