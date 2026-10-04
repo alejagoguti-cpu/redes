@@ -549,14 +549,25 @@ function pumpImages(){
     const entry=imageCache.get(name);
     if(!entry||entry.status!=="queued")continue;
     entry.status="loading";activeLoads++;
-    resolveImage(name).then(url=>{
-      if(!url){
-        entry.status="failed";failedCount++;return;
-      }
+    resolveGuaranteedPhoto(name).then(photo=>{
+      const url=photo?.url||"";
+      if(!url){entry.status="failed";failedCount++;return;}
       const img=new Image();
-      img.crossOrigin="anonymous";
-      img.onload=()=>{entry.status="loaded";entry.img=img;entry.url=url;loadedCount++;updateImageProgress()};
-      img.onerror=()=>{entry.status="failed";failedCount++;updateImageProgress()};
+      if(!url.startsWith("data:"))img.crossOrigin="anonymous";
+      img.onload=()=>{
+        entry.status="loaded";entry.img=img;entry.url=url;
+        entry.photoExact=!!photo.exact;entry.photoLabel=photo.label||"";
+        loadedCount++;updateImageProgress()
+      };
+      img.onerror=()=>{
+        // Even if a remote representative fails, force the local SVG image fallback.
+        const eco=SPECIAL_ECO_GROUP[name]||ecoGroup(name);
+        const label=(ECO_LABELS[eco]||"Taxón").replace(/&/g,"y");
+        const icon=eco==="birds"?"AVE":eco==="plants"?"FLORA":eco==="fungi"?"HONGO":eco==="invert"?"INVERT":eco==="micro"?"MICRO":"FAUNA";
+        const svg='<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><rect width="240" height="240" fill="%23131c16"/><circle cx="120" cy="105" r="64" fill="%232a3b2e"/><text x="120" y="112" text-anchor="middle" fill="white" font-family="Arial" font-size="25" font-weight="700">'+icon+'</text><text x="120" y="194" text-anchor="middle" fill="%23b8c7bb" font-family="Arial" font-size="14">'+label+'</text></svg>';
+        img.crossOrigin=null;img.src="data:image/svg+xml;charset=utf-8,"+svg;
+        entry.url=img.src;entry.photoExact=false;entry.photoLabel="representación de categoría";
+      };
       img.src=url;
     }).finally(()=>{activeLoads--;updateImageProgress();pumpImages()});
   }
@@ -654,13 +665,11 @@ function draw(){
       const sx=(iw-side)/2,sy=(ih-side)/2;
       ctx.drawImage(im.img,sx,sy,side,side,p.x-radius,p.y-radius,radius*2,radius*2);
     }else{
-      const g=ctx.createLinearGradient(p.x-radius,p.y-radius,p.x+radius,p.y+radius);
-      g.addColorStop(0,"#d9dfd4");g.addColorStop(1,"#8da087");
+      // Never render initials/icons as nodes. While a photograph is resolving,
+      // keep a neutral photographic placeholder only.
+      const g=ctx.createRadialGradient(p.x-radius*.25,p.y-radius*.3,radius*.1,p.x,p.y,radius*1.2);
+      g.addColorStop(0,"#506256");g.addColorStop(.55,"#26342b");g.addColorStop(1,"#111813");
       ctx.fillStyle=g;ctx.fillRect(p.x-radius,p.y-radius,radius*2,radius*2);
-      ctx.fillStyle="rgba(255,255,255,.82)";
-      ctx.font=Math.max(6,radius*.7)+"px Inter,Arial";
-      ctx.textAlign="center";ctx.textBaseline="middle";
-      ctx.fillText((n.id||"?").charAt(0).toUpperCase(),p.x,p.y);
     }
     ctx.restore();
 
@@ -1069,7 +1078,7 @@ function openNode(n,showPopup=true){
   const d=document.querySelector("#detail");
   d.classList.add("open");
   const im=imageCache.get(n.id);
-  const hero=im?.status==="loaded"&&im.url ? 'style="background-image:url(\''+im.url+'\')"' : "";
+  const hero=im?.url ? 'style="background-image:url(\''+im.url+'\')"' : "";
   d.innerHTML=
     '<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>'+
     '<h2>'+n.id+'</h2><div class="hero" '+hero+'></div>'+
