@@ -15,7 +15,9 @@
 .hero{min-height:100vh;display:grid;grid-template-columns:minmax(390px,.72fr) minmax(620px,1.28fr);align-items:center;padding:46px 3.2vw 46px 4vw;gap:34px;background:radial-gradient(circle at 76% 30%,#dce7df 0,transparent 31%),linear-gradient(180deg,#fbfbf8,#f1f3ee)}
 .eyebrow{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:700;margin-bottom:24px}.hero h1{font:600 clamp(48px,5.2vw,78px)/.94 "Space Grotesk",sans-serif;letter-spacing:-.055em;margin:0;max-width:680px;color:#22342a}.hero p{font-size:14px;line-height:1.65;color:#526057;max-width:590px;margin:25px 0 20px}.hero-actions{display:flex;gap:9px;flex-wrap:wrap}.hero-actions button,.hero-actions a{border:1px solid var(--line);background:#fff;border-radius:999px;padding:11px 15px;font-size:9px;font-weight:600;color:#34473a;text-decoration:none;cursor:pointer}.hero-actions .primary{background:var(--green);color:#fff;border-color:var(--green)}
 .network-shell{height:min(82vh,760px);min-height:620px;position:relative;border-radius:38px;overflow:hidden;background:#fff;border:1px solid #d3dbd2;box-shadow:var(--shadow)}.network-shell iframe{width:100%;height:100%;border:0;display:block}.network-tags{position:absolute;left:18px;top:16px;z-index:4;display:flex;gap:7px;flex-wrap:wrap;pointer-events:none}.tag{background:rgba(255,255,252,.92);border:1px solid var(--line);border-radius:999px;padding:7px 9px;font-size:8px;color:#59645c;backdrop-filter:blur(10px)}.tag.status{transition:.3s}.tag.status.live{background:#13251a;color:#dfffe8;border-color:#315b3d;box-shadow:0 0 22px rgba(86,255,137,.25)}.network-note{position:absolute;left:18px;right:18px;bottom:16px;z-index:4;background:rgba(255,255,252,.9);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:9px;line-height:1.45;color:#667168;backdrop-filter:blur(10px);pointer-events:none}
-.story{display:grid;grid-template-columns:minmax(330px,.72fr) minmax(560px,1.28fr)}.copy{padding:10vh 4vw 16vh 5vw}.step{min-height:76vh;display:flex;align-items:center;opacity:.24;transform:translateY(28px) scale(.985);transition:opacity .5s ease,transform .5s ease}.step.active{opacity:1;transform:none}.step-card{max-width:520px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 12px 40px rgba(31,42,34,.04);transition:.45s}.step.active .step-card{box-shadow:0 18px 54px rgba(31,42,34,.09);border-color:#b9c6ba}.step-no{font:700 10px/1 "Space Grotesk",sans-serif;color:var(--green);letter-spacing:.12em;margin-bottom:20px}.step h2{font:600 clamp(28px,3.4vw,48px)/1 "Space Grotesk",sans-serif;letter-spacing:-.04em;margin:0 0 15px}.step p{font-size:13px;line-height:1.65;color:#5b655d;margin:0 0 18px}.chips{display:flex;gap:7px;flex-wrap:wrap}.chips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px;font-size:9px;color:#516057;cursor:pointer}.chips button.active{background:var(--green);color:#fff;border-color:var(--green)}
+.story{display:grid;grid-template-columns:minmax(330px,.72fr) minmax(560px,1.28fr)}.copy{padding:10vh 4vw 16vh 5vw}.step{min-height:76vh;display:flex;align-items:center;opacity:.24;transform:translateY(28px) scale(.985);transition:opacity .5s ease,transform .5s ease}.step.active{opacity:1;transform:none}.step-card{max-width:520px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 12px 40px rgba(31,42,34,.04);transition:.45s}.step.active .step-card{box-shadow:0 18px 54px rgba(31,42,34,.09);border-color:#b9c6ba}.step-no{font:700 10px/1 "Space Grotesk",sans-serif;color:var(--green);letter-spacing:.12em;margin-bottom:20px}.step h2{font:600 clamp(28px,3.4vw,48px)/1 "Space Grotesk",sans-serif;letter-spacing:-.04em;margin:0 0 15px}.step p{font-size:13px;line-height:1.65;color:#5b655d;margin:0 0 18px}.chips{display:flex;gap:7px;flex-wrap:wrap}.chips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px;font-size:9px;color:#516057;cursor:pointer}.chips button.active{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 0 0 2px rgba(53,88,69,.08)}
+.chips button:active{transform:scale(.97)}
+.step-feedback{margin-top:12px;padding:9px 11px;border-radius:11px;background:#eef2ec;border:1px solid #d9e0d8;font-size:9px;line-height:1.45;color:#59645c;min-height:34px}
 .visual{position:sticky;top:0;height:100vh;background:linear-gradient(155deg,#f8f8f4,#edf0ea);border-left:1px solid var(--line);overflow:hidden}.visual .network-shell{position:absolute;inset:26px;height:auto;min-height:0;border-radius:28px;background:#030604;border-color:#16231a;box-shadow:0 28px 90px rgba(0,0,0,.24)}
 .visual-frame{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;transition:opacity .65s ease,transform .65s cubic-bezier(.22,1,.36,1);background:#fff}
 .visual-frame.hidden{opacity:0;pointer-events:none;transform:scale(.975)}
@@ -47,11 +49,11 @@
 
 <section class="story" id="story">
  <div class="copy">
-  <article class="step active" data-scene="territory"><div class="step-card"><div class="step-no">01 · TERRITORIO</div><h2>Primero ubicamos dónde buscar.</h2><p>Selecciona un sector. La red todavía no afirma presencia: solo plantea el contexto espacial que luego debe comprobarse.</p><div class="chips"><button class="active" data-place="vaca">La Vaca</button><button data-place="burro">El Burro</button><button data-place="techo">Techo</button><button data-place="matriz">Corabastos · María Paz · Patio Bonito</button></div></div></article>
-  <article class="step" data-scene="gis"><div class="step-card"><div class="step-no">02 · GIS DE ARBOLADO Y VEGETACIÓN</div><h2>Definimos las condiciones espaciales y la vegetación disponible.</h2><p>La axonometría incorpora el <b>arbolado real de Kennedy</b>, junto con humedales, agua, edificaciones y red vial. Esta capa GIS permite reconocer las plantas y estructuras vegetales disponibles antes de contrastarlas con los registros de biodiversidad.</p><div class="chips"><button class="active" data-layer="plants">Arbolado</button><button class="active" data-layer="water">Humedales</button><button class="active" data-layer="urban">Matriz urbana</button></div></div></article>
-  <article class="step" data-scene="records"><div class="step-card"><div class="step-no">03 · PRESENCIA GEOREFERENCIADA</div><h2>Verificamos qué taxones tienen evidencia territorial.</h2><p><b>eBird + iNaturalist + SiB + GBIF</b> sirven para verificar avistamientos y presencia georreferenciada. Para cada registro revisamos <b>coordenada, fecha, precisión e identificación</b>; aparecer en una base no basta para afirmar presencia local.</p><div class="chips"><button data-source="ebird">eBird</button><button data-source="inat">iNaturalist</button><button data-source="sib">SiB</button><button data-source="gbif">GBIF</button></div></div></article>
-  <article class="step" data-scene="ribb"><div class="step-card"><div class="step-no">04 · RIBB</div><h2>Con los taxones territoriales, buscamos interacciones documentadas.</h2><p>Una vez sabemos qué taxones tienen evidencia territorial, consultamos <b>RIBB</b> para identificar qué relaciones están documentadas entre ellos: visita floral, herbivoría, depredación, dispersión, parasitismo y otras interacciones.</p><div class="chips"><button class="active" data-interaction="ALL">todas</button><button data-interaction="VISITA FLORAL">visita floral</button><button data-interaction="HERBIVORÍA">herbivoría</button><button data-interaction="DEPREDACIÓN">depredación</button><button data-interaction="DISPERSIÓN">dispersión</button></div></div></article>
-  <article class="step" data-scene="evidence"><div class="step-card"><div class="step-no">05 · CÓDIGO BIOSCI + VALIDACIÓN LOCAL</div><h2>Complementamos relaciones, pero no confundimos posibilidad con presencia.</h2><p><b>Código Biosci</b> funciona como fuente complementaria para explorar relaciones biológicas y ecológicas. Solo entran como <b>presencia local confirmada</b> los registros cuya coordenada o geometría realmente intersecta el área de estudio. “Bogotá” o un dataset que incluya Kennedy no son suficientes por sí solos.</p><div class="chips"><button class="active" data-quality="ALL">todas</button><button data-quality="Alta">alta</button><button data-quality="Media">media</button><button data-quality="Baja">baja</button></div></div></article>
+  <article class="step active" data-scene="territory"><div class="step-card"><div class="step-no">01 · TERRITORIO</div><h2>Primero ubicamos dónde buscar.</h2><p>Selecciona un sector. La red todavía no afirma presencia: solo plantea el contexto espacial que luego debe comprobarse.</p><div class="chips"><button class="active" data-place="vaca">La Vaca</button><button data-place="burro">El Burro</button><button data-place="techo">Techo</button><button data-place="matriz">Corabastos · María Paz · Patio Bonito</button><div class="step-feedback" id="territoryFeedback">La Vaca seleccionada como contexto territorial.</div></div></article>
+  <article class="step" data-scene="gis"><div class="step-card"><div class="step-no">02 · GIS DE ARBOLADO Y VEGETACIÓN</div><h2>Definimos las condiciones espaciales y la vegetación disponible.</h2><p>La axonometría incorpora el <b>arbolado real de Kennedy</b>, junto con humedales, agua, edificaciones y red vial. Esta capa GIS permite reconocer las plantas y estructuras vegetales disponibles antes de contrastarlas con los registros de biodiversidad.</p><div class="chips"><button class="active" data-layer="plants">Arbolado</button><button class="active" data-layer="water">Humedales</button><button class="active" data-layer="urban">Matriz urbana</button><div class="step-feedback" id="gisFeedback">Capas visibles: arbolado + humedales + matriz urbana.</div></div></article>
+  <article class="step" data-scene="records"><div class="step-card"><div class="step-no">03 · PRESENCIA GEOREFERENCIADA</div><h2>Verificamos qué taxones tienen evidencia territorial.</h2><p><b>eBird + iNaturalist + SiB + GBIF</b> sirven para verificar avistamientos y presencia georreferenciada. Para cada registro revisamos <b>coordenada, fecha, precisión e identificación</b>; aparecer en una base no basta para afirmar presencia local.</p><div class="chips"><button data-source="ebird">eBird</button><button data-source="inat">iNaturalist</button><button data-source="sib">SiB</button><button data-source="gbif">GBIF</button><div class="step-feedback" id="sourceFeedback">Selecciona una fuente para cambiar la vista.</div></div></article>
+  <article class="step" data-scene="ribb"><div class="step-card"><div class="step-no">04 · RIBB</div><h2>Con los taxones territoriales, buscamos interacciones documentadas.</h2><p>Una vez sabemos qué taxones tienen evidencia territorial, consultamos <b>RIBB</b> para identificar qué relaciones están documentadas entre ellos: visita floral, herbivoría, depredación, dispersión, parasitismo y otras interacciones.</p><div class="chips"><button class="active" data-interaction="ALL">todas</button><button data-interaction="VISITA FLORAL">visita floral</button><button data-interaction="HERBIVORÍA">herbivoría</button><button data-interaction="DEPREDACIÓN">depredación</button><button data-interaction="DISPERSIÓN">dispersión</button><div class="step-feedback" id="interactionFeedback">Mostrando todas las interacciones documentadas.</div></div></article>
+  <article class="step" data-scene="evidence"><div class="step-card"><div class="step-no">05 · CÓDIGO BIOSCI + VALIDACIÓN LOCAL</div><h2>Complementamos relaciones, pero no confundimos posibilidad con presencia.</h2><p><b>Código Biosci</b> funciona como fuente complementaria para explorar relaciones biológicas y ecológicas. Solo entran como <b>presencia local confirmada</b> los registros cuya coordenada o geometría realmente intersecta el área de estudio. “Bogotá” o un dataset que incluya Kennedy no son suficientes por sí solos.</p><div class="chips"><button class="active" data-quality="ALL">todas</button><button data-quality="Alta">alta</button><button data-quality="Media">media</button><button data-quality="Baja">baja</button><div class="step-feedback" id="qualityFeedback">Mostrando todas las calidades de evidencia.</div></div></article>
   <article class="step" data-scene="hyp"><div class="step-card"><div class="step-no">06 · MODELO DE NICHO</div><h2>Cruzamos especie + vegetación + espacio + interacción.</h2><p>Solo después de cruzar la <b>especie registrada</b>, la <b>vegetación disponible</b>, su <b>posición espacial</b> y la <b>interacción documentada</b> formulamos hipótesis sobre cómo se organiza la vida en Kennedy.</p></div></article>
  </div>
 
@@ -188,23 +190,59 @@ document.querySelectorAll("[data-interaction]").forEach(b=>b.onclick=()=>{
   const v=b.dataset.interaction;
   send(storyFrame,{type:"storyScene",scene:"ribb",neonInteractions:v==="ALL"?scenes.ribb.neonInteractions:[v]});
   if(v!=="ALL")setTimeout(()=>send(storyFrame,{type:"setInteraction",value:v}),750);
+  document.querySelector("#interactionFeedback").textContent=v==="ALL"?"Mostrando todas las interacciones documentadas.":"Interacción aislada: "+v.toLowerCase()+".";
+
 });
 document.querySelectorAll("[data-quality]").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("[data-quality]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
-  send(storyFrame,{type:"setQuality",value:b.dataset.quality});
+  const q=b.dataset.quality;
+  send(storyFrame,{type:"setQuality",value:q});
+  document.querySelector("#qualityFeedback").textContent=q==="ALL"?"Mostrando todas las calidades de evidencia.":"Filtro activo: calidad "+q+".";
 });
-document.querySelectorAll("[data-place]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-place]").forEach(x=>x.classList.remove("active"));b.classList.add("active")});
-document.querySelectorAll("[data-layer]").forEach(b=>b.onclick=()=>b.classList.toggle("active"));
+
+const PLACE_LABELS={
+  vaca:"Humedal La Vaca",burro:"Humedal El Burro",techo:"Humedal de Techo",
+  matriz:"Corabastos · María Paz · Patio Bonito"
+};
+document.querySelectorAll("[data-place]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-place]").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+  const key=b.dataset.place,label=PLACE_LABELS[key]||key;
+  setVisualMode("axon");
+  document.querySelector("#visualModeBadge").textContent="Territorio · "+label;
+  document.querySelector("#sceneStatus").textContent="contexto seleccionado";
+  document.querySelector("#sceneNote").textContent=label+" queda como contexto de lectura. La axonometría completa permanece visible para no inferir límites o presencias que no estén cargados como geometría.";
+  document.querySelector("#territoryFeedback").textContent="Contexto territorial activo: "+label+".";
+});
+
+const layerState={plants:true,water:true,urban:true};
+const LAYER_LABELS={plants:"arbolado",water:"humedales",urban:"matriz urbana"};
+function updateGISFeedback(){
+  const on=Object.entries(layerState).filter(([,v])=>v).map(([k])=>LAYER_LABELS[k]);
+  document.querySelector("#gisFeedback").textContent=on.length?"Capas de lectura activas: "+on.join(" + ")+".":"Todas las capas de lectura están apagadas.";
+  document.querySelector("#visualModeBadge").textContent="GIS · "+(on.length?on.join(" + "):"sin capas");
+  axonFrame.style.filter=(!layerState.plants&&layerState.water&&layerState.urban)?"saturate(.7) contrast(.95)":(!layerState.water&&layerState.plants)?"saturate(.65) brightness(1.03)":"none";
+  axonFrame.style.opacity=on.length?"1":".18";
+}
+document.querySelectorAll("[data-layer]").forEach(b=>b.onclick=()=>{
+  const k=b.dataset.layer;layerState[k]=!layerState[k];b.classList.toggle("active",layerState[k]);
+  setVisualMode("axon");updateGISFeedback();
+});
+
+const SOURCE_META={
+ ebird:{label:"eBird · avifauna",note:"Solo aves de la red RIBB. Fotografías resueltas por nombre científico. La presencia local debe validarse después con coordenadas eBird."},
+ inat:{label:"iNaturalist · taxones fotografiados",note:"Vista de taxones con fotografía taxonómica disponible; funciona como apoyo de identificación, no como confirmación automática en Kennedy."},
+ sib:{label:"SiB · biodiversidad",note:"Vista general de biodiversidad para contrastar taxones y registros; la asignación local requiere bajar al registro georreferenciado."},
+ gbif:{label:"GBIF · ocurrencias",note:"Vista de taxones de la red para contraste con ocurrencias GBIF; Kennedy solo se confirma cuando la coordenada intersecta el área de estudio."}
+};
 document.querySelectorAll("[data-source]").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("[data-source]").forEach(x=>x.classList.remove("active"));
   b.classList.add("active");
-  const src=b.dataset.source;
+  const src=b.dataset.source,meta=SOURCE_META[src];
   setVisualMode("network");
-  document.querySelector("#visualModeBadge").textContent=src==="ebird"?"eBird · avifauna":"Presencia georreferenciada";
-  document.querySelector("#sceneStatus").textContent="cargando "+(src==="ebird"?"aves":"registros")+"…";
-  document.querySelector("#sceneNote").textContent=src==="ebird"
-    ?"Vista de avifauna: se muestran únicamente taxones clasificados como aves; las fotografías se cargan por nombre científico."
-    :"Vista general de presencia. La asignación local sigue dependiendo de coordenada, fecha, precisión e identificación.";
+  document.querySelector("#visualModeBadge").textContent=meta.label;
+  document.querySelector("#sceneStatus").textContent="aplicando vista…";
+  document.querySelector("#sceneNote").textContent=meta.note;
+  document.querySelector("#sourceFeedback").textContent="Fuente activa: "+meta.label+".";
   send(storyFrame,{type:"sourceScene",source:src});
 });
 
