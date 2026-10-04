@@ -188,7 +188,7 @@ const activeEco=new Set(Object.keys(ECO_LABELS));
 
 const state={
   district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:"",
-  focus:null, interactionSet:null, yaw:0.35,pitch:-0.16,zoom:1,auto:true,labels:false
+  focus:null, interactionSet:null, includeIsolated:false, yaw:0.35,pitch:-0.16,zoom:1,auto:true,labels:false
 };
 const sceneAnim={alpha:1,targetAlpha:1,zoomBoost:0,targetZoomBoost:0,spin:0,targetSpin:0,busy:false,pending:null,lastApplied:null};
 const neonState={groups:new Set(),interaction:null,interactions:new Set(),strength:0,targetStrength:0};
@@ -293,6 +293,26 @@ function rebuild(){
   visible=DATA.records.filter(match);
   const ids=new Set();
   visible.forEach(r=>{ids.add(r.s);ids.add(r.t)});
+
+  // Some explanatory scenes intentionally isolate a trophic/taxonomic layer.
+  // Those nodes must remain visible even when no edge exists inside that layer.
+  if(state.includeIsolated){
+    const isolated=[...DATA.nodes]
+      .filter(n=>activeEco.has(ecoGroup(n.id)))
+      .sort((a,b)=>(b.n||0)-(a.n||0))
+      .slice(0,220);
+    isolated.forEach(n=>ids.add(n.id));
+  }
+
+  // Safety fallback: never leave the canvas blank after a valid scene change.
+  if(!ids.size){
+    [...DATA.nodes]
+      .filter(n=>activeEco.has(ecoGroup(n.id)))
+      .sort((a,b)=>(b.n||0)-(a.n||0))
+      .slice(0,160)
+      .forEach(n=>ids.add(n.id));
+  }
+
   nodes=[...ids].map(id=>{
     const src=DATA.nodeById.get(id)||{id,n:1,origin:""};
     return {...src,id,base:unitSphere(id),screen:null};
@@ -803,7 +823,7 @@ function handleNetworkMessage(m){
     animateSceneChange(()=>{
       activeEco.clear();groups.forEach(k=>activeEco.add(k));syncEcoButtons();
       state.interaction="ALL";state.interactionSet=interactions.length?new Set(interactions):null;
-      state.quality=m.quality||"ALL";state.focus=null;
+      state.quality=m.quality||"ALL";state.includeIsolated=!!m.includeIsolated;state.focus=null;
       neonState.groups=new Set((m.neonGroups||[]).filter(k=>ECO_LABELS[k]));
       neonState.interaction=null;neonState.interactions=new Set(m.neonInteractions||interactions);
       neonState.targetStrength=(neonState.groups.size||neonState.interactions.size)?1:0;
@@ -820,7 +840,7 @@ function handleNetworkMessage(m){
   }
   if(m.type==="setInteraction"){const v=m.value||"ALL";animateSceneChange(()=>{state.interactionSet=null;state.interaction=v;const sel=document.querySelector("#interaction");if(sel)sel.value=state.interaction;state.focus=null;rebuild()},"interaction:"+v)}
   if(m.type==="setQuality"){const v=m.value||"ALL";animateSceneChange(()=>{state.quality=v;state.focus=null;rebuild()},"quality:"+v)}
-  if(m.type==="resetNetwork"){neonState.groups.clear();neonState.interaction=null;neonState.interactions.clear();neonState.targetStrength=0;state.interactionSet=null;animateSceneChange(()=>resetNetworkState(),"reset");}
+  if(m.type==="resetNetwork"){neonState.groups.clear();neonState.interaction=null;neonState.interactions.clear();neonState.targetStrength=0;state.interactionSet=null;state.includeIsolated=false;animateSceneChange(()=>resetNetworkState(),"reset");}
   if(m.type==="focusTaxon"||m.type==="openTaxon"){
     const n=nodeMap.get(m.taxon)||DATA?.nodeById?.get(m.taxon);
     if(n){state.focus=n.id;if(m.type==="openTaxon")openNode(n);else draw()}
