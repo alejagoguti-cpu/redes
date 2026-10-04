@@ -81,6 +81,10 @@ body.storymode .legend .label,body.storymode .legend .small{color:#aebbb1}
 .analysis-list{margin:6px 0 0;padding:0;list-style:none}.analysis-list li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid #edf0ea;font-size:7.5px}.analysis-list li:last-child{border-bottom:0}.analysis-list em{font-style:normal;color:#8a9088}
 .analysis-note{background:#f5f0df;color:#695c37;border-radius:10px;padding:8px;font-size:7.5px;line-height:1.45;margin-top:9px}
 body.embed .analysis{display:none!important}
+
+.arch-key{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px}
+.arch-key span{display:flex;align-items:center;gap:6px;font-size:7.5px;color:#687168}
+.arch-key i{width:9px;height:9px;border-radius:50%;display:inline-block}
 </style>
 </head>
 <body><div class="app">
@@ -160,16 +164,21 @@ body.embed .analysis{display:none!important}
   <p class="introcopy">Aísla categorías, remueve soportes y observa qué nodos pierden conectividad. Las métricas se recalculan con la red visible.</p>
 
   <div class="analysis-grid">
-    <div class="analysis-card"><b id="mComponents">0</b><span>componentes</span></div>
-    <div class="analysis-card"><b id="mDangling">0</b><span>colgantes (grado ≤ 1)</span></div>
+    <div class="analysis-card"><b id="mCommunities">0</b><span>comunidades</span></div>
+    <div class="analysis-card"><b id="mGiant">0%</b><span>componente gigante</span></div>
+    <div class="analysis-card"><b id="mDensity">0</b><span>densidad</span></div>
     <div class="analysis-card"><b id="mBridges">0</b><span>nodos puente</span></div>
+    <div class="analysis-card"><b id="mComponents">0</b><span>componentes</span></div>
+    <div class="analysis-card"><b id="mDangling">0</b><span>colgantes</span></div>
     <div class="analysis-card"><b id="mBirdLoss">0%</b><span>avifauna desconectada</span></div>
+    <div class="analysis-card"><b id="mCentral">0</b><span>hubs estructurales</span></div>
   </div>
 
   <div class="section-title">Organización visual</div>
   <div class="analysis-actions">
     <button class="analysis-btn active" id="layoutSwarm">Enjambre</button>
     <button class="analysis-btn" id="layoutGroups">Agrupar categorías</button>
+    <button class="analysis-btn" id="layoutArchitecture">Arquitectura</button>
   </div>
 
   <div class="section-title">Aislar interacciones</div>
@@ -180,6 +189,13 @@ body.embed .analysis{display:none!important}
     <button class="analysis-btn" data-highlight="hubs">Hubs</button>
     <button class="analysis-btn" data-highlight="bridges">Puentes</button>
     <button class="analysis-btn" data-highlight="dangling">Colgantes</button>
+    <button class="analysis-btn" data-highlight="betweenness">Intermediación</button>
+  </div>
+  <div class="arch-key">
+    <span><i style="background:#e6b84a"></i>Hub</span>
+    <span><i style="background:#8f6bd1"></i>Puente</span>
+    <span><i style="background:#6aa6d8"></i>Intermediación</span>
+    <span><i style="background:#9ea79f"></i>Periférico</span>
   </div>
 
   <div class="section-title">Experimento de remoción</div>
@@ -252,8 +268,11 @@ const neonState={groups:new Set(),interaction:null,interactions:new Set(),streng
 const storyState={scene:null,records:null,nodeIds:null,featured:new Set(),caption:""};
 const analysisState={
   open:false,cluster:false,clusterStrength:0,targetClusterStrength:0,
+  architectureStrength:0,targetArchitectureStrength:0,
   interactionSet:new Set(),removedGroups:new Set(),removedNodes:new Set(),
-  highlight:"none",highlightNodes:new Set(),baselineBirds:new Set(),baselineMetrics:null
+  highlight:"none",highlightNodes:new Set(),baselineBirds:new Set(),baselineMetrics:null,
+  communities:new Map(),communityCenters:new Map(),betweenness:new Map(),
+  roles:new Map(),lastSnapshot:null
 };
 const CLUSTER_ANCHORS={
   micro:{x:-.62,y:-.48},fungi:{x:.58,y:.48},plants:{x:.18,y:.52},
@@ -319,6 +338,17 @@ function project(n){
     const tx=cx+a.x*Math.min(W,H)*.48+Math.cos(ang)*rr;
     const ty=cy+a.y*Math.min(W,H)*.40+Math.sin(ang)*rr;
     const k=analysisState.clusterStrength;
+    x=x*(1-k)+tx*k;y=y*(1-k)+ty*k;
+  }
+  if(analysisState.architectureStrength>.001&&!storyState.scene){
+    const cid=analysisState.communities.get(n.id);
+    const center=analysisState.communityCenters.get(cid)||{x:0,y:0};
+    const jitter=(hash(n.id+"arch")%1000)/1000;
+    const ang=jitter*Math.PI*2;
+    const rr=Math.min(W,H)*(.035+((hash(n.id+"archr")%1000)/1000)*.10);
+    const tx=cx+center.x*Math.min(W,H)*.46+Math.cos(ang)*rr;
+    const ty=cy+center.y*Math.min(W,H)*.38+Math.sin(ang)*rr;
+    const k=analysisState.architectureStrength;
     x=x*(1-k)+tx*k;y=y*(1-k)+ty*k;
   }
   return {
@@ -570,7 +600,8 @@ function draw(){
     const depth=(a.z+b.z)/2;
     const edgeAlpha=dim?.012:(hot?.9:Math.max(.035,.10+(depth+1)*.035));
     ctx.globalAlpha=edgeAlpha*sceneAnim.alpha;
-    const edgeNeon=(storyState.scene&&storyState.featured.size)|| (neonState.interactions.size&&neonState.interactions.has(r.title))||(neonState.interaction&&r.title===neonState.interaction)||(!neonState.interactions.size&&!neonState.interaction&&(neonState.groups.has(ecoGroup(r.s))||neonState.groups.has(ecoGroup(r.t))));
+    const crossCommunity=analysisState.architectureStrength>.25&&analysisState.communities.get(r.s)!==analysisState.communities.get(r.t);
+    const edgeNeon=crossCommunity||(storyState.scene&&storyState.featured.size)|| (neonState.interactions.size&&neonState.interactions.has(r.title))||(neonState.interaction&&r.title===neonState.interaction)||(!neonState.interactions.size&&!neonState.interaction&&(neonState.groups.has(ecoGroup(r.s))||neonState.groups.has(ecoGroup(r.t))));
     ctx.strokeStyle=COLORS[r.title]||"#8b8f88";
     ctx.shadowColor=edgeNeon?(COLORS[r.title]||"#8b8f88"):"transparent";
     ctx.shadowBlur=edgeNeon?28*neonState.strength:0;
@@ -640,11 +671,13 @@ function draw(){
       ctx.beginPath();ctx.arc(p.x,p.y,radius*(1.8+sceneAnim.burst*2.2),0,Math.PI*2);ctx.stroke();
       ctx.restore();
     }
-    ctx.strokeStyle=hot?"#1f3d25":(ECO_COLORS[ecoGroup(n.id)]||"rgba(255,255,255,.96)");
+    const role=analysisState.roles.get(n.id)||"peripheral";
+    const roleColor=role==="hub"?"#e6b84a":role==="bridge"?"#8f6bd1":role==="betweenness"?"#6aa6d8":null;
+    ctx.strokeStyle=hot?"#1f3d25":(analysisState.architectureStrength>.25&&roleColor?roleColor:(ECO_COLORS[ecoGroup(n.id)]||"rgba(255,255,255,.96)"));
     ctx.shadowColor=nodeNeon?(analysisHot?"#fff3a6":(storyHot?"#b7ffca":(ECO_COLORS[ecoGroup(n.id)]||"#8fd3a8"))):"transparent";
     ctx.shadowBlur=nodeNeon?34*neonState.strength:0;
     const pulse=nodeNeon?(1+Math.sin(performance.now()*.004+(hash(n.id)%100)/10)*.10*neonState.strength):1;
-    ctx.lineWidth=nodeNeon?Math.max(2.8,4.8*neonState.strength):(hot?3:Math.max(1,1.2*p.scale));
+    ctx.lineWidth=analysisState.architectureStrength>.25&&roleColor?3.2:(nodeNeon?Math.max(2.8,4.8*neonState.strength):(hot?3:Math.max(1,1.2*p.scale)));
     ctx.beginPath();ctx.arc(p.x,p.y,radius*pulse,0,Math.PI*2);ctx.stroke();
     if(nodeNeon&&neonState.strength>.2){
       ctx.globalAlpha=.22*sceneAnim.alpha*neonState.strength;
@@ -678,6 +711,7 @@ function animate(now){
   sceneAnim.flash+=(sceneAnim.targetFlash-sceneAnim.flash)*Math.min(1,dt*.024);
   neonState.strength+=(neonState.targetStrength-neonState.strength)*ease;
   analysisState.clusterStrength+=(analysisState.targetClusterStrength-analysisState.clusterStrength)*Math.min(1,dt*.012);
+  analysisState.architectureStrength+=(analysisState.targetArchitectureStrength-analysisState.architectureStrength)*Math.min(1,dt*.012);
   state.yaw+=sceneAnim.spin*dt*.0005;
   draw();
   raf=requestAnimationFrame(animate);
@@ -991,12 +1025,23 @@ document.querySelector("#analysisToggle").addEventListener("click",e=>{
   if(analysisState.open)captureAnalysisBaseline();
 });
 document.querySelector("#layoutSwarm").onclick=()=>{
-  analysisState.targetClusterStrength=0;
-  document.querySelector("#layoutSwarm").classList.add("active");document.querySelector("#layoutGroups").classList.remove("active");
+  analysisState.targetClusterStrength=0;analysisState.targetArchitectureStrength=0;
+  document.querySelector("#layoutSwarm").classList.add("active");
+  document.querySelector("#layoutGroups").classList.remove("active");
+  document.querySelector("#layoutArchitecture").classList.remove("active");
 };
 document.querySelector("#layoutGroups").onclick=()=>{
-  analysisState.targetClusterStrength=1;
-  document.querySelector("#layoutGroups").classList.add("active");document.querySelector("#layoutSwarm").classList.remove("active");
+  analysisState.targetClusterStrength=1;analysisState.targetArchitectureStrength=0;
+  document.querySelector("#layoutGroups").classList.add("active");
+  document.querySelector("#layoutSwarm").classList.remove("active");
+  document.querySelector("#layoutArchitecture").classList.remove("active");
+};
+document.querySelector("#layoutArchitecture").onclick=()=>{
+  updateAnalysis();
+  analysisState.targetClusterStrength=0;analysisState.targetArchitectureStrength=1;
+  document.querySelector("#layoutArchitecture").classList.add("active");
+  document.querySelector("#layoutGroups").classList.remove("active");
+  document.querySelector("#layoutSwarm").classList.remove("active");
 };
 document.querySelectorAll("[data-highlight]").forEach(b=>b.onclick=()=>{
   const m=b.dataset.highlight;
@@ -1020,7 +1065,7 @@ document.querySelector("#removeHubs").onclick=e=>{
 document.querySelector("#restoreAnalysis").onclick=()=>{
   analysisState.removedGroups.clear();analysisState.removedNodes.clear();analysisState.interactionSet.clear();analysisState.highlight="none";analysisState.highlightNodes.clear();
   document.querySelectorAll("#analysisPanel .analysis-btn").forEach(b=>b.classList.remove("active"));
-  document.querySelector("#layoutSwarm").classList.add("active");analysisState.targetClusterStrength=0;
+  document.querySelector("#layoutSwarm").classList.add("active");analysisState.targetClusterStrength=0;analysisState.targetArchitectureStrength=0;document.querySelector("#layoutArchitecture").classList.remove("active");
   document.querySelectorAll("[data-highlight]").forEach(b=>b.classList.remove("active"));
   applyAnalysisScenario();captureAnalysisBaseline();
 };
@@ -1093,7 +1138,7 @@ function graphSnapshot(records=visible){
   }
   comps.sort((a,b)=>b.length-a.length);
 
-  // articulation points (undirected Tarjan)
+  // Articulation points.
   let time=0;const disc=new Map(),low=new Map(),parent=new Map(),arts=new Set();
   function dfs(u){
     disc.set(u,++time);low.set(u,disc.get(u));let children=0;
@@ -1105,38 +1150,122 @@ function graphSnapshot(records=visible){
     }
   }
   for(const u of adj.keys())if(!disc.has(u))dfs(u);
+
   const dangling=[...degree].filter(([,d])=>d<=1).map(([id])=>id);
-  const hubs=[...degree].sort((a,b)=>b[1]-a[1]).slice(0,8);
-  return {adj,degree,components:comps,articulation:[...arts],dangling,hubs};
+  const hubs=[...degree].sort((a,b)=>b[1]-a[1]).slice(0,Math.max(8,Math.ceil(degree.size*.02)));
+
+  // Deterministic label-propagation communities.
+  const labels=new Map([...adj.keys()].map((id,i)=>[id,i]));
+  const ordered=[...adj.keys()].sort();
+  for(let iter=0;iter<14;iter++){
+    let changed=0;
+    for(const u of ordered){
+      const counts=new Map();
+      for(const v of adj.get(u)||[]){
+        const lab=labels.get(v);counts.set(lab,(counts.get(lab)||0)+1);
+      }
+      if(!counts.size)continue;
+      const best=[...counts.entries()].sort((a,b)=>b[1]-a[1]||a[0]-b[0])[0][0];
+      if(labels.get(u)!==best){labels.set(u,best);changed++}
+    }
+    if(!changed)break;
+  }
+  const relabel=new Map();let next=0;
+  for(const id of ordered){const l=labels.get(id);if(!relabel.has(l))relabel.set(l,next++);labels.set(id,relabel.get(l))}
+  const communitySizes=new Map();
+  labels.forEach(c=>communitySizes.set(c,(communitySizes.get(c)||0)+1));
+
+  // Approximate betweenness centrality using up to 28 deterministic sources.
+  const between=new Map([...adj.keys()].map(id=>[id,0]));
+  const ids=[...adj.keys()];
+  const sampleCount=Math.min(28,ids.length);
+  const sources=ids.filter((_,i)=>i%Math.max(1,Math.floor(ids.length/sampleCount))===0).slice(0,sampleCount);
+  for(const s0 of sources){
+    const stack=[],pred=new Map(ids.map(v=>[v,[]])),sigma=new Map(ids.map(v=>[v,0])),dist=new Map(ids.map(v=>[v,-1]));
+    sigma.set(s0,1);dist.set(s0,0);const q=[s0];
+    while(q.length){
+      const v=q.shift();stack.push(v);
+      for(const w of adj.get(v)||[]){
+        if(dist.get(w)<0){q.push(w);dist.set(w,dist.get(v)+1)}
+        if(dist.get(w)===dist.get(v)+1){sigma.set(w,sigma.get(w)+sigma.get(v));pred.get(w).push(v)}
+      }
+    }
+    const delta=new Map(ids.map(v=>[v,0]));
+    while(stack.length){
+      const w=stack.pop();
+      for(const v of pred.get(w)||[]){
+        const sw=sigma.get(w)||1;
+        delta.set(v,delta.get(v)+(sigma.get(v)/sw)*(1+delta.get(w)));
+      }
+      if(w!==s0)between.set(w,between.get(w)+delta.get(w));
+    }
+  }
+
+  const n=adj.size,m=records.length;
+  const density=n>1?(2*m)/(n*(n-1)):0;
+  const giant=n?(comps[0]?.length||0)/n:0;
+  return {adj,degree,components:comps,articulation:[...arts],dangling,hubs,communities:labels,communitySizes,betweenness:between,density,giant};
 }
 
 function updateAnalysis(){
   if(!DATA)return;
   const snap=graphSnapshot(visible);
+  analysisState.lastSnapshot=snap;
+  analysisState.communities=snap.communities;
+  analysisState.betweenness=snap.betweenness;
+
+  // Place communities around a ring, largest first.
+  const communities=[...snap.communitySizes.entries()].sort((a,b)=>b[1]-a[1]);
+  analysisState.communityCenters=new Map();
+  communities.forEach(([cid],i)=>{
+    const ang=(i/Math.max(1,communities.length))*Math.PI*2-Math.PI/2;
+    const ring=communities.length<=4?.52:.68;
+    analysisState.communityCenters.set(cid,{x:Math.cos(ang)*ring,y:Math.sin(ang)*ring});
+  });
+
   const birdsNow=new Set([...snap.degree.keys()].filter(id=>ecoGroup(id)==="birds"));
   const base=analysisState.baselineBirds;
   const lost=base.size?[...base].filter(id=>!birdsNow.has(id)).length:0;
   const lossPct=base.size?Math.round(lost/base.size*100):0;
 
+  document.querySelector("#mCommunities").textContent=communities.length.toLocaleString("es-CO");
+  document.querySelector("#mGiant").textContent=Math.round(snap.giant*100)+"%";
+  document.querySelector("#mDensity").textContent=snap.density.toFixed(3);
   document.querySelector("#mComponents").textContent=snap.components.length.toLocaleString("es-CO");
   document.querySelector("#mDangling").textContent=snap.dangling.length.toLocaleString("es-CO");
   document.querySelector("#mBridges").textContent=snap.articulation.length.toLocaleString("es-CO");
   document.querySelector("#mBirdLoss").textContent=lossPct+"%";
+  document.querySelector("#mCentral").textContent=snap.hubs.length.toLocaleString("es-CO");
 
+  const betweenRank=[...snap.betweenness.entries()].sort((a,b)=>b[1]-a[1]);
   let set=new Set();
   if(analysisState.highlight==="hubs")set=new Set(snap.hubs.map(x=>x[0]));
   if(analysisState.highlight==="bridges")set=new Set(snap.articulation);
   if(analysisState.highlight==="dangling")set=new Set(snap.dangling);
+  if(analysisState.highlight==="betweenness")set=new Set(betweenRank.slice(0,Math.max(8,Math.ceil(snap.degree.size*.02))).map(x=>x[0]));
   analysisState.highlightNodes=set;
 
+  analysisState.roles=new Map();
+  const hubSet=new Set(snap.hubs.map(x=>x[0])),bridgeSet=new Set(snap.articulation),betweenSet=new Set(betweenRank.slice(0,Math.max(8,Math.ceil(snap.degree.size*.02))).map(x=>x[0]));
+  snap.degree.forEach((d,id)=>{
+    let role="peripheral";
+    if(hubSet.has(id))role="hub";
+    if(betweenSet.has(id))role="betweenness";
+    if(bridgeSet.has(id))role="bridge";
+    analysisState.roles.set(id,role);
+  });
+
   const list=document.querySelector("#analysisTop");
-  list.innerHTML=snap.hubs.slice(0,6).map(([id,d])=>'<li><span>'+id+'</span><em>grado '+d+'</em></li>').join("");
+  list.innerHTML=snap.hubs.slice(0,6).map(([id,d])=>{
+    const b=Math.round((snap.betweenness.get(id)||0)*10)/10;
+    return '<li><span>'+id+'</span><em>grado '+d+' · interm. '+b+'</em></li>';
+  }).join("");
 
   const removed=analysisState.removedGroups.size+analysisState.removedNodes.size;
   const largest=snap.components[0]?.length||0;
   document.querySelector("#analysisResult").innerHTML=removed
-    ? '<b>Escenario activo.</b> '+lossPct+'% de la avifauna de la red base dejó de aparecer conectada. Componente mayor: '+largest+' nodos. Nodos colgantes: '+snap.dangling.length+'.'
-    : 'Red base: '+snap.components.length+' componente(s), '+snap.articulation.length+' nodo(s) puente y '+snap.dangling.length+' nodo(s) colgante(s).';
+    ? '<b>Escenario activo.</b> '+lossPct+'% de la avifauna base dejó de aparecer conectada. Componente mayor: '+largest+' nodos. Comunidades: '+communities.length+'.'
+    : '<b>Arquitectura actual:</b> '+communities.length+' comunidades · '+Math.round(snap.giant*100)+'% en el componente gigante · densidad '+snap.density.toFixed(3)+' · '+snap.articulation.length+' puentes.';
 }
 
 function captureAnalysisBaseline(){
