@@ -593,9 +593,94 @@ function relationLabel(r,centerId){
   return (r.title||r.i||"interacción").toLowerCase();
 }
 
-function deepSubgraph(rootId,maxDepth=4,maxNodes=34){
+const SPECIAL_ECO_GROUP={
+  "Zonotrichia capensis costaricensis":"birds",
+  "Ficus americana subsp. andicola":"plants",
+  "Citharexylum subflavescens":"plants",
+  "Lafoensia acuminata":"plants",
+  "Ligustrum lucidum":"plants",
+  "Syzygium paniculatum":"plants",
+  "Smallanthus pyramidalis":"plants",
+  "Alnus acuminata":"plants",
+  "Baccharis bogotensis":"plants",
+  "Dodonaea viscosa":"plants",
+  "Sambucus peruviana":"plants",
+  "Croton mutisianus":"plants",
+  "Bocconia frutescens":"plants",
+  "Cenchrus clandestinus":"plants",
+  "Polygonum capitatum":"plants",
+  "Taraxacum officinale":"plants",
+  "Anthoxanthum odoratum":"plants",
+  "Chusquea sp.":"plants",
+  "Lumbricidae":"invert",
+  "Tipula sp.":"invert",
+  "Eristalis tenax":"invert",
+  "Amastus rubridorsata":"invert",
+  "Fungi":"fungi",
+  "Molothrus bonariensis":"birds",
+  "Asio stygius":"birds",
+  "Tyto furcata contempta":"birds"
+};
+
+const SPECIAL_NETWORKS={
+  "Zonotrichia capensis costaricensis":[
+    {t:"Ficus americana subsp. andicola",i:"Oviposita en el tallo",title:"NIDIFICACIÓN",coord:"4.606143, -74.161681",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Ficus americana subsp. andicola",i:"Consume fruto",title:"HERBIVORÍA",coord:"",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Citharexylum subflavescens",i:"Consume fruto",title:"HERBIVORÍA",coord:"4.641169, -74.149218",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Lafoensia acuminata",i:"Consume semilla",title:"HERBIVORÍA",coord:"4.669460, -74.100150",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Lafoensia acuminata",i:"Oviposita en el tallo",title:"NIDIFICACIÓN",coord:"4.603200, -74.116730",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Ligustrum lucidum",i:"Consume semilla",title:"HERBIVORÍA",coord:"4.601950, -74.116270",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Ligustrum lucidum",i:"Consume flor",title:"VISITA FLORAL",coord:"4.601950, -74.116270",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Syzygium paniculatum",i:"Consume flor",title:"VISITA FLORAL",coord:"4.651220, -74.149440",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Syzygium paniculatum",i:"Oviposita en el tallo",title:"NIDIFICACIÓN",coord:"4.669460, -74.100150",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Smallanthus pyramidalis",i:"Consume fruto",title:"HERBIVORÍA",coord:"4.632056, -74.075028",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Alnus acuminata",i:"Consume semilla",title:"HERBIVORÍA",coord:"",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Baccharis bogotensis",i:"Oviposita en el tallo",title:"NIDIFICACIÓN",coord:"",district:"NO",status:"No reportada en el Distrito para esa interacción"},
+    {t:"Dodonaea viscosa",i:"Oviposita en el tallo",title:"NIDIFICACIÓN",coord:"",district:"NO",status:"No reportada para esa interacción"},
+    {t:"Sambucus peruviana",i:"Consume fruto",title:"HERBIVORÍA",coord:"",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Croton mutisianus",i:"Consume semilla",title:"HERBIVORÍA",coord:"4.669460, -74.100150",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Bocconia frutescens",i:"Consume semilla",title:"HERBIVORÍA",coord:"",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Cenchrus clandestinus",i:"Consume semilla",title:"HERBIVORÍA",coord:"4.667890, -74.100026",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Polygonum capitatum",i:"Consume semilla",title:"HERBIVORÍA",coord:"4.667269, -74.099741",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Taraxacum officinale",i:"Consume semilla",title:"HERBIVORÍA",coord:"",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Anthoxanthum odoratum",i:"Consume semilla",title:"HERBIVORÍA",coord:"4.761571, -74.075356",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Chusquea sp.",i:"Consume semilla",title:"HERBIVORÍA",coord:"",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Lumbricidae",i:"Consume",title:"OTRAS INTERACCIONES",coord:"4.608831, -74.129236",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Tipula sp.",i:"Consume",title:"OTRAS INTERACCIONES",coord:"4.664257, -74.117146",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Eristalis tenax",i:"Consume pupas",title:"OTRAS INTERACCIONES",coord:"4.800000, -74.050000",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Amastus rubridorsata",i:"Consume",title:"OTRAS INTERACCIONES",coord:"4.605673, -74.055525",district:"SI",status:"Reportada en Bogotá"},
+    {t:"Fungi",i:"Se alimenta de hongos que crecen sobre Ficus americana",title:"OTRAS INTERACCIONES",coord:"4.603170, -74.115340",district:"SI",status:"Reportada en Bogotá"},
+    {s:"Molothrus bonariensis",i:"Parasita el nido del copetón",title:"PARASITISMO",coord:"",district:"SI",status:"Reportada en Bogotá"},
+    {s:"Asio stygius",i:"Depreda al copetón",title:"DEPREDACIÓN",coord:"",district:"SI",status:"Reportada en Bogotá"},
+    {s:"Tyto furcata contempta",i:"Depreda al copetón",title:"DEPREDACIÓN",coord:"",district:"NO",status:"No reportada en Distrito para esa interacción"}
+  ]
+};
+
+function specialSubgraph(rootId){
+  const rows=SPECIAL_NETWORKS[rootId];
+  if(!rows)return null;
+  const edges=rows.map((x,idx)=>({
+    id:"special-"+rootId+"-"+idx,
+    s:x.s||rootId,t:x.t||rootId,
+    i:x.i,title:x.title,q:x.district==="NO"?"Baja":"Alta",
+    coord:x.coord||"",district:x.district,status:x.status||""
+  }));
+  const selected=[rootId],seen=new Set([rootId]),depth=new Map([[rootId,0]]),parentEdge=new Map();
   const adjacency=new Map();
-  for(const r of visible){
+  for(const r of edges){
+    const other=r.s===rootId?r.t:r.s;
+    if(!seen.has(other)){seen.add(other);selected.push(other);depth.set(other,1);parentEdge.set(other,{from:rootId,other,r})}
+    if(!adjacency.has(r.s))adjacency.set(r.s,[]);
+    if(!adjacency.has(r.t))adjacency.set(r.t,[]);
+    adjacency.get(r.s).push({other:r.t,r});adjacency.get(r.t).push({other:r.s,r});
+  }
+  return {selected,depth,parentEdge,edges,adjacency,special:true};
+}
+
+function deepSubgraph(rootId,maxDepth=4,maxNodes=34){
+  const special=specialSubgraph(rootId);if(special)return special;
+  const adjacency=new Map();
+  for(const r of DATA.records){
     if(!adjacency.has(r.s))adjacency.set(r.s,[]);
     if(!adjacency.has(r.t))adjacency.set(r.t,[]);
     adjacency.get(r.s).push({other:r.t,r});
@@ -617,7 +702,7 @@ function deepSubgraph(rootId,maxDepth=4,maxNodes=34){
     }
   }
   const ids=new Set(selected);
-  const edges=visible.filter(r=>ids.has(r.s)&&ids.has(r.t));
+  const edges=DATA.records.filter(r=>ids.has(r.s)&&ids.has(r.t));
   return {selected,depth,parentEdge,edges,adjacency};
 }
 
@@ -637,7 +722,7 @@ function openSubnetwork(n){
   const modal=document.querySelector("#subnetModal"),svg=document.querySelector("#subnetSvg"),holder=document.querySelector("#subnetNodes");
   const graph=deepSubgraph(n.id,4,34), ids=graph.selected;
   document.querySelector("#subnetTitle").textContent=n.id;
-  document.querySelector("#subnetSubtitle").textContent=(ids.length-1)+" organismos · "+graph.edges.length+" vínculos · red ecológica expandida hasta 4 grados.";
+  document.querySelector("#subnetSubtitle").textContent=(ids.length-1)+" organismos relacionados · "+graph.edges.length+" registros/vínculos · evidencia RIBB visible en la subred.";
   svg.innerHTML='';holder.innerHTML='';
   const NS="http://www.w3.org/2000/svg";
 
@@ -658,7 +743,7 @@ function openSubnetwork(n){
 
   const pos=new Map();
   const buckets={micro:[],fungi:[],plants:[],invert:[],birds:[],vertebrates:[]};
-  ids.forEach(id=>(buckets[ecoGroup(id)]||buckets.plants).push(id));
+  ids.forEach(id=>(buckets[SPECIAL_ECO_GROUP[id]||ecoGroup(id)]||buckets.plants).push(id));
 
   Object.entries(buckets).forEach(([eco,arr])=>{
     const A=anchors[eco]; if(!A||!arr.length)return;
@@ -694,16 +779,18 @@ function openSubnetwork(n){
   for(const id of ids){
     const p=pos.get(id);if(!p)continue;
     const nd=nodeMap.get(id)||DATA.nodeById.get(id)||{id,n:0,origin:""};
-    const d=graph.depth.get(id)||0, eco=ecoGroup(id), el=document.createElement("div");
+    const d=graph.depth.get(id)||0, eco=SPECIAL_ECO_GROUP[id]||ecoGroup(id), el=document.createElement("div");
     el.className="sub-node"+(id===n.id?" center":"");
     el.style.left=p.x+"%";el.style.top=p.y+"%";
     const degree=graph.edges.filter(e=>e.s===id||e.t===id).length;
-    if(id!==n.id){
-      const size=degree>=5?68:degree>=3?58:48;
-      el.querySelector?.(".pic");
-      el.style.setProperty("--node-size",size+"px");
-    }
-    el.innerHTML='<div class="pic" style="border-color:'+(ECO_COLORS[eco]||'#fff')+';'+(id!==n.id?'width:'+(degree>=5?68:degree>=3?58:48)+'px;height:'+(degree>=5?68:degree>=3?58:48)+'px;':'')+'">'+id.charAt(0).toUpperCase()+'</div><div class="nm">'+id+'</div><div class="rel">'+(id===n.id?"SELECCIONADO":ECO_LABELS[eco])+'</div>';
+    const size=id===n.id?88:(degree>=5?68:degree>=3?58:48);
+    const direct=graph.edges.filter(r=>(r.s===n.id&&r.t===id)||(r.t===n.id&&r.s===id));
+    const relTexts=direct.map(r=>r.i).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
+    const coords=direct.map(r=>r.coord).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
+    const statuses=direct.map(r=>r.status).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
+    const relation=id===n.id?"Copetón · especie de partida":(relTexts.length?relTexts.join(" · "):ECO_LABELS[eco]);
+    const metadata=(coords.length?coords.join(" / "):"")+(statuses.length?((coords.length?"<br>":"")+statuses.join(" · ")):"");
+    el.innerHTML='<div class="pic" style="border-color:'+(ECO_COLORS[eco]||'#fff')+';width:'+size+'px;height:'+size+'px;">'+id.charAt(0).toUpperCase()+'</div><div class="nm">'+id+'</div><div class="rel">'+relation+(metadata?"<br>"+metadata:"")+'</div>';
     el.addEventListener("click",()=>{if(id!==n.id){openSubnetwork(nd);openNode(nd,false)}});
     holder.appendChild(el);ensureNodePhoto(id,el.querySelector(".pic"));
   }
