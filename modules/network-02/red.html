@@ -48,13 +48,13 @@ h3{font-size:11px;margin:0 0 9px}.label{display:block;font-size:7px;text-transfo
 .subnet-stage{position:absolute;inset:0}
 .subnet-svg{position:absolute;inset:0;width:100%;height:100%}
 .sub-ring{display:none}.eco-zone-label{font:600 9px Inter,Arial;letter-spacing:.11em;text-transform:uppercase;opacity:.72}
-.sub-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;z-index:5;width:132px;color:#fff}
+.sub-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;z-index:5;width:100px;color:#fff}
 .sub-node .pic{width:54px;height:54px;border-radius:50%;overflow:hidden;border:2px solid #fff;background:#36443a;box-shadow:0 8px 24px #0008;display:grid;place-items:center;font-size:18px;font-weight:700;color:#dce5de}
 .sub-node.center .pic{width:84px;height:84px;border-width:3px}
 .sub-node img{width:100%;height:100%;object-fit:cover;display:block}
-.sub-node .nm{font-size:9px;line-height:1.12;text-align:center;text-shadow:0 1px 4px #000;max-width:130px;font-weight:600}
+.sub-node .nm{font-size:8px;line-height:1.15;text-align:center;text-shadow:0 1px 4px #000;max-width:105px}
 .sub-node.center .nm{font-size:12px;font-weight:700}
-.sub-node .rel{font-size:7px;line-height:1.22;letter-spacing:.02em;color:#b7c2b9;text-align:center;max-width:135px}
+.sub-node .rel{font-size:6px;line-height:1.1;text-transform:uppercase;letter-spacing:.05em;opacity:.78;text-align:center}
 .sub-node:hover .pic{box-shadow:0 0 0 4px #ffffff1f,0 8px 28px #000}
 .subnet-legend{position:absolute;left:24px;bottom:18px;z-index:8;display:flex;gap:11px;flex-wrap:wrap;color:#b7c1ba;font-size:8px}
 .subnet-legend span{display:flex;align-items:center;gap:5px}.subnet-legend i{width:18px;height:2px;border-radius:2px;display:block}
@@ -70,35 +70,6 @@ body.storymode{background:#050806;color:#eef6ef}
 body.storymode #swarm{background:radial-gradient(circle at 50% 50%,#101a13 0,#071009 48%,#020403 100%)}
 body.storymode .legend{background:rgba(5,9,6,.78);border-color:rgba(255,255,255,.08);color:#c9d5cb}
 body.storymode .legend .label,body.storymode .legend .small{color:#aebbb1}
-
-.analysis{right:18px;top:96px;width:300px;padding:14px;border-radius:18px;max-height:calc(100vh - 114px);overflow:auto;transform:translateX(calc(100% + 36px));opacity:0;pointer-events:none;transition:.28s ease}
-.analysis.open{transform:none;opacity:1;pointer-events:auto}
-.analysis h3{font-size:12px;margin:0 0 4px}.analysis .introcopy{font-size:8px;line-height:1.45;color:#6d756c;margin:0 0 10px}
-.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.analysis-card{background:#f0f3ec;border-radius:10px;padding:8px}.analysis-card b{display:block;font-size:15px}.analysis-card span{font-size:7px;color:#747d73}
-.analysis .section-title{font-size:7px;text-transform:uppercase;letter-spacing:.11em;color:#8a9088;margin:12px 0 6px}
-.analysis-actions{display:flex;gap:5px;flex-wrap:wrap}.analysis-btn{border:1px solid var(--hair);background:#fff;border-radius:999px;padding:6px 8px;font-size:7.5px;cursor:pointer}.analysis-btn.active{background:#1c2a20;color:#fff;border-color:#1c2a20}
-.analysis-btn.danger.active{background:#874d47;border-color:#874d47}.analysis-result{margin-top:9px;border:1px solid var(--hair);background:#fff;border-radius:11px;padding:9px;font-size:8px;line-height:1.5;color:#596158}
-.analysis-list{margin:6px 0 0;padding:0;list-style:none}.analysis-list li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid #edf0ea;font-size:7.5px}.analysis-list li:last-child{border-bottom:0}.analysis-list em{font-style:normal;color:#8a9088}
-.analysis-note{background:#f5f0df;color:#695c37;border-radius:10px;padding:8px;font-size:7.5px;line-height:1.45;margin-top:9px}
-body.embed .analysis{display:none!important}
-
-.arch-key{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px}
-.arch-key span{display:flex;align-items:center;gap:6px;font-size:7.5px;color:#687168}
-.arch-key i{width:9px;height:9px;border-radius:50%;display:inline-block}
-
-.sub-node .pic{position:relative;overflow:hidden;background:#172019}
-.sub-node .pic img{width:100%;height:100%;object-fit:cover;display:block}
-.sub-node .pic.photo-loading:after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(110deg,#172019 20%,#314437 45%,#172019 70%);background-size:200% 100%;animation:photoShimmer 1s linear infinite}.sub-node .pic img{position:relative;z-index:2}
-.sub-node .pic.representative-photo:after{content:"";position:absolute;right:2px;bottom:2px;background:rgba(0,0,0,.72);color:#fff;font-size:5px;letter-spacing:.08em;padding:2px 3px;border-radius:4px}
-@keyframes photoShimmer{to{background-position:-200% 0}}
-
-.scene-editor-toggle{position:absolute;right:68px;top:18px;z-index:14;border:1px solid #ffffff26;background:#ffffff12;color:#fff;border-radius:999px;padding:10px 14px;font-size:8px;font-weight:700;cursor:pointer}
-.scene-editor{position:absolute;right:18px;top:68px;z-index:20;width:285px;max-height:calc(100% - 100px);overflow:auto;background:rgba(14,20,16,.96);border:1px solid #ffffff1f;border-radius:16px;padding:12px;color:#eef4ef;display:none;backdrop-filter:blur(14px)}
-.scene-editor.open{display:block}.scene-editor h3{margin:0 0 9px;font-size:12px}.scene-editor .field{display:grid;grid-template-columns:76px 1fr;gap:8px;align-items:center;margin:7px 0}.scene-editor label{font-size:7px;color:#9eaaa1;text-transform:uppercase;letter-spacing:.08em}
-.scene-editor input,.scene-editor select,.scene-editor textarea{width:100%;box-sizing:border-box;background:#07100a;color:#fff;border:1px solid #ffffff20;border-radius:8px;padding:7px;font:8px Inter,Arial}.scene-editor textarea{min-height:110px;resize:vertical}
-.scene-editor .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.scene-editor button{border:1px solid #ffffff22;background:#ffffff10;color:#fff;border-radius:999px;padding:7px 9px;font-size:7px;cursor:pointer}.scene-editor button.primary{background:#dff4e4;color:#17301f;border-color:#dff4e4;font-weight:700}
-.scene-editor .minihelp{display:block;color:#849288;font-size:7px;margin-top:7px;line-height:1.4}
-.sub-node.editable{cursor:grab}.sub-node.editable:active{cursor:grabbing}.sub-node.selected .pic{box-shadow:0 0 0 4px #f3e38b,0 10px 30px #000}.sub-edge-selected{filter:drop-shadow(0 0 5px currentColor)}
 </style>
 </head>
 <body><div class="app">
@@ -122,7 +93,7 @@ body.embed .analysis{display:none!important}
 <div class="viewbar">
   <button id="autoRotate" class="active"><i class="fa-solid fa-rotate"></i> Giro</button>
   <button id="fitView"><i class="fa-solid fa-expand"></i> Centrar</button>
-  <button id="labels"><i class="fa-solid fa-tag"></i> Etiquetas</button><button id="analysisToggle"><i class="fa-solid fa-diagram-project"></i> Analizar</button>
+  <button id="labels"><i class="fa-solid fa-tag"></i> Etiquetas</button>
 </div>
 
 <aside class="panel filters">
@@ -142,7 +113,6 @@ body.embed .analysis{display:none!important}
   <button class="eco-btn active" data-eco="birds"><i style="background:#668eb5"></i><span>Aves</span></button>
   <button class="eco-btn active" data-eco="vertebrates"><i style="background:#c46f67"></i><span>Otros vertebrados</span></button>
 </div>
-<p class="small" style="margin:6px 0 0">clic = aislar categoría · clic de nuevo = restaurar todas · Shift/Ctrl = combinar</p>
 <span class="label">Interacción</span>
 <select id="interaction"><option value="ALL">Todas</option></select>
 <span class="label">Origen</span>
@@ -173,59 +143,6 @@ body.embed .analysis{display:none!important}
 <p>Arrastra para rotar el enjambre. Usa la rueda para acercar o alejar. Haz clic en un nodo o en una conexión para consultar su evidencia.</p>
 </aside>
 
-<aside id="analysisPanel" class="panel analysis">
-  <h3>Análisis de arquitectura</h3>
-  <p class="introcopy">Aísla categorías, remueve soportes y observa qué nodos pierden conectividad. Las métricas se recalculan con la red visible.</p>
-
-  <div class="analysis-grid">
-    <div class="analysis-card"><b id="mCommunities">0</b><span>comunidades</span></div>
-    <div class="analysis-card"><b id="mGiant">0%</b><span>componente gigante</span></div>
-    <div class="analysis-card"><b id="mDensity">0</b><span>densidad</span></div>
-    <div class="analysis-card"><b id="mBridges">0</b><span>nodos puente</span></div>
-    <div class="analysis-card"><b id="mComponents">0</b><span>componentes</span></div>
-    <div class="analysis-card"><b id="mDangling">0</b><span>colgantes</span></div>
-    <div class="analysis-card"><b id="mBirdLoss">0%</b><span>avifauna desconectada</span></div>
-    <div class="analysis-card"><b id="mCentral">0</b><span>hubs estructurales</span></div>
-  </div>
-
-  <div class="section-title">Organización visual</div>
-  <div class="analysis-actions">
-    <button class="analysis-btn active" id="layoutSwarm">Enjambre</button>
-    <button class="analysis-btn" id="layoutGroups">Agrupar categorías</button>
-    <button class="analysis-btn" id="layoutArchitecture">Arquitectura</button>
-  </div>
-
-  <div class="section-title">Aislar interacciones</div>
-  <div class="analysis-actions" id="analysisInteractions"></div>
-
-  <div class="section-title">Leer arquitectura</div>
-  <div class="analysis-actions">
-    <button class="analysis-btn" data-highlight="hubs">Hubs</button>
-    <button class="analysis-btn" data-highlight="bridges">Puentes</button>
-    <button class="analysis-btn" data-highlight="dangling">Colgantes</button>
-    <button class="analysis-btn" data-highlight="betweenness">Intermediación</button>
-  </div>
-  <div class="arch-key">
-    <span><i style="background:#e6b84a"></i>Hub</span>
-    <span><i style="background:#8f6bd1"></i>Puente</span>
-    <span><i style="background:#6aa6d8"></i>Intermediación</span>
-    <span><i style="background:#9ea79f"></i>Periférico</span>
-  </div>
-
-  <div class="section-title">Experimento de remoción</div>
-  <div class="analysis-actions">
-    <button class="analysis-btn danger" id="removePlants">Remover vegetación</button>
-    <button class="analysis-btn danger" id="removeHubs">Remover 3 hubs</button>
-    <button class="analysis-btn" id="restoreAnalysis">Restaurar</button>
-  </div>
-  <div class="analysis-result" id="analysisResult">Red base sin remociones. Ejecuta un escenario para comparar conectividad.</div>
-
-  <div class="section-title">Nodos estructurales</div>
-  <ul class="analysis-list" id="analysisTop"></ul>
-
-  <div class="analysis-note">Las presiones urbanas (ruido, impermeabilización, residuos) se representan aquí como <b>escenarios de remoción/fragmentación</b>. No se convierten en interacciones observadas sin evidencia espacial que las vincule a taxones concretos.</div>
-</aside>
-
 <div class="hint">Arrastra = rotar · rueda = zoom · nodo = especie · línea = evidencia</div>
 
 <div class="legend">
@@ -243,23 +160,6 @@ body.embed .analysis{display:none!important}
 <div class="subnet-modal" id="subnetModal" aria-hidden="true">
   <div class="subnet-shell" role="dialog" aria-modal="true" aria-labelledby="subnetTitle">
     <button class="subnet-close" id="subnetClose" aria-label="Cerrar subred"><i class="fa-solid fa-xmark"></i></button>
-    <button id="sceneEditorToggle" class="scene-editor-toggle"><i class="fa-solid fa-sliders"></i> editar escena</button>
-    <aside id="sceneEditor" class="scene-editor" aria-label="Editor de escena">
-      <h3>Editor de escena</h3>
-      <div class="field"><label>Nodo</label><select id="editNode"></select></div>
-      <div class="field"><label>X</label><input id="editX" type="number" min="2" max="98" step=".1"></div>
-      <div class="field"><label>Y</label><input id="editY" type="number" min="8" max="92" step=".1"></div>
-      <div class="field"><label>Vínculo</label><select id="editEdge"></select></div>
-      <div class="field"><label>Relación</label><select id="editRelation">
-        <option>VISITA FLORAL</option><option>HERBIVORÍA</option><option>DEPREDACIÓN</option><option>DISPERSIÓN</option><option>PARASITISMO</option><option>NIDIFICACIÓN</option><option>CONSUMO FAUNA/HONGOS</option><option>OTRAS INTERACCIONES</option>
-      </select></div>
-      <div class="field"><label>Línea</label><select id="editLineStyle"><option value="solid">continua</option><option value="dashed">segmentada</option><option value="dotted">punteada</option></select></div>
-      <div class="field"><label>Grosor</label><input id="editWidth" type="range" min=".6" max="5" step=".2" value="1.6"></div>
-      <div class="field"><label>Color</label><input id="editColor" type="color" value="#6f9569"></div>
-      <div class="row"><button id="saveScene" class="primary">guardar escena</button><button id="resetScene">restablecer</button><button id="exportScene">generar JSON</button></div>
-      <textarea id="sceneJSON" readonly placeholder="Aquí aparece el JSON para fijar la escena en el repositorio."></textarea>
-      <span class="minihelp">Arrastra nodos directamente. X/Y están en porcentaje del lienzo. Puedes editar relación, tipo de línea, grosor y color.</span>
-    </aside>
     <div class="subnet-head">
       <div class="ey">Subred de interacción directa</div>
       <h2 id="subnetTitle">Especie seleccionada</h2>
@@ -271,10 +171,10 @@ body.embed .analysis{display:none!important}
     </div>
     <div class="subnet-legend">
       <span><i style="background:#6f9569"></i>Visita floral</span>
-      <span><i style="background:#be8b57"></i>Herbivoría / alimento</span>
+      <span><i style="background:#be8b57"></i>Herbivoría</span>
       <span><i style="background:#b45f5f"></i>Depredación</span>
-      <span><i style="background:#648bb2"></i>Dispersión / consumo</span>
-      <span><i style="background:#8c73a5"></i>Parasitismo / otras</span>
+      <span><i style="background:#648bb2"></i>Dispersión</span>
+      <span><i style="background:#8c73a5"></i>Otras</span>
     </div>
     <div class="subnet-note">clic en una especie = convertirla en centro</div>
   </div>
@@ -283,7 +183,7 @@ body.embed .analysis{display:none!important}
 <script>
 const COLORS={
   "VISITA FLORAL":"#6f9569","HERBIVORÍA":"#be8b57","DEPREDACIÓN":"#b45f5f","DISPERSIÓN":"#648bb2",
-  "OVIPOSICIÓN":"#e6d34b","NIDIFICACIÓN":"#e6d34b","PARASITISMO":"#b867d4","CONSUMO FAUNA/HONGOS":"#4b9fe6","MUTUALISMO":"#5a9a90","OTRAS INTERACCIONES":"#8a8a86"
+  "OVIPOSICIÓN":"#9870a6","PARASITISMO":"#8c73a5","MUTUALISMO":"#5a9a90","OTRAS INTERACCIONES":"#8a8a86"
 };
 
 const ECO_COLORS={micro:"#57a6a1",fungi:"#9a78aa",plants:"#6f9569",invert:"#d09a55",birds:"#668eb5",vertebrates:"#c46f67"};
@@ -297,27 +197,13 @@ const state={
 const sceneAnim={alpha:1,targetAlpha:1,zoomBoost:0,targetZoomBoost:0,spin:0,targetSpin:0,morph:1,targetMorph:1,burst:0,targetBurst:0,flash:0,targetFlash:0,busy:false,pending:null,lastApplied:null};
 const neonState={groups:new Set(),interaction:null,interactions:new Set(),strength:0,targetStrength:0};
 const storyState={scene:null,records:null,nodeIds:null,featured:new Set(),caption:""};
-const analysisState={
-  open:false,cluster:false,clusterStrength:0,targetClusterStrength:0,
-  architectureStrength:0,targetArchitectureStrength:0,
-  interactionSet:new Set(),removedGroups:new Set(),removedNodes:new Set(),
-  highlight:"none",highlightNodes:new Set(),baselineBirds:new Set(),baselineMetrics:null,
-  communities:new Map(),communityCenters:new Map(),betweenness:new Map(),
-  roles:new Map(),lastSnapshot:null
-};
-const CLUSTER_ANCHORS={
-  micro:{x:-.62,y:-.48},fungi:{x:.58,y:.48},plants:{x:.18,y:.52},
-  invert:{x:.18,y:-.50},birds:{x:-.55,y:-.10},vertebrates:{x:-.55,y:.44}
-};
 
-let DATA=null,visible=[],nodes=[],nodeMap=new Map(),edgeScreen=[],visibleDegree=new Map(),networkFit=1;
+let DATA=null,visible=[],nodes=[],nodeMap=new Map(),edgeScreen=[];
 let canvas=document.querySelector("#swarm"),ctx=canvas.getContext("2d"),tooltip=document.querySelector("#tooltip");
 let W=0,H=0,dpr=1,drag=false,dragMoved=false,lastX=0,lastY=0,hoverNode=null;
 let raf=null,lastFrame=performance.now();
 
 const imageCache=new Map();
-let TAXON_IMAGE_DB={};
-let TAXON_IMAGE_DB_READY=false;
 const imageQueue=[];
 let activeLoads=0,loadedCount=0,failedCount=0;
 const MAX_LOADS=5;
@@ -357,35 +243,15 @@ function rotatePoint(p){
 function project(n){
   const p=rotatePoint(n.base);
   const depth=2.8-p.z;
-  const scale=(state.zoom+sceneAnim.zoomBoost)*networkFit*(Math.min(W,H)*0.38)/depth;
+  const scale=(state.zoom+sceneAnim.zoomBoost)*(Math.min(W,H)*0.38)/depth;
   const cx=W*0.52,cy=H*0.53;
   const morph=Math.max(.02,sceneAnim.morph);
   const burst=sceneAnim.burst;
   const radial=scale*morph*(1+burst*.72);
-  let x=cx+p.x*radial,y=cy+p.y*radial;
-  if(analysisState.clusterStrength>.001&&!storyState.scene){
-    const a=CLUSTER_ANCHORS[ecoGroup(n.id)]||{x:0,y:0};
-    const jitter=(hash(n.id+"cluster")%1000)/1000;
-    const ang=jitter*Math.PI*2;
-    const rr=Math.min(W,H)*(.055+((hash(n.id+"rr")%1000)/1000)*.10);
-    const tx=cx+a.x*Math.min(W,H)*.48+Math.cos(ang)*rr;
-    const ty=cy+a.y*Math.min(W,H)*.40+Math.sin(ang)*rr;
-    const k=analysisState.clusterStrength;
-    x=x*(1-k)+tx*k;y=y*(1-k)+ty*k;
-  }
-  if(analysisState.architectureStrength>.001&&!storyState.scene){
-    const cid=analysisState.communities.get(n.id);
-    const center=analysisState.communityCenters.get(cid)||{x:0,y:0};
-    const jitter=(hash(n.id+"arch")%1000)/1000;
-    const ang=jitter*Math.PI*2;
-    const rr=Math.min(W,H)*(.035+((hash(n.id+"archr")%1000)/1000)*.10);
-    const tx=cx+center.x*Math.min(W,H)*.46+Math.cos(ang)*rr;
-    const ty=cy+center.y*Math.min(W,H)*.38+Math.sin(ang)*rr;
-    const k=analysisState.architectureStrength;
-    x=x*(1-k)+tx*k;y=y*(1-k)+ty*k;
-  }
   return {
-    x,y,z:p.z,
+    x:cx+p.x*radial,
+    y:cy+p.y*radial,
+    z:p.z,
     scale:Math.max(.22,Math.min(2.8,(1.15/depth*2.3)*(0.45+0.55*morph)*(1+burst*.28)))
   };
 }
@@ -415,9 +281,6 @@ function ecoGroup(name){
 }
 
 function match(r){
-  if(analysisState.removedNodes.has(r.s)||analysisState.removedNodes.has(r.t))return false;
-  if(analysisState.removedGroups.has(ecoGroup(r.s))||analysisState.removedGroups.has(ecoGroup(r.t)))return false;
-  if(analysisState.interactionSet.size&&!analysisState.interactionSet.has(r.title))return false;
   if(!activeEco.has(ecoGroup(r.s))||!activeEco.has(ecoGroup(r.t)))return false;
   if(state.district!=="ALL"&&r.district!==state.district)return false;
   if(state.interactionSet&&state.interactionSet.size&&!state.interactionSet.has(r.title))return false;
@@ -436,91 +299,37 @@ function match(r){
 }
 
 function rebuild(){
-  // Base records after non-ecological filters. This lets us know which taxa
-  // actually participate in the currently selected evidence set.
-  let baseRecords;
   if(storyState.scene&&storyState.records){
-    baseRecords=[...storyState.records];
+    visible=[...storyState.records];
   }else{
-    baseRecords=DATA.records.filter(r=>{
-      if(analysisState.removedNodes.has(r.s)||analysisState.removedNodes.has(r.t))return false;
-      if(analysisState.removedGroups.has(ecoGroup(r.s))||analysisState.removedGroups.has(ecoGroup(r.t)))return false;
-      if(analysisState.interactionSet.size&&!analysisState.interactionSet.has(r.title))return false;
-      if(state.interactionSet&&state.interactionSet.size&&!state.interactionSet.has(r.title))return false;
-      if(!state.interactionSet&&state.interaction!=="ALL"&&r.title!==state.interaction)return false;
-      if(state.origin!=="ALL"){
-        const ns=DATA.nodeById.get(r.s),nt=DATA.nodeById.get(r.t);
-        if((ns?.origin||"")!==state.origin&&(nt?.origin||"")!==state.origin)return false;
-      }
-      if(state.quality!=="ALL"&&r.q!==state.quality)return false;
-      if(state.district==="SI"&&r.district!=="SI")return false;
-      if(state.search){
-        const q=state.search.toLowerCase();
-        if(!r.s.toLowerCase().includes(q)&&!r.t.toLowerCase().includes(q))return false;
-      }
-      return true;
-    });
+    visible=DATA.records.filter(match);
   }
-
-  // Degree before hiding categories: a taxon stays eligible when it has real
-  // evidence in the current filter, even if its counterpart belongs to a
-  // category that is currently hidden.
-  const participationDegree=new Map();
-  baseRecords.forEach(r=>{
-    participationDegree.set(r.s,(participationDegree.get(r.s)||0)+1);
-    participationDegree.set(r.t,(participationDegree.get(r.t)||0)+1);
-  });
-
-  // Visible edges require both endpoints to belong to active categories.
-  visible=baseRecords.filter(r=>activeEco.has(ecoGroup(r.s))&&activeEco.has(ecoGroup(r.t)));
 
   const ids=new Set();
+  visible.forEach(r=>{ids.add(r.s);ids.add(r.t)});
+
   if(storyState.scene&&storyState.nodeIds){
-    storyState.nodeIds.forEach(id=>{
-      if(activeEco.has(ecoGroup(id))&&(participationDegree.get(id)||0)>0)ids.add(id);
-    });
-  }else{
-    // Node visibility follows the selected ecological categories, but only
-    // includes taxa that participate in at least one record under the current
-    // evidence filters.
-    for(const [id,deg] of participationDegree){
-      if(deg>0&&activeEco.has(ecoGroup(id)))ids.add(id);
-    }
+    storyState.nodeIds.forEach(id=>ids.add(id));
+  }else if(state.includeIsolated){
+    [...DATA.nodes]
+      .filter(n=>activeEco.has(ecoGroup(n.id)))
+      .sort((a,b)=>(b.n||0)-(a.n||0))
+      .slice(0,220)
+      .forEach(n=>ids.add(n.id));
   }
 
-  // If there are visible within-category edges, compute degree from the
-  // filtered subnetwork. Otherwise use participation degree so an isolated
-  // category (e.g. fungi connected mainly to plants) still scales meaningfully.
-  visibleDegree=new Map();
-  visible.forEach(r=>{
-    visibleDegree.set(r.s,(visibleDegree.get(r.s)||0)+1);
-    visibleDegree.set(r.t,(visibleDegree.get(r.t)||0)+1);
-  });
-  for(const id of ids){
-    if(!visibleDegree.has(id))visibleDegree.set(id,participationDegree.get(id)||1);
+  if(!ids.size){
+    [...DATA.nodes].sort((a,b)=>(b.n||0)-(a.n||0)).slice(0,120).forEach(n=>ids.add(n.id));
   }
 
-  // Never inject unrelated fallback taxa. If a filter produces zero evidence,
-  // the canvas honestly becomes empty and the UI reports 0 nodes.
   nodes=[...ids].map(id=>{
     const src=DATA.nodeById.get(id)||{id,n:1,origin:""};
     return {...src,id,base:unitSphere(id),screen:null};
   });
   nodeMap=new Map(nodes.map(n=>[n.id,n]));
-
-  // Re-fit the sphere to the amount of information that remains.
-  // Small subnetworks expand; large swarms stay compact.
-  const count=nodes.length;
-  if(count<=8)networkFit=1.65;
-  else if(count<=25)networkFit=1.42;
-  else if(count<=80)networkFit=1.18;
-  else if(count<=220)networkFit=1.02;
-  else networkFit=.88;
-
-  document.querySelector("#nodes").textContent=count.toLocaleString("es-CO");
+  document.querySelector("#nodes").textContent=nodes.length.toLocaleString("es-CO");
   document.querySelector("#edges").textContent=visible.length.toLocaleString("es-CO");
   queueImages();
-  if(analysisState.open)setTimeout(updateAnalysis,0);
 }
 
 function queueImages(){
@@ -540,30 +349,7 @@ function updateImageProgress(){
     total ? "Imágenes: "+loadedCount.toLocaleString("es-CO")+" cargadas · "+failedCount+" sin foto validada" : "";
 }
 
-async function loadTaxonImageDB(){
-  try{
-    const r=await fetch("../../assets/data/taxon_images.json?v=1",{cache:"force-cache"});
-    if(!r.ok)return;
-    const j=await r.json();
-    TAXON_IMAGE_DB=j.taxa||{};
-    TAXON_IMAGE_DB_READY=true;
-  }catch(e){}
-}
-function localTaxonPhoto(name){
-  const row=TAXON_IMAGE_DB[name];
-  return row&&row.path?row.path:"";
-}
-async function preloadLocalPhotos(names){
-  const urls=names.map(localTaxonPhoto).filter(Boolean);
-  await Promise.allSettled(urls.map(url=>new Promise(resolve=>{
-    const img=new Image();
-    img.onload=()=>resolve(true);
-    img.onerror=()=>resolve(false);
-    img.src=url;
-  })));
-}
 async function resolveImage(name){
-  const local=localTaxonPhoto(name);if(local)return local;
   const pickPhoto=t=>t?.default_photo?.medium_url||t?.default_photo?.square_url||"";
   try{
     const exactRes=await fetch("https://api.inaturalist.org/v1/taxa?q="+encodeURIComponent(name)+"&per_page=10");
@@ -599,27 +385,14 @@ function pumpImages(){
     const entry=imageCache.get(name);
     if(!entry||entry.status!=="queued")continue;
     entry.status="loading";activeLoads++;
-    resolveGuaranteedPhoto(name).then(photo=>{
-      const url=photo?.url||"";
-      if(!url){entry.status="failed";failedCount++;return;}
+    resolveImage(name).then(url=>{
+      if(!url){
+        entry.status="failed";failedCount++;return;
+      }
       const img=new Image();
-      if(!url.startsWith("data:"))
-      img.onload=()=>{
-        entry.status="loaded";entry.img=img;entry.url=url;
-        entry.photoExact=!!photo.exact;entry.photoLabel=photo.label||"";
-        loadedCount++;updateImageProgress()
-      };
-      img.onerror=()=>{
-        const eco=SPECIAL_ECO_GROUP[name]||ecoGroup(name);
-        const fallback=CATEGORY_PHOTOS[eco]||CATEGORY_PHOTOS.plants;
-        if(img.src!==fallback){
-          
-          img.src=fallback;
-          entry.url=fallback;entry.photoExact=false;entry.photoLabel="fotografía representativa · "+(ECO_LABELS[eco]||"grupo ecológico");
-        }else{
-          entry.status="failed";failedCount++;updateImageProgress();
-        }
-      };
+      img.crossOrigin="anonymous";
+      img.onload=()=>{entry.status="loaded";entry.img=img;entry.url=url;loadedCount++;updateImageProgress()};
+      img.onerror=()=>{entry.status="failed";failedCount++;updateImageProgress()};
       img.src=url;
     }).finally(()=>{activeLoads--;updateImageProgress();pumpImages()});
   }
@@ -669,8 +442,7 @@ function draw(){
     const depth=(a.z+b.z)/2;
     const edgeAlpha=dim?.012:(hot?.9:Math.max(.035,.10+(depth+1)*.035));
     ctx.globalAlpha=edgeAlpha*sceneAnim.alpha;
-    const crossCommunity=analysisState.architectureStrength>.25&&analysisState.communities.get(r.s)!==analysisState.communities.get(r.t);
-    const edgeNeon=crossCommunity||(storyState.scene&&storyState.featured.size)|| (neonState.interactions.size&&neonState.interactions.has(r.title))||(neonState.interaction&&r.title===neonState.interaction)||(!neonState.interactions.size&&!neonState.interaction&&(neonState.groups.has(ecoGroup(r.s))||neonState.groups.has(ecoGroup(r.t))));
+    const edgeNeon=(storyState.scene&&storyState.featured.size)|| (neonState.interactions.size&&neonState.interactions.has(r.title))||(neonState.interaction&&r.title===neonState.interaction)||(!neonState.interactions.size&&!neonState.interaction&&(neonState.groups.has(ecoGroup(r.s))||neonState.groups.has(ecoGroup(r.t))));
     ctx.strokeStyle=COLORS[r.title]||"#8b8f88";
     ctx.shadowColor=edgeNeon?(COLORS[r.title]||"#8b8f88"):"transparent";
     ctx.shadowBlur=edgeNeon?28*neonState.strength:0;
@@ -701,10 +473,7 @@ function draw(){
     const nodeAlpha=dim?.08:Math.max(.35,.72+(p.z+1)*.14);
     ctx.globalAlpha=nodeAlpha*sceneAnim.alpha;
 
-    const deg=visibleDegree.get(n.id)||1;
-    const maxDeg=Math.max(1,...visibleDegree.values());
-    const degreeNorm=Math.sqrt(deg/maxDeg);
-    const baseRadius=4.5+degreeNorm*15;
+    const baseRadius=4+Math.min(12,Math.sqrt(n.n||1)*.42);
     const radius=Math.max(3,baseRadius*p.scale)*(storyState.featured.has(n.id)?1.32:1);
     n.drawRadius=radius;
 
@@ -717,18 +486,19 @@ function draw(){
       const sx=(iw-side)/2,sy=(ih-side)/2;
       ctx.drawImage(im.img,sx,sy,side,side,p.x-radius,p.y-radius,radius*2,radius*2);
     }else{
-      // Never render initials/icons as nodes. While a photograph is resolving,
-      // keep a neutral photographic placeholder only.
-      const g=ctx.createRadialGradient(p.x-radius*.25,p.y-radius*.3,radius*.1,p.x,p.y,radius*1.2);
-      g.addColorStop(0,"#506256");g.addColorStop(.55,"#26342b");g.addColorStop(1,"#111813");
+      const g=ctx.createLinearGradient(p.x-radius,p.y-radius,p.x+radius,p.y+radius);
+      g.addColorStop(0,"#d9dfd4");g.addColorStop(1,"#8da087");
       ctx.fillStyle=g;ctx.fillRect(p.x-radius,p.y-radius,radius*2,radius*2);
+      ctx.fillStyle="rgba(255,255,255,.82)";
+      ctx.font=Math.max(6,radius*.7)+"px Inter,Arial";
+      ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillText((n.id||"?").charAt(0).toUpperCase(),p.x,p.y);
     }
     ctx.restore();
 
     ctx.globalAlpha=(dim?.08:1)*sceneAnim.alpha;
     const storyHot=storyState.featured.has(n.id);
-    const analysisHot=analysisState.highlightNodes.has(n.id);
-    const nodeNeon=analysisHot||storyHot||neonState.groups.has(ecoGroup(n.id));
+    const nodeNeon=storyHot||neonState.groups.has(ecoGroup(n.id));
     if((nodeNeon||neonState.interactions.size)&&sceneAnim.burst>.04){
       ctx.save();
       ctx.globalAlpha=Math.min(.42,sceneAnim.burst*.5)*sceneAnim.alpha;
@@ -738,13 +508,11 @@ function draw(){
       ctx.beginPath();ctx.arc(p.x,p.y,radius*(1.8+sceneAnim.burst*2.2),0,Math.PI*2);ctx.stroke();
       ctx.restore();
     }
-    const role=analysisState.roles.get(n.id)||"peripheral";
-    const roleColor=role==="hub"?"#e6b84a":role==="bridge"?"#8f6bd1":role==="betweenness"?"#6aa6d8":null;
-    ctx.strokeStyle=hot?"#1f3d25":(analysisState.architectureStrength>.25&&roleColor?roleColor:(ECO_COLORS[ecoGroup(n.id)]||"rgba(255,255,255,.96)"));
-    ctx.shadowColor=nodeNeon?(analysisHot?"#fff3a6":(storyHot?"#b7ffca":(ECO_COLORS[ecoGroup(n.id)]||"#8fd3a8"))):"transparent";
+    ctx.strokeStyle=hot?"#1f3d25":(ECO_COLORS[ecoGroup(n.id)]||"rgba(255,255,255,.96)");
+    ctx.shadowColor=nodeNeon?(storyHot?"#b7ffca":(ECO_COLORS[ecoGroup(n.id)]||"#8fd3a8")):"transparent";
     ctx.shadowBlur=nodeNeon?34*neonState.strength:0;
     const pulse=nodeNeon?(1+Math.sin(performance.now()*.004+(hash(n.id)%100)/10)*.10*neonState.strength):1;
-    ctx.lineWidth=analysisState.architectureStrength>.25&&roleColor?3.2:(nodeNeon?Math.max(2.8,4.8*neonState.strength):(hot?3:Math.max(1,1.2*p.scale)));
+    ctx.lineWidth=nodeNeon?Math.max(2.8,4.8*neonState.strength):(hot?3:Math.max(1,1.2*p.scale));
     ctx.beginPath();ctx.arc(p.x,p.y,radius*pulse,0,Math.PI*2);ctx.stroke();
     if(nodeNeon&&neonState.strength>.2){
       ctx.globalAlpha=.22*sceneAnim.alpha*neonState.strength;
@@ -777,8 +545,6 @@ function animate(now){
   sceneAnim.burst+=(sceneAnim.targetBurst-sceneAnim.burst)*ease;
   sceneAnim.flash+=(sceneAnim.targetFlash-sceneAnim.flash)*Math.min(1,dt*.024);
   neonState.strength+=(neonState.targetStrength-neonState.strength)*ease;
-  analysisState.clusterStrength+=(analysisState.targetClusterStrength-analysisState.clusterStrength)*Math.min(1,dt*.012);
-  analysisState.architectureStrength+=(analysisState.targetArchitectureStrength-analysisState.architectureStrength)*Math.min(1,dt*.012);
   state.yaw+=sceneAnim.spin*dt*.0005;
   draw();
   raf=requestAnimationFrame(animate);
@@ -827,98 +593,9 @@ function relationLabel(r,centerId){
   return (r.title||r.i||"interacción").toLowerCase();
 }
 
-const SPECIAL_ECO_GROUP={
-  "Zonotrichia capensis costaricensis":"birds",
-  "Ficus americana subsp. andicola":"plants",
-  "Citharexylum subflavescens":"plants",
-  "Lafoensia acuminata":"plants",
-  "Ligustrum lucidum":"plants",
-  "Syzygium paniculatum":"plants",
-  "Smallanthus pyramidalis":"plants",
-  "Alnus acuminata":"plants",
-  "Baccharis bogotensis":"plants",
-  "Dodonaea viscosa":"plants",
-  "Sambucus peruviana":"plants",
-  "Croton mutisianus":"plants",
-  "Bocconia frutescens":"plants",
-  "Cenchrus clandestinus":"plants",
-  "Polygonum capitatum":"plants",
-  "Taraxacum officinale":"plants",
-  "Anthoxanthum odoratum":"plants",
-  "Chusquea sp.":"plants",
-  "Lumbricidae":"invert",
-  "Tipula sp.":"invert",
-  "Eristalis tenax":"invert",
-  "Amastus rubridorsata":"invert",
-  "Fungi":"fungi",
-  "Molothrus bonariensis":"birds",
-  "Asio stygius":"birds",
-  "Tyto furcata contempta":"birds"
-};
-
-const SPECIAL_NETWORKS={
-  "Zonotrichia capensis costaricensis":[
-    {t:"Ficus americana subsp. andicola",i:"Oviposita en el tallo",title:"NIDIFICACIÓN",coord:"4.606143, -74.161681",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Ficus americana subsp. andicola",i:"Consume fruto",title:"HERBIVORÍA",coord:"",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Citharexylum subflavescens",i:"Consume fruto",title:"HERBIVORÍA",coord:"4.641169, -74.149218",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Lafoensia acuminata",i:"Consume semilla",title:"HERBIVORÍA",coord:"4.669460, -74.100150",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Lafoensia acuminata",i:"Oviposita en el tallo",title:"NIDIFICACIÓN",coord:"4.603200, -74.116730",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Ligustrum lucidum",i:"Consume semilla",title:"HERBIVORÍA",coord:"4.601950, -74.116270",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Ligustrum lucidum",i:"Consume flor",title:"VISITA FLORAL",coord:"4.601950, -74.116270",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Syzygium paniculatum",i:"Consume flor",title:"VISITA FLORAL",coord:"4.651220, -74.149440",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Syzygium paniculatum",i:"Oviposita en el tallo",title:"NIDIFICACIÓN",coord:"4.669460, -74.100150",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Smallanthus pyramidalis",i:"Consume fruto",title:"HERBIVORÍA",coord:"4.632056, -74.075028",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Alnus acuminata",i:"Consume semilla",title:"HERBIVORÍA",coord:"",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Baccharis bogotensis",i:"Oviposita en el tallo",title:"NIDIFICACIÓN",coord:"",district:"NO",status:"No reportada en el Distrito para esa interacción"},
-    {t:"Dodonaea viscosa",i:"Oviposita en el tallo",title:"NIDIFICACIÓN",coord:"",district:"NO",status:"No reportada para esa interacción"},
-    {t:"Sambucus peruviana",i:"Consume fruto",title:"HERBIVORÍA",coord:"",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Croton mutisianus",i:"Consume semilla",title:"HERBIVORÍA",coord:"4.669460, -74.100150",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Bocconia frutescens",i:"Consume semilla",title:"HERBIVORÍA",coord:"",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Cenchrus clandestinus",i:"Consume semilla",title:"HERBIVORÍA",coord:"4.667890, -74.100026",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Polygonum capitatum",i:"Consume semilla",title:"HERBIVORÍA",coord:"4.667269, -74.099741",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Taraxacum officinale",i:"Consume semilla",title:"HERBIVORÍA",coord:"",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Anthoxanthum odoratum",i:"Consume semilla",title:"HERBIVORÍA",coord:"4.761571, -74.075356",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Chusquea sp.",i:"Consume semilla",title:"HERBIVORÍA",coord:"",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Lumbricidae",i:"Consume",title:"CONSUMO FAUNA/HONGOS",coord:"4.608831, -74.129236",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Tipula sp.",i:"Consume",title:"CONSUMO FAUNA/HONGOS",coord:"4.664257, -74.117146",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Eristalis tenax",i:"Consume pupas",title:"CONSUMO FAUNA/HONGOS",coord:"4.800000, -74.050000",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Amastus rubridorsata",i:"Consume",title:"CONSUMO FAUNA/HONGOS",coord:"4.605673, -74.055525",district:"SI",status:"Reportada en Bogotá"},
-    {t:"Fungi",i:"Se alimenta de hongos que crecen sobre Ficus americana",title:"CONSUMO FAUNA/HONGOS",coord:"4.603170, -74.115340",district:"SI",status:"Reportada en Bogotá"},
-    {s:"Molothrus bonariensis",i:"Parasita el nido",title:"PARASITISMO",coord:"",district:"SI",status:"Reportada en Bogotá"},
-    {s:"Asio stygius",i:"Depreda",title:"DEPREDACIÓN",coord:"",district:"SI",status:"Reportada en Bogotá"},
-    {s:"Tyto furcata contempta",i:"Depreda",title:"DEPREDACIÓN",coord:"",district:"NO",status:"No reportada en Distrito para esa interacción"}
-  ]
-};
-
-function specialSubgraph(rootId){
-  const rows=SPECIAL_NETWORKS[rootId];
-  if(!rows)return null;
-  const edges=rows.map((x,idx)=>({
-    id:"special-"+rootId+"-"+idx,
-    s:x.s||rootId,t:x.t||rootId,
-    i:x.i,title:x.title,q:x.district==="NO"?"Baja":"Alta",
-    coord:x.coord||"",district:x.district,status:x.status||"",
-    part:x.i||""
-  }));
-  const selected=[rootId],seen=new Set([rootId]);
-  const depth=new Map([[rootId,0]]),parentEdge=new Map();
-  for(const r of edges){
-    const other=r.s===rootId?r.t:r.s;
-    if(!seen.has(other)){seen.add(other);selected.push(other);depth.set(other,1);parentEdge.set(other,{from:rootId,other,r});}
-  }
-  const adjacency=new Map();
-  edges.forEach(r=>{
-    if(!adjacency.has(r.s))adjacency.set(r.s,[]);
-    if(!adjacency.has(r.t))adjacency.set(r.t,[]);
-    adjacency.get(r.s).push({other:r.t,r});adjacency.get(r.t).push({other:r.s,r});
-  });
-  return {selected,depth,parentEdge,edges,adjacency,special:true};
-}
-
 function deepSubgraph(rootId,maxDepth=4,maxNodes=34){
-  const special=specialSubgraph(rootId);if(special)return special;
   const adjacency=new Map();
-  for(const r of DATA.records){
+  for(const r of visible){
     if(!adjacency.has(r.s))adjacency.set(r.s,[]);
     if(!adjacency.has(r.t))adjacency.set(r.t,[]);
     adjacency.get(r.s).push({other:r.t,r});
@@ -940,395 +617,98 @@ function deepSubgraph(rootId,maxDepth=4,maxNodes=34){
     }
   }
   const ids=new Set(selected);
-  const edges=DATA.records.filter(r=>ids.has(r.s)&&ids.has(r.t));
+  const edges=visible.filter(r=>ids.has(r.s)&&ids.has(r.t));
   return {selected,depth,parentEdge,edges,adjacency};
 }
 
-const EXACT_PHOTO_OVERRIDES={
-  "Zonotrichia capensis costaricensis":[
-    "https://inaturalist-open-data.s3.amazonaws.com/photos/98999715/original.jpeg",
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Zonotrichia_capensis_-Costa_Rica-8.jpg/640px-Zonotrichia_capensis_-Costa_Rica-8.jpg"
-  ],
-  "Lafoensia acuminata":[
-    "https://static.inaturalist.org/photos/347883116/large.jpeg"
-  ],
-  "Alnus acuminata":[
-    "https://inaturalist-open-data.s3.amazonaws.com/photos/98999715/original.jpeg"
-  ],
-  "Syzygium paniculatum":[
-    "https://kyw-public-weed-images.s3.amazonaws.com/OrigImages/S/Syzygium%20paniculatum%206.JPG"
-  ],
-  "Smallanthus pyramidalis":[
-    "https://www.picturethisai.com/wiki-image/1080/154089334834724893.jpeg"
-  ],
-  "Baccharis bogotensis":[
-    "https://inaturalist-open-data.s3.amazonaws.com/photos/6407152/original.jpg"
-  ],
-  "Sambucus peruviana":[
-    "https://bs.plantnet.org/image/o/b738989e1e2cf1781d6b6cbb09984e69e365a954"
-  ],
-  "Bocconia frutescens":[
-    "https://biogeodb.stri.si.edu/bioinformatics/dfmfiles/files/c/29731/29731.jpg"
-  ],
-  "Polygonum capitatum":[
-    "https://mullerseeds.fr/app/uploads/2022/04/68400-Polygonum-capitatum.jpg"
-  ],
-  "Anthoxanthum odoratum":[
-    "https://www.plantarium.ru/dat/plants/7/747/513747_418d08a3.jpg"
-  ],
-  "Tipula sp.":[
-    "https://static.wixstatic.com/media/f54b1e_f800e5b2872e46f2b8831b1e038e9cec.jpg"
-  ],
-  "Asio stygius":[
-    "https://s3.amazonaws.com/media.wikiaves.com.br/images/4864/4684897g_774ab7d8b036d66756653331c2e6f285.jpg"
-  ]
-};
-
-function testImageUrl(url,timeout=6000){
-  return new Promise(resolve=>{
-    if(!url){resolve(false);return;}
-    const img=new Image();
-    let done=false;
-    const finish=ok=>{if(done)return;done=true;clearTimeout(timer);resolve(ok)};
-    const timer=setTimeout(()=>finish(false),timeout);
-    img.onload=()=>finish(!!img.naturalWidth);
-    img.onerror=()=>finish(false);
-    // Deliberately do NOT set crossOrigin: many biodiversity/image hosts
-    // display images correctly but reject anonymous CORS canvas requests.
-    img.src=url;
-  });
-}
-
-async function firstWorkingUrl(urls){
-  for(const url of urls){
-    if(await testImageUrl(url))return url;
-  }
-  return "";
-}
-
-const REPRESENTATIVE_TAXA={
-  birds:["Aves","Passeriformes"],
-  plants:["Plantae","Magnoliopsida"],
-  invert:["Insecta","Arthropoda"],
-  fungi:["Fungi","Agaricomycetes"],
-  micro:["Bacteria"],
-  vertebrates:["Mammalia","Vertebrata"]
-};
-
-const CATEGORY_PHOTOS={
-  birds:"https://inaturalist-open-data.s3.amazonaws.com/photos/98999715/medium.jpeg",
-  plants:"https://inaturalist-open-data.s3.amazonaws.com/photos/6407152/medium.jpg",
-  invert:"https://static.wixstatic.com/media/f54b1e_f800e5b2872e46f2b8831b1e038e9cec.jpg",
-  fungi:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Agaricus_bisporus_2013_G1.jpg/640px-Agaricus_bisporus_2013_G1.jpg",
-  micro:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/EscherichiaColi_NIAID.jpg/640px-EscherichiaColi_NIAID.jpg",
-  vertebrates:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Red_fox_-_Nov_2010.jpg/640px-Red_fox_-_Nov_2010.jpg"
-};
-
-async function resolveGuaranteedPhoto(name){
-  const candidates=[...(EXACT_PHOTO_OVERRIDES[name]||[])];
-
-  const direct=await resolveImage(name);
-  if(direct)candidates.push(direct);
-
-  const clean=(name||"").replace(/\b(sp\.|spp\.|cf\.|aff\.)\b/gi,"").replace(/\s+/g," ").trim();
-  if(clean&&clean!==name){
-    const cleaned=await resolveImage(clean);
-    if(cleaned)candidates.push(cleaned);
-  }
-
-  const eco=SPECIAL_ECO_GROUP[name]||ecoGroup(name);
-  for(const taxon of (REPRESENTATIVE_TAXA[eco]||["Biota"])){
-    const url=await resolveImage(taxon);
-    if(url)candidates.push(url);
-  }
-  candidates.push(CATEGORY_PHOTOS[eco]||CATEGORY_PHOTOS.plants);
-
-  const url=await firstWorkingUrl([...new Set(candidates.filter(Boolean))]);
-  return {
-    url:url||(CATEGORY_PHOTOS[eco]||CATEGORY_PHOTOS.plants),
-    exact:!!((EXACT_PHOTO_OVERRIDES[name]||[]).includes(url)||url===direct),
-    label:url===direct?"foto del taxón":"fotografía representativa · "+(ECO_LABELS[eco]||"grupo ecológico")
-  };
-}
-
 async function ensureNodePhoto(name,el){
-  if(!el)return;
-  const eco=SPECIAL_ECO_GROUP[name]||ecoGroup(name);
-  const local=localTaxonPhoto(name);
-
-  // Local cache is the primary path: no API call and no empty waiting state.
-  if(local){
-    const img=document.createElement("img");
-    img.alt=name;img.src=local;
-    el.innerHTML="";el.appendChild(img);
-    el.classList.remove("photo-loading","representative-photo");
-    img.onerror=async()=>{
-      const resolved=await resolveGuaranteedPhoto(name);
-      if(resolved?.url&&resolved.url!==local){img.src=resolved.url}
-    };
-    return;
-  }
-
   const cached=imageCache.get(name);
-  if(cached?.status==="loaded"&&cached.img?.src){
-    const img=document.createElement("img");
-    img.alt=name;img.src=cached.img.src;
-    el.innerHTML="";el.appendChild(img);
-    el.classList.remove("photo-loading");
-    if(cached.photoExact===false)el.classList.add("representative-photo");
-    return;
-  }
-
-  const immediate=CATEGORY_PHOTOS[eco]||CATEGORY_PHOTOS.plants;
-  const baseImg=document.createElement("img");
-  baseImg.alt=name;baseImg.src=immediate;
-  el.innerHTML="";el.appendChild(baseImg);
-  el.classList.add("representative-photo");
-  el.classList.remove("photo-loading");
-
-  try{
-    const resolved=await resolveGuaranteedPhoto(name);
-    if(resolved?.url&&resolved.url!==immediate){
-      const candidate=document.createElement("img");
-      candidate.alt=name;
-      candidate.onload=()=>{
-        el.innerHTML="";el.appendChild(candidate);
-        if(resolved.exact)el.classList.remove("representative-photo");
-      };
-      candidate.src=resolved.url;
-    }
-  }catch(e){}
+  if(cached?.status==="loaded"&&cached.url){el.innerHTML='<img src="'+cached.url+'" alt="'+name+'">';return;}
+  const url=await resolveImage(name);
+  if(url){let entry=imageCache.get(name);if(!entry){entry={status:"loading",img:null,url:""};imageCache.set(name,entry)}entry.url=url;el.innerHTML='<img src="'+url+'" alt="'+name+'">';}
 }
 
 function closeSubnetwork(){
   const modal=document.querySelector("#subnetModal");
-  modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.querySelector("#sceneEditor")?.classList.remove("open");
+  modal.classList.remove("open");modal.setAttribute("aria-hidden","true");
 }
 
-function relationLabel(r,rootId,nodeId){
-  const other=nodeId;
-  let text=(r.i||r.title||"Interacción");
-  if(r.i==="Consume"){
-    if(r.part&&r.part!=="general")text="Consume "+r.part.replace(/^el |^la |^los |^las /,"");
-    else text="Consume";
-  }else if(r.i==="Parasita a")text="Parasita";
-  else if(r.i==="Oviposita en")text="Oviposita";
-  else if(r.i==="Poliniza a")text="Poliniza";
-  else if(r.i==="Dispersa"||r.i==="Dispersa a")text="Dispersa";
-  else if(r.title==="DEPREDACIÓN")text="Depredación";
-  else if(r.title==="NIDIFICACIÓN")text="Nidificación";
-  return text;
-}
-
-function bestRelationForNode(graph,rootId,id){
-  const direct=graph.edges.filter(r=>(r.s===rootId&&r.t===id)||(r.t===rootId&&r.s===id));
-  if(direct.length)return direct[0];
-  const parent=graph.parentEdge.get(id);
-  return parent?.r||graph.edges.find(r=>r.s===id||r.t===id)||null;
-}
-
-async let SUBNET_SCENES={};
-const sceneEditorState={root:null,graph:null,pos:new Map(),edgeStyles:new Map(),selectedNode:null,selectedEdge:null,render:null};
-
-async function loadSubnetScenes(){
-  try{
-    const r=await fetch("../../assets/data/subnetwork_scenes.json?v=1",{cache:"no-store"});
-    if(r.ok){const j=await r.json();SUBNET_SCENES=j.scenes||{}}
-  }catch(e){}
-}
-function sceneStorageKey(root){return "ribb-scene:"+root}
-function getSavedScene(root){
-  try{
-    const local=localStorage.getItem(sceneStorageKey(root));
-    if(local)return JSON.parse(local);
-  }catch(e){}
-  return SUBNET_SCENES[root]||null;
-}
-function decentralizedPositions(ids){
-  const sorted=[...ids].sort((a,b)=>(hash(a+"scene")%10000)-(hash(b+"scene")%10000));
-  const cols=6,rows=Math.ceil(sorted.length/cols),map=new Map();
-  sorted.forEach((id,i)=>{
-    const col=i%cols,row=Math.floor(i/cols);
-    const jx=((hash(id+"x")%1000)/1000-.5)*6;
-    const jy=((hash(id+"y")%1000)/1000-.5)*5;
-    map.set(id,{x:9+(col/Math.max(1,cols-1))*82+jx,y:17+(row/Math.max(1,rows-1))*66+jy});
-  });
-  return map;
-}
-function serializeScene(){
-  const nodes={};sceneEditorState.pos.forEach((p,id)=>nodes[id]={x:+p.x.toFixed(2),y:+p.y.toFixed(2)});
-  const edges={};sceneEditorState.edgeStyles.forEach((st,id)=>edges[id]={...st});
-  return {root:sceneEditorState.root,nodes,edges};
-}
-function saveSceneLocal(){
-  const data=serializeScene();
-  try{localStorage.setItem(sceneStorageKey(sceneEditorState.root),JSON.stringify(data))}catch(e){}
-  document.querySelector("#sceneJSON").value=JSON.stringify(data,null,2);
-}
-function applySavedScene(root,pos,edgeStyles){
-  const saved=getSavedScene(root);if(!saved)return;
-  Object.entries(saved.nodes||{}).forEach(([id,p])=>{if(pos.has(id))pos.set(id,{x:+p.x,y:+p.y})});
-  Object.entries(saved.edges||{}).forEach(([id,st])=>edgeStyles.set(id,{...st}));
-}
-function syncSceneEditorInputs(){
-  const id=sceneEditorState.selectedNode,p=sceneEditorState.pos.get(id);
-  if(p){document.querySelector("#editNode").value=id;document.querySelector("#editX").value=p.x.toFixed(1);document.querySelector("#editY").value=p.y.toFixed(1)}
-  const eid=sceneEditorState.selectedEdge,edge=sceneEditorState.graph?.edges.find(e=>e.id===eid);
-  if(edge){
-    document.querySelector("#editEdge").value=eid;
-    const st=sceneEditorState.edgeStyles.get(eid)||{};
-    document.querySelector("#editRelation").value=st.relation||edge.title||"OTRAS INTERACCIONES";
-    document.querySelector("#editLineStyle").value=st.lineStyle||"solid";
-    document.querySelector("#editWidth").value=st.width||1.6;
-    document.querySelector("#editColor").value=st.color||COLORS[edge.title]||"#6f9569";
-  }
-}
-function highlightSceneSelection(){
-  document.querySelectorAll(".sub-node").forEach(el=>el.classList.toggle("selected",el.dataset.node===sceneEditorState.selectedNode));
-  document.querySelectorAll("#subnetSvg path[data-edge]").forEach(el=>el.classList.toggle("sub-edge-selected",el.dataset.edge===sceneEditorState.selectedEdge));
-}
-function fillSceneEditor(graph){
-  const nodeSel=document.querySelector("#editNode"),edgeSel=document.querySelector("#editEdge");
-  nodeSel.innerHTML="";graph.selected.forEach(id=>{const o=document.createElement("option");o.value=id;o.textContent=id;nodeSel.appendChild(o)});
-  edgeSel.innerHTML="";graph.edges.forEach(r=>{const o=document.createElement("option");o.value=r.id;o.textContent=r.s+" → "+r.t;edgeSel.appendChild(o)});
-  sceneEditorState.selectedNode=graph.selected[0]||null;sceneEditorState.selectedEdge=graph.edges[0]?.id||null;syncSceneEditorInputs();
-}
-function bindSceneEditor(){
-  document.querySelector("#sceneEditorToggle").onclick=()=>{
-    const panel=document.querySelector("#sceneEditor");panel.classList.toggle("open");
-    document.querySelectorAll(".sub-node").forEach(n=>n.classList.toggle("editable",panel.classList.contains("open")));
-  };
-  document.querySelector("#editNode").onchange=e=>{sceneEditorState.selectedNode=e.target.value;syncSceneEditorInputs();highlightSceneSelection()};
-  const updateNode=()=>{
-    const id=sceneEditorState.selectedNode;if(!id)return;
-    const x=Math.max(2,Math.min(98,+document.querySelector("#editX").value||50));
-    const y=Math.max(8,Math.min(92,+document.querySelector("#editY").value||50));
-    sceneEditorState.pos.set(id,{x,y});sceneEditorState.render?.();
-  };
-  document.querySelector("#editX").oninput=updateNode;document.querySelector("#editY").oninput=updateNode;
-  document.querySelector("#editEdge").onchange=e=>{sceneEditorState.selectedEdge=e.target.value;syncSceneEditorInputs();highlightSceneSelection()};
-  const updateEdge=()=>{
-    const id=sceneEditorState.selectedEdge;if(!id)return;
-    sceneEditorState.edgeStyles.set(id,{relation:document.querySelector("#editRelation").value,lineStyle:document.querySelector("#editLineStyle").value,width:+document.querySelector("#editWidth").value,color:document.querySelector("#editColor").value});
-    sceneEditorState.render?.();
-  };
-  ["editRelation","editLineStyle","editWidth","editColor"].forEach(id=>document.querySelector("#"+id).oninput=updateEdge);
-  document.querySelector("#saveScene").onclick=saveSceneLocal;
-  document.querySelector("#exportScene").onclick=()=>{document.querySelector("#sceneJSON").value=JSON.stringify(serializeScene(),null,2)};
-  document.querySelector("#resetScene").onclick=()=>{
-    try{localStorage.removeItem(sceneStorageKey(sceneEditorState.root))}catch(e){}
-    sceneEditorState.pos=decentralizedPositions(sceneEditorState.graph.selected);sceneEditorState.edgeStyles.clear();sceneEditorState.render?.();fillSceneEditor(sceneEditorState.graph);
-  };
-}
-async function openSubnetwork(n){
+function openSubnetwork(n){
   const modal=document.querySelector("#subnetModal"),svg=document.querySelector("#subnetSvg"),holder=document.querySelector("#subnetNodes");
-  const graph=deepSubgraph(n.id,4,30),ids=graph.selected;
+  const graph=deepSubgraph(n.id,4,34), ids=graph.selected;
   document.querySelector("#subnetTitle").textContent=n.id;
-  document.querySelector("#subnetSubtitle").textContent="Preparando fotos de la subred…";
-  modal.classList.add("open");modal.setAttribute("aria-hidden","false");
-  await preloadLocalPhotos(ids);
-  document.querySelector("#subnetSubtitle").textContent=(ids.length-1)+" organismos relacionados · "+graph.edges.length+" registros/vínculos · red ecológica expandida hasta 4 grados";
-  svg.innerHTML="";holder.innerHTML="";
+  document.querySelector("#subnetSubtitle").textContent=(ids.length-1)+" organismos · "+graph.edges.length+" vínculos · red ecológica expandida hasta 4 grados.";
+  svg.innerHTML='';holder.innerHTML='';
   const NS="http://www.w3.org/2000/svg";
 
-  // Arrowheads make interaction direction explicit.
-  const defs=document.createElementNS(NS,"defs");
-  Object.entries(COLORS).forEach(([key,color],i)=>{
-    const m=document.createElementNS(NS,"marker");
-    const mid="arrow-"+i;m.setAttribute("id",mid);m.setAttribute("viewBox","0 0 10 10");m.setAttribute("refX","8");m.setAttribute("refY","5");
-    m.setAttribute("markerWidth","6");m.setAttribute("markerHeight","6");m.setAttribute("orient","auto-start-reverse");
-    const p=document.createElementNS(NS,"path");p.setAttribute("d","M 0 0 L 10 5 L 0 10 z");p.setAttribute("fill",color);m.appendChild(p);defs.appendChild(m);
+  // Ecological territories across the canvas, inspired by an ecosystem map rather than radial rings.
+  const anchors={
+    birds:{x:18,y:23}, vertebrates:{x:18,y:67}, invert:{x:48,y:24},
+    plants:{x:55,y:68}, fungi:{x:79,y:68}, micro:{x:82,y:30}
+  };
+  const labels={
+    birds:"AVES",vertebrates:"OTROS VERTEBRADOS",invert:"INVERTEBRADOS",
+    plants:"PLANTAS Y VEGETACIÓN",fungi:"HONGOS",micro:"MICROORGANISMOS"
+  };
+  Object.entries(anchors).forEach(([k,p])=>{
+    if(!activeEco.has(k))return;
+    const t=document.createElementNS(NS,"text");t.setAttribute("x",p.x*10);t.setAttribute("y",p.y*6.5-55);
+    t.setAttribute("text-anchor","middle");t.setAttribute("fill",ECO_COLORS[k]);t.setAttribute("class","eco-zone-label");t.textContent=labels[k];svg.appendChild(t);
   });
-  svg.appendChild(defs);
-  const markerIndex=new Map(Object.keys(COLORS).map((k,i)=>[k,i]));
 
-  let pos=decentralizedPositions(ids);
-  const edgeStyles=new Map();
-  applySavedScene(n.id,pos,edgeStyles);
-  sceneEditorState.root=n.id;sceneEditorState.graph=graph;sceneEditorState.pos=pos;sceneEditorState.edgeStyles=edgeStyles;
+  const pos=new Map();
+  const buckets={micro:[],fungi:[],plants:[],invert:[],birds:[],vertebrates:[]};
+  ids.forEach(id=>(buckets[ecoGroup(id)]||buckets.plants).push(id));
 
-  function renderEdges(){
-    [...svg.querySelectorAll("path[data-edge]")].forEach(x=>x.remove());
-    for(const r of graph.edges){
-      const p1=pos.get(r.s),p2=pos.get(r.t);if(!p1||!p2)continue;
-      const x1=p1.x*10,y1=p1.y*6.5,x2=p2.x*10,y2=p2.y*6.5;
-      const mx=(x1+x2)/2,my=(y1+y2)/2;
-      const bend=(hash(r.s+r.t)%2?1:-1)*Math.min(42,Math.abs(x2-x1)*.055+12);
-      const path=document.createElementNS(NS,"path");
-      path.dataset.edge=r.id;
-      path.setAttribute("d","M "+x1+" "+y1+" Q "+mx+" "+(my+bend)+" "+x2+" "+y2);
-      const st=edgeStyles.get(r.id)||{};
-      const relation=st.relation||r.title;
-      const color=st.color||COLORS[relation]||COLORS[r.title]||"#87958a";
-      path.setAttribute("fill","none");path.setAttribute("stroke",color);
-      path.setAttribute("stroke-width",String(st.width||1.5));
-      path.setAttribute("stroke-opacity",".86");
-      const ls=st.lineStyle||((r.q==="Media")?"dashed":(r.q==="Baja"?"dotted":"solid"));
-      if(ls==="dashed")path.setAttribute("stroke-dasharray","8 5");
-      if(ls==="dotted")path.setAttribute("stroke-dasharray","2 6");
-      const mi=markerIndex.has(relation)?markerIndex.get(relation):(markerIndex.has(r.title)?markerIndex.get(r.title):null);
-      if(mi!==null)path.setAttribute("marker-end","url(#arrow-"+mi+")");
-      path.style.color=color;
-      path.addEventListener("click",ev=>{ev.stopPropagation();sceneEditorState.selectedEdge=r.id;syncSceneEditorInputs();highlightSceneSelection()});
-      svg.appendChild(path);
-    }
-    highlightSceneSelection();
+  Object.entries(buckets).forEach(([eco,arr])=>{
+    const A=anchors[eco]; if(!A||!arr.length)return;
+    // deterministic sunflower cloud around each ecological anchor
+    arr.forEach((id,i)=>{
+      const h=(hash(id+"sub")%10000)/10000;
+      const ang=i*2.399963+h*.8;
+      const rr=Math.sqrt(i+.35)*3.8;
+      let x=A.x+Math.cos(ang)*rr, y=A.y+Math.sin(ang)*rr*.78;
+      x=Math.max(7,Math.min(93,x));y=Math.max(13,Math.min(88,y));
+      pos.set(id,{x,y});
+    });
+  });
+
+  // The selected organism remains identifiable, but inside its ecological territory.
+  const rootEco=ecoGroup(n.id),rootAnchor=anchors[rootEco]||{x:50,y:50};
+  pos.set(n.id,{x:rootAnchor.x,y:rootAnchor.y});
+
+  // Draw all cross-connections first.
+  for(const r of graph.edges){
+    const p1=pos.get(r.s),p2=pos.get(r.t);if(!p1||!p2)continue;
+    const line=document.createElementNS(NS,"line");
+    line.setAttribute("x1",p1.x*10);line.setAttribute("y1",p1.y*6.5);
+    line.setAttribute("x2",p2.x*10);line.setAttribute("y2",p2.y*6.5);
+    line.setAttribute("stroke",COLORS[r.title]||"#8c73a5");
+    line.setAttribute("stroke-width",r.s===n.id||r.t===n.id?"2":"1.15");
+    line.setAttribute("stroke-opacity",r.s===n.id||r.t===n.id?".9":".58");
+    if(r.q==="Media")line.setAttribute("stroke-dasharray","7 6");
+    if(r.q==="Baja")line.setAttribute("stroke-dasharray","2 7");
+    svg.appendChild(line);
   }
 
   for(const id of ids){
     const p=pos.get(id);if(!p)continue;
     const nd=nodeMap.get(id)||DATA.nodeById.get(id)||{id,n:0,origin:""};
-    const eco=SPECIAL_ECO_GROUP[id]||ecoGroup(id),el=document.createElement("div"),isRoot=id===n.id;
-    el.className="sub-node";
-    el.dataset.node=id;
+    const d=graph.depth.get(id)||0, eco=ecoGroup(id), el=document.createElement("div");
+    el.className="sub-node"+(id===n.id?" center":"");
     el.style.left=p.x+"%";el.style.top=p.y+"%";
     const degree=graph.edges.filter(e=>e.s===id||e.t===id).length;
-    const size=isRoot?104:(degree>=5?72:degree>=3?62:54);
-    const direct=graph.edges.filter(r=>(r.s===n.id&&r.t===id)||(r.t===n.id&&r.s===id));
-    const rel=direct[0]||bestRelationForNode(graph,n.id,id);
-    const relation=isRoot?ECO_LABELS[eco]:(direct.length?direct.map(r=>r.i||relationLabel(r,n.id,id)).filter((v,i,a)=>a.indexOf(v)===i).join(" · "):(rel?relationLabel(rel,n.id,id):ECO_LABELS[eco]));
-    const coords=direct.map(r=>r.coord).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
-    const statuses=direct.map(r=>r.status).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
-    const coord=coords.length?coords.join(" / "):"";
-    const statusText=statuses.length?statuses.join(" · "):(rel?.district==="NO"?"No reportada en Distrito":"");
-    el.innerHTML='<div class="pic photo-loading" style="border-color:'+(ECO_COLORS[eco]||"#fff")+';width:'+size+'px;height:'+size+'px"></div>'+
-      '<div class="nm">'+id+'</div>'+
-      '<div class="rel">'+relation+(coord?'<br>'+coord:'')+(statusText?'<br>'+statusText:'')+'</div>';
-    el.addEventListener("click",()=>{if(document.querySelector("#sceneEditor").classList.contains("open")){sceneEditorState.selectedNode=id;syncSceneEditorInputs();highlightSceneSelection();return;} if(!isRoot){openSubnetwork(nd);openNode(nd,false)}});
+    if(id!==n.id){
+      const size=degree>=5?68:degree>=3?58:48;
+      el.querySelector?.(".pic");
+      el.style.setProperty("--node-size",size+"px");
+    }
+    el.innerHTML='<div class="pic" style="border-color:'+(ECO_COLORS[eco]||'#fff')+';'+(id!==n.id?'width:'+(degree>=5?68:degree>=3?58:48)+'px;height:'+(degree>=5?68:degree>=3?58:48)+'px;':'')+'">'+id.charAt(0).toUpperCase()+'</div><div class="nm">'+id+'</div><div class="rel">'+(id===n.id?"SELECCIONADO":ECO_LABELS[eco])+'</div>';
+    el.addEventListener("click",()=>{if(id!==n.id){openSubnetwork(nd);openNode(nd,false)}});
     holder.appendChild(el);ensureNodePhoto(id,el.querySelector(".pic"));
-    el.addEventListener("pointerdown",ev=>{
-      if(!document.querySelector("#sceneEditor").classList.contains("open"))return;
-      ev.preventDefault();ev.stopPropagation();
-      sceneEditorState.selectedNode=id;syncSceneEditorInputs();highlightSceneSelection();
-      el.setPointerCapture(ev.pointerId);
-      const move=mv=>{
-        const rect=holder.getBoundingClientRect();
-        const x=Math.max(2,Math.min(98,((mv.clientX-rect.left)/rect.width)*100));
-        const y=Math.max(8,Math.min(92,((mv.clientY-rect.top)/rect.height)*100));
-        pos.set(id,{x,y});el.style.left=x+"%";el.style.top=y+"%";
-        document.querySelector("#editX").value=x.toFixed(1);document.querySelector("#editY").value=y.toFixed(1);
-        renderEdges();
-      };
-      const up=()=>{el.removeEventListener("pointermove",move);el.removeEventListener("pointerup",up)};
-      el.addEventListener("pointermove",move);el.addEventListener("pointerup",up);
-    });
   }
-  sceneEditorState.render=()=>{
-    pos=sceneEditorState.pos;
-    document.querySelectorAll(".sub-node").forEach(el=>{
-      const p=pos.get(el.dataset.node);if(p){el.style.left=p.x+"%";el.style.top=p.y+"%";}
-    });
-    renderEdges();
-  };
-  renderEdges();
-  fillSceneEditor(graph);
-  document.querySelector("#sceneEditor").classList.remove("open");
-  document.querySelector("#sceneJSON").value="";
-  highlightSceneSelection();
-
+  modal.classList.add("open");modal.setAttribute("aria-hidden","false");
 }
-
-bindSceneEditor();
 
 document.querySelector("#subnetClose").addEventListener("click",closeSubnetwork);
 document.querySelector("#subnetModal").addEventListener("click",e=>{if(e.target.id==="subnetModal")closeSubnetwork()});
@@ -1347,7 +727,7 @@ function openNode(n,showPopup=true){
   const d=document.querySelector("#detail");
   d.classList.add("open");
   const im=imageCache.get(n.id);
-  const hero=im?.url ? 'style="background-image:url(\''+im.url+'\')"' : "";
+  const hero=im?.status==="loaded"&&im.url ? 'style="background-image:url(\''+im.url+'\')"' : "";
   d.innerHTML=
     '<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>'+
     '<h2>'+n.id+'</h2><div class="hero" '+hero+'></div>'+
@@ -1435,93 +815,20 @@ document.querySelector("#labels").onclick=e=>{
 };
 
 document.querySelectorAll("#ecoGroups .eco-btn").forEach(btn=>{
-  btn.addEventListener("click",e=>{
+  btn.addEventListener("click",()=>{
     const k=btn.dataset.eco;
-    const all=Object.keys(ECO_LABELS);
-    const additive=e.shiftKey||e.ctrlKey||e.metaKey;
-
-    if(additive){
-      // Shift/Ctrl/Cmd = combine categories.
-      if(activeEco.has(k)){
-        if(activeEco.size>1)activeEco.delete(k);
-      }else activeEco.add(k);
+    if(activeEco.has(k)){
+      if(activeEco.size===1)return;
+      activeEco.delete(k);btn.classList.remove("active");
     }else{
-      // Normal click = isolate one category. Clicking that isolated category
-      // again restores the complete ecological network.
-      if(activeEco.size===1&&activeEco.has(k)){
-        activeEco.clear();all.forEach(x=>activeEco.add(x));
-      }else{
-        activeEco.clear();activeEco.add(k);
-      }
+      activeEco.add(k);btn.classList.add("active");
     }
-
-    syncEcoButtons();
-    storyState.scene=null;storyState.records=null;storyState.nodeIds=null;storyState.featured.clear();
     state.focus=null;
     closeSubnetwork();
-    sceneAnim.targetAlpha=.08;
-    setTimeout(()=>{
-      rebuild();
-      sceneAnim.alpha=.12;
-      sceneAnim.targetAlpha=1;
-      sceneAnim.targetZoomBoost=.12;
-      setTimeout(()=>sceneAnim.targetZoomBoost=0,420);
-    },180);
+    rebuild();
   });
 });
 
-
-document.querySelector("#analysisToggle").addEventListener("click",e=>{
-  analysisState.open=!analysisState.open;
-  document.querySelector("#analysisPanel").classList.toggle("open",analysisState.open);
-  e.currentTarget.classList.toggle("active",analysisState.open);
-  if(analysisState.open)captureAnalysisBaseline();
-});
-document.querySelector("#layoutSwarm").onclick=()=>{
-  analysisState.targetClusterStrength=0;analysisState.targetArchitectureStrength=0;
-  document.querySelector("#layoutSwarm").classList.add("active");
-  document.querySelector("#layoutGroups").classList.remove("active");
-  document.querySelector("#layoutArchitecture").classList.remove("active");
-};
-document.querySelector("#layoutGroups").onclick=()=>{
-  analysisState.targetClusterStrength=1;analysisState.targetArchitectureStrength=0;
-  document.querySelector("#layoutGroups").classList.add("active");
-  document.querySelector("#layoutSwarm").classList.remove("active");
-  document.querySelector("#layoutArchitecture").classList.remove("active");
-};
-document.querySelector("#layoutArchitecture").onclick=()=>{
-  updateAnalysis();
-  analysisState.targetClusterStrength=0;analysisState.targetArchitectureStrength=1;
-  document.querySelector("#layoutArchitecture").classList.add("active");
-  document.querySelector("#layoutGroups").classList.remove("active");
-  document.querySelector("#layoutSwarm").classList.remove("active");
-};
-document.querySelectorAll("[data-highlight]").forEach(b=>b.onclick=()=>{
-  const m=b.dataset.highlight;
-  analysisState.highlight=analysisState.highlight===m?"none":m;
-  document.querySelectorAll("[data-highlight]").forEach(x=>x.classList.toggle("active",analysisState.highlight===x.dataset.highlight));
-  updateAnalysis();
-});
-document.querySelector("#removePlants").onclick=e=>{
-  const on=!analysisState.removedGroups.has("plants");
-  if(on)analysisState.removedGroups.add("plants");else analysisState.removedGroups.delete("plants");
-  e.currentTarget.classList.toggle("active",on);applyAnalysisScenario();
-};
-document.querySelector("#removeHubs").onclick=e=>{
-  const on=!e.currentTarget.classList.contains("active");
-  if(on){
-    const snap=graphSnapshot(visible);
-    snap.hubs.slice(0,3).forEach(([id])=>analysisState.removedNodes.add(id));
-  }else analysisState.removedNodes.clear();
-  e.currentTarget.classList.toggle("active",on);applyAnalysisScenario();
-};
-document.querySelector("#restoreAnalysis").onclick=()=>{
-  analysisState.removedGroups.clear();analysisState.removedNodes.clear();analysisState.interactionSet.clear();analysisState.highlight="none";analysisState.highlightNodes.clear();
-  document.querySelectorAll("#analysisPanel .analysis-btn").forEach(b=>b.classList.remove("active"));
-  document.querySelector("#layoutSwarm").classList.add("active");analysisState.targetClusterStrength=0;analysisState.targetArchitectureStrength=0;document.querySelector("#layoutArchitecture").classList.remove("active");
-  document.querySelectorAll("[data-highlight]").forEach(b=>b.classList.remove("active"));
-  applyAnalysisScenario();captureAnalysisBaseline();
-};
 
 function syncEcoButtons(){
   document.querySelectorAll("#ecoGroups .eco-btn").forEach(btn=>btn.classList.toggle("active",activeEco.has(btn.dataset.eco)));
@@ -1574,165 +881,6 @@ function applyEcoSet(list){
   if(!activeEco.size)Object.keys(ECO_LABELS).forEach(k=>activeEco.add(k));
   syncEcoButtons();state.focus=null;closeSubnetwork();rebuild();
 }
-function graphSnapshot(records=visible){
-  const adj=new Map();
-  for(const r of records){
-    if(!adj.has(r.s))adj.set(r.s,new Set());
-    if(!adj.has(r.t))adj.set(r.t,new Set());
-    adj.get(r.s).add(r.t);adj.get(r.t).add(r.s);
-  }
-  const degree=new Map([...adj].map(([k,v])=>[k,v.size]));
-  const comps=[];const seen=new Set();
-  for(const id of adj.keys()){
-    if(seen.has(id))continue;
-    const comp=[];const q=[id];seen.add(id);
-    while(q.length){const u=q.shift();comp.push(u);for(const v of adj.get(u)||[]){if(!seen.has(v)){seen.add(v);q.push(v)}}}
-    comps.push(comp);
-  }
-  comps.sort((a,b)=>b.length-a.length);
-
-  // Articulation points.
-  let time=0;const disc=new Map(),low=new Map(),parent=new Map(),arts=new Set();
-  function dfs(u){
-    disc.set(u,++time);low.set(u,disc.get(u));let children=0;
-    for(const v of adj.get(u)||[]){
-      if(!disc.has(v)){children++;parent.set(v,u);dfs(v);low.set(u,Math.min(low.get(u),low.get(v)));
-        if(!parent.has(u)&&children>1)arts.add(u);
-        if(parent.has(u)&&low.get(v)>=disc.get(u))arts.add(u);
-      }else if(parent.get(u)!==v){low.set(u,Math.min(low.get(u),disc.get(v)))}
-    }
-  }
-  for(const u of adj.keys())if(!disc.has(u))dfs(u);
-
-  const dangling=[...degree].filter(([,d])=>d<=1).map(([id])=>id);
-  const hubs=[...degree].sort((a,b)=>b[1]-a[1]).slice(0,Math.max(8,Math.ceil(degree.size*.02)));
-
-  // Deterministic label-propagation communities.
-  const labels=new Map([...adj.keys()].map((id,i)=>[id,i]));
-  const ordered=[...adj.keys()].sort();
-  for(let iter=0;iter<14;iter++){
-    let changed=0;
-    for(const u of ordered){
-      const counts=new Map();
-      for(const v of adj.get(u)||[]){
-        const lab=labels.get(v);counts.set(lab,(counts.get(lab)||0)+1);
-      }
-      if(!counts.size)continue;
-      const best=[...counts.entries()].sort((a,b)=>b[1]-a[1]||a[0]-b[0])[0][0];
-      if(labels.get(u)!==best){labels.set(u,best);changed++}
-    }
-    if(!changed)break;
-  }
-  const relabel=new Map();let next=0;
-  for(const id of ordered){const l=labels.get(id);if(!relabel.has(l))relabel.set(l,next++);labels.set(id,relabel.get(l))}
-  const communitySizes=new Map();
-  labels.forEach(c=>communitySizes.set(c,(communitySizes.get(c)||0)+1));
-
-  // Approximate betweenness centrality using up to 28 deterministic sources.
-  const between=new Map([...adj.keys()].map(id=>[id,0]));
-  const ids=[...adj.keys()];
-  const sampleCount=Math.min(28,ids.length);
-  const sources=ids.filter((_,i)=>i%Math.max(1,Math.floor(ids.length/sampleCount))===0).slice(0,sampleCount);
-  for(const s0 of sources){
-    const stack=[],pred=new Map(ids.map(v=>[v,[]])),sigma=new Map(ids.map(v=>[v,0])),dist=new Map(ids.map(v=>[v,-1]));
-    sigma.set(s0,1);dist.set(s0,0);const q=[s0];
-    while(q.length){
-      const v=q.shift();stack.push(v);
-      for(const w of adj.get(v)||[]){
-        if(dist.get(w)<0){q.push(w);dist.set(w,dist.get(v)+1)}
-        if(dist.get(w)===dist.get(v)+1){sigma.set(w,sigma.get(w)+sigma.get(v));pred.get(w).push(v)}
-      }
-    }
-    const delta=new Map(ids.map(v=>[v,0]));
-    while(stack.length){
-      const w=stack.pop();
-      for(const v of pred.get(w)||[]){
-        const sw=sigma.get(w)||1;
-        delta.set(v,delta.get(v)+(sigma.get(v)/sw)*(1+delta.get(w)));
-      }
-      if(w!==s0)between.set(w,between.get(w)+delta.get(w));
-    }
-  }
-
-  const n=adj.size,m=records.length;
-  const density=n>1?(2*m)/(n*(n-1)):0;
-  const giant=n?(comps[0]?.length||0)/n:0;
-  return {adj,degree,components:comps,articulation:[...arts],dangling,hubs,communities:labels,communitySizes,betweenness:between,density,giant};
-}
-
-function updateAnalysis(){
-  if(!DATA)return;
-  const snap=graphSnapshot(visible);
-  analysisState.lastSnapshot=snap;
-  analysisState.communities=snap.communities;
-  analysisState.betweenness=snap.betweenness;
-
-  // Place communities around a ring, largest first.
-  const communities=[...snap.communitySizes.entries()].sort((a,b)=>b[1]-a[1]);
-  analysisState.communityCenters=new Map();
-  communities.forEach(([cid],i)=>{
-    const ang=(i/Math.max(1,communities.length))*Math.PI*2-Math.PI/2;
-    const ring=communities.length<=4?.52:.68;
-    analysisState.communityCenters.set(cid,{x:Math.cos(ang)*ring,y:Math.sin(ang)*ring});
-  });
-
-  const birdsNow=new Set([...snap.degree.keys()].filter(id=>ecoGroup(id)==="birds"));
-  const base=analysisState.baselineBirds;
-  const lost=base.size?[...base].filter(id=>!birdsNow.has(id)).length:0;
-  const lossPct=base.size?Math.round(lost/base.size*100):0;
-
-  document.querySelector("#mCommunities").textContent=communities.length.toLocaleString("es-CO");
-  document.querySelector("#mGiant").textContent=Math.round(snap.giant*100)+"%";
-  document.querySelector("#mDensity").textContent=snap.density.toFixed(3);
-  document.querySelector("#mComponents").textContent=snap.components.length.toLocaleString("es-CO");
-  document.querySelector("#mDangling").textContent=snap.dangling.length.toLocaleString("es-CO");
-  document.querySelector("#mBridges").textContent=snap.articulation.length.toLocaleString("es-CO");
-  document.querySelector("#mBirdLoss").textContent=lossPct+"%";
-  document.querySelector("#mCentral").textContent=snap.hubs.length.toLocaleString("es-CO");
-
-  const betweenRank=[...snap.betweenness.entries()].sort((a,b)=>b[1]-a[1]);
-  let set=new Set();
-  if(analysisState.highlight==="hubs")set=new Set(snap.hubs.map(x=>x[0]));
-  if(analysisState.highlight==="bridges")set=new Set(snap.articulation);
-  if(analysisState.highlight==="dangling")set=new Set(snap.dangling);
-  if(analysisState.highlight==="betweenness")set=new Set(betweenRank.slice(0,Math.max(8,Math.ceil(snap.degree.size*.02))).map(x=>x[0]));
-  analysisState.highlightNodes=set;
-
-  analysisState.roles=new Map();
-  const hubSet=new Set(snap.hubs.map(x=>x[0])),bridgeSet=new Set(snap.articulation),betweenSet=new Set(betweenRank.slice(0,Math.max(8,Math.ceil(snap.degree.size*.02))).map(x=>x[0]));
-  snap.degree.forEach((d,id)=>{
-    let role="peripheral";
-    if(hubSet.has(id))role="hub";
-    if(betweenSet.has(id))role="betweenness";
-    if(bridgeSet.has(id))role="bridge";
-    analysisState.roles.set(id,role);
-  });
-
-  const list=document.querySelector("#analysisTop");
-  list.innerHTML=snap.hubs.slice(0,6).map(([id,d])=>{
-    const b=Math.round((snap.betweenness.get(id)||0)*10)/10;
-    return '<li><span>'+id+'</span><em>grado '+d+' · interm. '+b+'</em></li>';
-  }).join("");
-
-  const removed=analysisState.removedGroups.size+analysisState.removedNodes.size;
-  const largest=snap.components[0]?.length||0;
-  document.querySelector("#analysisResult").innerHTML=removed
-    ? '<b>Escenario activo.</b> '+lossPct+'% de la avifauna base dejó de aparecer conectada. Componente mayor: '+largest+' nodos. Comunidades: '+communities.length+'.'
-    : '<b>Arquitectura actual:</b> '+communities.length+' comunidades · '+Math.round(snap.giant*100)+'% en el componente gigante · densidad '+snap.density.toFixed(3)+' · '+snap.articulation.length+' puentes.';
-}
-
-function captureAnalysisBaseline(){
-  const snap=graphSnapshot(visible);
-  analysisState.baselineMetrics=snap;
-  analysisState.baselineBirds=new Set([...snap.degree.keys()].filter(id=>ecoGroup(id)==="birds"));
-  updateAnalysis();
-}
-
-function applyAnalysisScenario(){
-  storyState.scene=null;storyState.records=null;storyState.nodeIds=null;storyState.featured.clear();
-  rebuild();updateAnalysis();
-}
-
 function resetNetworkState(){
   activeEco.clear();Object.keys(ECO_LABELS).forEach(k=>activeEco.add(k));syncEcoButtons();
   state.interaction="ALL";state.quality="ALL";state.origin="ALL";state.search="";state.focus=null;
@@ -1815,78 +963,9 @@ function setStoryScene(name){
   state.interaction="ALL";state.interactionSet=null;state.quality="ALL";state.focus=null;
   rebuild();
 }
-function buildSourceScene(source){
-  if(source==="ebird"){
-    const birdNodes=[...DATA.nodes]
-      .filter(n=>ecoGroup(n.id)==="birds")
-      .sort((a,b)=>(b.n||0)-(a.n||0))
-      .slice(0,180);
-    const ids=new Set(birdNodes.map(n=>n.id));
-    const birdEdges=DATA.records.filter(r=>ids.has(r.s)&&ids.has(r.t)).slice(0,260);
-    return {records:birdEdges,nodeIds:ids,featured:new Set(birdNodes.slice(0,40).map(n=>n.id)),caption:"eBird · vista de avifauna"};
-  }
-
-  if(source==="inat"){
-    // Identification-oriented view: a compact, image-rich sample of the network.
-    const ranked=[...DATA.nodes].sort((a,b)=>(b.n||0)-(a.n||0)).slice(0,120);
-    const ids=new Set(ranked.map(n=>n.id));
-    const edges=DATA.records.filter(r=>ids.has(r.s)&&ids.has(r.t)).slice(0,320);
-    return {records:edges,nodeIds:ids,featured:new Set(ranked.slice(0,50).map(n=>n.id)),caption:"iNaturalist · taxones priorizados para identificación fotográfica"};
-  }
-
-  if(source==="sib"){
-    // Biodiversity-oriented view: prioritize native taxa where origin metadata exists.
-    let ranked=[...DATA.nodes].filter(n=>(n.origin||"").toLowerCase().startsWith("nativa"));
-    if(ranked.length<30)ranked=[...DATA.nodes];
-    ranked.sort((a,b)=>(b.n||0)-(a.n||0));
-    const ids=new Set(ranked.slice(0,150).map(n=>n.id));
-    const edges=DATA.records.filter(r=>ids.has(r.s)&&ids.has(r.t)).slice(0,380);
-    return {records:edges,nodeIds:ids,featured:new Set([...ids].slice(0,35)),caption:"SiB · vista de biodiversidad y origen reportado"};
-  }
-
-  if(source==="gbif"){
-    // Broad occurrence contrast view: preserve the widest connected sample.
-    const degree=new Map();
-    DATA.records.forEach(r=>{degree.set(r.s,(degree.get(r.s)||0)+1);degree.set(r.t,(degree.get(r.t)||0)+1)});
-    const ranked=[...DATA.nodes].sort((a,b)=>(degree.get(b.id)||0)-(degree.get(a.id)||0)).slice(0,180);
-    const ids=new Set(ranked.map(n=>n.id));
-    const edges=DATA.records.filter(r=>ids.has(r.s)&&ids.has(r.t)).slice(0,500);
-    return {records:edges,nodeIds:ids,featured:new Set(ranked.slice(0,30).map(n=>n.id)),caption:"GBIF · muestra amplia para contraste de ocurrencias"};
-  }
-
-  return buildStoryScene("records");
-}
-
-function setSourceScene(source){
-  const scene=buildSourceScene(source);
-  storyState.scene="source:"+source;
-  storyState.records=scene.records;
-  storyState.nodeIds=scene.nodeIds;
-  storyState.featured=scene.featured;
-  storyState.caption=scene.caption;
-  state.includeIsolated=true;
-  state.interaction="ALL";state.interactionSet=null;state.quality="ALL";state.focus=null;
-  rebuild();
-}
-
 function handleNetworkMessage(m){
   if(!m||typeof m!=="object")return;
   if(!networkDataReady){pendingNetworkMessages.push(m);return}
-  if(m.type==="sourceScene"){
-    const src=m.source||"";
-    animateSceneChange(()=>{
-      setSourceScene(src);
-      neonState.groups.clear();
-      neonState.interaction=null;
-      neonState.interactions.clear();
-      if(src==="ebird"){
-        neonState.groups.add("birds");
-        neonState.targetStrength=1;
-      }else neonState.targetStrength=.55;
-      try{parent.postMessage({type:"sceneApplied",scene:"source:"+src,nodes:nodes.length,edges:visible.length},"*")}catch(e){}
-    },"source:"+src);
-    return;
-  }
   if(m.type==="storyScene"){
     animateSceneChange(()=>{
       setStoryScene(m.scene||null);
@@ -1938,26 +1017,13 @@ async function init(){
     if(qs.get("embed")==="1")document.body.classList.add("embed");
     if(qs.get("story")==="1")document.body.classList.add("storymode");
     resize();
-    const dbPromise=loadTaxonImageDB();
-    const scenePromise=loadSubnetScenes();
     const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());
     if(!res.ok)throw new Error("HTTP "+res.status);
     DATA=await res.json();
-    await Promise.all([dbPromise,scenePromise]);
     DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));
     const sel=document.querySelector("#interaction");
     Object.keys(DATA.meta.interactionTypes||{}).sort().forEach(k=>{
       const o=document.createElement("option");o.value=k;o.textContent=k+" ("+DATA.meta.interactionTypes[k]+")";sel.appendChild(o);
-    });
-    const interactionBox=document.querySelector("#analysisInteractions");
-    Object.keys(DATA.meta.interactionTypes||{}).sort((a,b)=>(DATA.meta.interactionTypes[b]||0)-(DATA.meta.interactionTypes[a]||0)).slice(0,8).forEach(k=>{
-      const b=document.createElement("button");b.className="analysis-btn";b.textContent=k;b.dataset.type=k;
-      b.onclick=()=>{
-        if(analysisState.interactionSet.has(k)){analysisState.interactionSet.delete(k);b.classList.remove("active")}
-        else{analysisState.interactionSet.add(k);b.classList.add("active")}
-        applyAnalysisScenario();
-      };
-      interactionBox.appendChild(b);
     });
     document.querySelector("#meta").textContent=
       "Base: "+DATA.meta.totalRecords.toLocaleString("es-CO")+" registros · "+
@@ -1967,10 +1033,7 @@ async function init(){
     document.querySelector("#search").oninput=e=>{state.search=e.target.value.trim();rebuild()};
     document.querySelector("#reset").onclick=()=>location.reload();
     bindClose();
-    const warmIds=["Zonotrichia capensis costaricensis",...Object.keys(SPECIAL_ECO_GROUP)];
-    preloadLocalPhotos([...new Set(warmIds)]).catch(()=>{});
     rebuild();
-    captureAnalysisBaseline();
     networkDataReady=true;
     pendingNetworkMessages.splice(0).forEach(handleNetworkMessage);
     try{parent.postMessage({type:"networkReady"},"*")}catch(e){}
