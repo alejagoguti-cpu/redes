@@ -345,14 +345,14 @@
         id: n.id,
         label: n.label,
         group: n.group,
-        shape: 'circularImage',
-        image: n.image_url || defaultImages[n.group] || defaultImages['Plantae'],
-        size: n.is_hub ? 36 : 24,
+        shape: n.is_hub || n.img ? 'circularImage' : 'dot',
+        image: n.img || n.image_url || defaultImages[n.group] || defaultImages['Plantae'],
+        size: n.is_hub ? 20 : 8,
         color: {
           border: n.is_hub ? '#2DD4BF' : (n.group === 'Abiotico' ? '#EF4444' : '#EC4899'),
-          background: '#080B10'
+          background: n.color || '#080B10'
         },
-        font: { color: '#F8FAFC', size: 10, face: 'Space Grotesk', background: '#0B0E14EE' }
+        font: { color: '#F8FAFC', size: n.is_hub ? 11 : 9, face: 'Space Grotesk', background: '#0B0E14EE' }
       }));
 
       const formattedEdges = edges.map(e => ({

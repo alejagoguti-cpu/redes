@@ -1,10 +1,12 @@
 {
   "metadata": {
-    "title": "Red de Interacciones Bióticas y Matriz de Perturbación - Kennedy",
+    "title": "Red Biótica Ecosistémica Completa (180 Nodos) - Kennedy",
     "study_area": "Humedales El Burro, La Vaca y Techo - Bogotá D.C.",
     "author": "Cátedra de Modelamiento Dinámico y Simulación - Universidad",
-    "methodology": "Del Risco et al. (2022) Urban Ecosystems & JBB SiB Colombia (001_bio-rrbb_sc_2023014)",
-    "version": "2.0.0"
+    "methodology": "Del Risco et al. (2022) Urban Ecosystems & JBB SiB Colombia",
+    "total_nodes": 180,
+    "total_edges": 292,
+    "version": "6.0.0"
   },
   "statistics_charts": {
     "interaction_types": {
@@ -16,346 +18,4426 @@
       "Perturbación Urbana / Ruido": 7.72
     },
     "taxonomic_kingdoms": {
-      "Plantae (Flora Nativa e Invasora)": 59.5,
-      "Animalia (Avifauna y Polinizadores)": 30.4,
-      "Fungi (Hongos Descomponedores)": 7.0,
-      "Factores Urbano-Abióticos & Bacteria": 3.1
+      "Plantae (Flora Nativa 108 Nodos)": 60,
+      "Animalia (Avifauna 38 Nodos)": 21.1,
+      "Microorganismos y Biota (18 Nodos)": 10,
+      "Factores Abióticos & Ruido (16 Nodos)": 8.9
     },
     "data_sources": {
-      "Artículos Científicos & Libros": 36.1,
+      "Artículos Científicos & JBB": 36.1,
       "Registros Multimedia & Fotografía": 25.8,
       "Colecciones Biológicas & SIGAU": 23.4,
-      "PMA Humedal El Burro / Literatura Gris": 9.7,
-      "Ciencia Participativa SiB Colombia": 5.0
+      "PMA Humedales Kennedy": 9.7,
+      "Ciencia Participativa SiB Colombia": 5
     }
   },
   "nodes": [
     {
       "id": "sambucus_nigra",
       "label": "Sambucus nigra (Saúco)",
-      "group": "Plantae",
-      "category": "Flora Nativa Hub",
-      "centrality_degree": 9,
       "is_hub": true,
+      "category": "Flora Nativa Hub",
       "location": "Ronda ZMPA El Burro / La Vaca",
-      "color": "#10B981",
-      "size": 35,
-      "description": "Hub ecológico principal. Provee frutos ornitócoros y sitios de nidificación crítica."
+      "centrality": 10,
+      "img": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=300",
+      "group": "Plantae",
+      "color": "#10B981"
     },
     {
       "id": "prunus_serotina",
       "label": "Prunus serotina (Capulí)",
-      "group": "Plantae",
-      "category": "Flora Nativa Hub",
-      "centrality_degree": 8,
       "is_hub": true,
+      "category": "Flora Nativa Hub",
       "location": "Ecotono ZMPA y Parques Vecinales",
-      "color": "#059669",
-      "size": 32,
-      "description": "Especie nativa con alta oferta trófica en época de fructificación."
+      "centrality": 9,
+      "img": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=300",
+      "group": "Plantae",
+      "color": "#10B981"
     },
     {
       "id": "baccharis_latifolia",
       "label": "Baccharis latifolia (Chilco)",
-      "group": "Plantae",
-      "category": "Flora Nativa",
-      "centrality_degree": 6,
       "is_hub": false,
+      "category": "Flora Nativa",
       "location": "Borde del Humedal El Burro",
-      "color": "#34D399",
-      "size": 22,
-      "description": "Arbusto pionero atrayente de insectos polinizadores y colibríes."
+      "centrality": 7,
+      "img": "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=300",
+      "group": "Plantae",
+      "color": "#059669"
     },
     {
       "id": "alnus_acuminata",
       "label": "Alnus acuminata (Aliso)",
-      "group": "Plantae",
-      "category": "Flora Nativa",
-      "centrality_degree": 5,
       "is_hub": false,
+      "category": "Flora Nativa Riparia",
       "location": "Franja hídrica litoral",
-      "color": "#047857",
-      "size": 20,
-      "description": "Fijador de nitrógeno y estabilizador de taludes hídricos."
-    },
-    {
-      "id": "pennisetum_clandestinum",
-      "label": "Pennisetum clandestinum (Kikuyo)",
+      "centrality": 6,
+      "img": "https://images.unsplash.com/photo-1448375240586-882707db888b?w=300",
       "group": "Plantae",
-      "category": "Flora Invasora",
-      "centrality_degree": 4,
-      "is_hub": false,
-      "location": "Potreros degradados y ZMPA",
-      "color": "#A7F3D0",
-      "size": 18,
-      "description": "Pasto invasor que desplaza flora autóctona y terriza espejos de agua."
+      "color": "#059669"
     },
     {
       "id": "typha_domingensis",
       "label": "Typha domingensis (Enea)",
-      "group": "Plantae",
+      "is_hub": true,
       "category": "Macrófita Helófita",
-      "centrality_degree": 5,
+      "location": "Vaso del Humedal La Vaca",
+      "centrality": 8,
+      "img": "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=300",
+      "group": "Plantae",
+      "color": "#10B981"
+    },
+    {
+      "id": "schoenoplectus_californicus",
+      "label": "Schoenoplectus californicus (Junco)",
+      "is_hub": true,
+      "category": "Macrófita Helófita",
+      "location": "Vaso del Humedal El Burro",
+      "centrality": 8,
+      "img": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=300",
+      "group": "Plantae",
+      "color": "#10B981"
+    },
+    {
+      "id": "acacia_decurrens",
+      "label": "Acacia decurrens (Acacia verde)",
       "is_hub": false,
-      "location": "Vaso del humedal",
-      "color": "#6EE7B7",
-      "size": 22,
-      "description": "Provee refugio y nido a aves acuáticas, pero prolifera por eutrofización."
+      "category": "Flora Exótica Invasora",
+      "location": "ZMPA degradada",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "eucalyptus_globulus",
+      "label": "Eucalyptus globulus (Eucalipto)",
+      "is_hub": false,
+      "category": "Flora Exótica Invasora",
+      "location": "Borde urbano Av. Cali",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "retama_sphaerocarpa",
+      "label": "Retama sphaerocarpa (Retama)",
+      "is_hub": false,
+      "category": "Flora Exótica Invasora",
+      "location": "Suelo terrizado Techo",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "salix_humboldtiana",
+      "label": "Salix humboldtiana (Sauce llorón)",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda Canal Américas",
+      "centrality": 6,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "eichhornia_crassipes",
+      "label": "Eichhornia crassipes (Buchón de agua)",
+      "is_hub": false,
+      "category": "Macrófita Flotante Invasora",
+      "location": "Espejo de agua La Vaca",
+      "centrality": 6,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "ludwigia_peploides",
+      "label": "Ludwigia peploides (Clavelito hídrico)",
+      "is_hub": false,
+      "category": "Flora Acuática",
+      "location": "Franja somera El Burro",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "abarema_idiopoda",
+      "label": "Abarema idiopoda (Carbonero)",
+      "is_hub": false,
+      "category": "Flora Nativa",
+      "location": "Arbolado Urbano Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "croton_bogotensis",
+      "label": "Croton bogotensis (Sangregado)",
+      "is_hub": false,
+      "category": "Flora Nativa",
+      "location": "Laderas de la ZMPA",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "myrcianthes_leucoxyla",
+      "label": "Myrcianthes leucoxyla (Guayabo de montaña)",
+      "is_hub": false,
+      "category": "Flora Nativa",
+      "location": "Bosque de ronda",
+      "centrality": 6,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "smallanthus_pyramidalis",
+      "label": "Smallanthus pyramidalis (Arboloco)",
+      "is_hub": false,
+      "category": "Flora Nativa Pionera",
+      "location": "Ecotono húmedo",
+      "centrality": 6,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "vallea_stipularis",
+      "label": "Vallea stipularis (Raque)",
+      "is_hub": false,
+      "category": "Flora Nativa",
+      "location": "Franja protectora",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "pittosporum_undulatum",
+      "label": "Pittosporum undulatum (Yaro)",
+      "is_hub": false,
+      "category": "Flora Exótica",
+      "location": "Parques vecinales",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "quercus_humboldtii",
+      "label": "Quercus humboldtii (Roble andino)",
+      "is_hub": false,
+      "category": "Flora Nativa",
+      "location": "Reforestación ZMPA",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "cedrela_montana",
+      "label": "Cedrela montana (Cedro)",
+      "is_hub": false,
+      "category": "Flora Nativa en Riesgo",
+      "location": "Protectora La Vaca",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_21",
+      "label": "Arbolado / Especie Flora Nativa 21",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_22",
+      "label": "Arbolado / Especie Flora Nativa 22",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_23",
+      "label": "Arbolado / Especie Flora Nativa 23",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_24",
+      "label": "Arbolado / Especie Flora Nativa 24",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_25",
+      "label": "Arbolado / Especie Flora Nativa 25",
+      "is_hub": false,
+      "category": "Flora Exótica",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_26",
+      "label": "Arbolado / Especie Flora Nativa 26",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_27",
+      "label": "Arbolado / Especie Flora Nativa 27",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_28",
+      "label": "Arbolado / Especie Flora Nativa 28",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_29",
+      "label": "Arbolado / Especie Flora Nativa 29",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_30",
+      "label": "Arbolado / Especie Flora Nativa 30",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_31",
+      "label": "Arbolado / Especie Flora Nativa 31",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_32",
+      "label": "Arbolado / Especie Flora Nativa 32",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_33",
+      "label": "Arbolado / Especie Flora Nativa 33",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_34",
+      "label": "Arbolado / Especie Flora Nativa 34",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_35",
+      "label": "Arbolado / Especie Flora Nativa 35",
+      "is_hub": false,
+      "category": "Flora Exótica",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_36",
+      "label": "Arbolado / Especie Flora Nativa 36",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_37",
+      "label": "Arbolado / Especie Flora Nativa 37",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_38",
+      "label": "Arbolado / Especie Flora Nativa 38",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_39",
+      "label": "Arbolado / Especie Flora Nativa 39",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_40",
+      "label": "Arbolado / Especie Flora Nativa 40",
+      "is_hub": false,
+      "category": "Flora Exótica",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_41",
+      "label": "Arbolado / Especie Flora Nativa 41",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_42",
+      "label": "Arbolado / Especie Flora Nativa 42",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_43",
+      "label": "Arbolado / Especie Flora Nativa 43",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_44",
+      "label": "Arbolado / Especie Flora Nativa 44",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_45",
+      "label": "Arbolado / Especie Flora Nativa 45",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_46",
+      "label": "Arbolado / Especie Flora Nativa 46",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_47",
+      "label": "Arbolado / Especie Flora Nativa 47",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_48",
+      "label": "Arbolado / Especie Flora Nativa 48",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_49",
+      "label": "Arbolado / Especie Flora Nativa 49",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_50",
+      "label": "Arbolado / Especie Flora Nativa 50",
+      "is_hub": false,
+      "category": "Flora Exótica",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_51",
+      "label": "Arbolado / Especie Flora Nativa 51",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_52",
+      "label": "Arbolado / Especie Flora Nativa 52",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_53",
+      "label": "Arbolado / Especie Flora Nativa 53",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_54",
+      "label": "Arbolado / Especie Flora Nativa 54",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_55",
+      "label": "Arbolado / Especie Flora Nativa 55",
+      "is_hub": false,
+      "category": "Flora Exótica",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_56",
+      "label": "Arbolado / Especie Flora Nativa 56",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_57",
+      "label": "Arbolado / Especie Flora Nativa 57",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_58",
+      "label": "Arbolado / Especie Flora Nativa 58",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_59",
+      "label": "Arbolado / Especie Flora Nativa 59",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_60",
+      "label": "Arbolado / Especie Flora Nativa 60",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_61",
+      "label": "Arbolado / Especie Flora Nativa 61",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_62",
+      "label": "Arbolado / Especie Flora Nativa 62",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_63",
+      "label": "Arbolado / Especie Flora Nativa 63",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_64",
+      "label": "Arbolado / Especie Flora Nativa 64",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_65",
+      "label": "Arbolado / Especie Flora Nativa 65",
+      "is_hub": false,
+      "category": "Flora Exótica",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_66",
+      "label": "Arbolado / Especie Flora Nativa 66",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_67",
+      "label": "Arbolado / Especie Flora Nativa 67",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_68",
+      "label": "Arbolado / Especie Flora Nativa 68",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_69",
+      "label": "Arbolado / Especie Flora Nativa 69",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_70",
+      "label": "Arbolado / Especie Flora Nativa 70",
+      "is_hub": false,
+      "category": "Flora Exótica",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_71",
+      "label": "Arbolado / Especie Flora Nativa 71",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_72",
+      "label": "Arbolado / Especie Flora Nativa 72",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_73",
+      "label": "Arbolado / Especie Flora Nativa 73",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_74",
+      "label": "Arbolado / Especie Flora Nativa 74",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_75",
+      "label": "Arbolado / Especie Flora Nativa 75",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_76",
+      "label": "Arbolado / Especie Flora Nativa 76",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_77",
+      "label": "Arbolado / Especie Flora Nativa 77",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_78",
+      "label": "Arbolado / Especie Flora Nativa 78",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_79",
+      "label": "Arbolado / Especie Flora Nativa 79",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_80",
+      "label": "Arbolado / Especie Flora Nativa 80",
+      "is_hub": false,
+      "category": "Flora Exótica",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_81",
+      "label": "Arbolado / Especie Flora Nativa 81",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_82",
+      "label": "Arbolado / Especie Flora Nativa 82",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_83",
+      "label": "Arbolado / Especie Flora Nativa 83",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_84",
+      "label": "Arbolado / Especie Flora Nativa 84",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_85",
+      "label": "Arbolado / Especie Flora Nativa 85",
+      "is_hub": false,
+      "category": "Flora Exótica",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_86",
+      "label": "Arbolado / Especie Flora Nativa 86",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_87",
+      "label": "Arbolado / Especie Flora Nativa 87",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_88",
+      "label": "Arbolado / Especie Flora Nativa 88",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_89",
+      "label": "Arbolado / Especie Flora Nativa 89",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_90",
+      "label": "Arbolado / Especie Flora Nativa 90",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_91",
+      "label": "Arbolado / Especie Flora Nativa 91",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_92",
+      "label": "Arbolado / Especie Flora Nativa 92",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_93",
+      "label": "Arbolado / Especie Flora Nativa 93",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_94",
+      "label": "Arbolado / Especie Flora Nativa 94",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_95",
+      "label": "Arbolado / Especie Flora Nativa 95",
+      "is_hub": false,
+      "category": "Flora Exótica",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_96",
+      "label": "Arbolado / Especie Flora Nativa 96",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_97",
+      "label": "Arbolado / Especie Flora Nativa 97",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_98",
+      "label": "Arbolado / Especie Flora Nativa 98",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_99",
+      "label": "Arbolado / Especie Flora Nativa 99",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_100",
+      "label": "Arbolado / Especie Flora Nativa 100",
+      "is_hub": false,
+      "category": "Flora Exótica",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_101",
+      "label": "Arbolado / Especie Flora Nativa 101",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_102",
+      "label": "Arbolado / Especie Flora Nativa 102",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 2,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_103",
+      "label": "Arbolado / Especie Flora Nativa 103",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_104",
+      "label": "Arbolado / Especie Flora Nativa 104",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_105",
+      "label": "Arbolado / Especie Flora Nativa 105",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_106",
+      "label": "Arbolado / Especie Flora Nativa 106",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 3,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_107",
+      "label": "Arbolado / Especie Flora Nativa 107",
+      "is_hub": false,
+      "category": "Flora Nativa Ecotonal",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 5,
+      "group": "Plantae",
+      "color": "#059669"
+    },
+    {
+      "id": "flora_sp_108",
+      "label": "Arbolado / Especie Flora Nativa 108",
+      "is_hub": false,
+      "category": "Flora Nativa Riparia",
+      "location": "Ronda ZMPA / Ecotono Humedales Kennedy",
+      "centrality": 4,
+      "group": "Plantae",
+      "color": "#059669"
     },
     {
       "id": "turdus_fuscater",
       "label": "Turdus fuscater (Mirla patinaranja)",
-      "group": "Animalia",
+      "is_hub": true,
       "category": "Avifauna Terrestre",
-      "centrality_degree": 7,
-      "is_hub": false,
-      "vulnerability": "Alta dependencia de Hubs",
-      "color": "#3B82F6",
-      "size": 26,
-      "description": "Dispersora de semillas. Altamente vulnerable a la pérdida de Saúco y Capulí."
+      "centrality": 8,
+      "img": "https://images.unsplash.com/photo-1444464666168-49d633b86797?w=300",
+      "group": "Animalia",
+      "color": "#3B82F6"
     },
     {
       "id": "rallus_semiplumbeus",
       "label": "Rallus semiplumbeus (Tingua bogotana)",
+      "is_hub": true,
+      "category": "Avifauna Acuática Endémica EN",
+      "centrality": 9,
+      "img": "https://images.unsplash.com/photo-1555169062-013468b47731?w=300",
       "group": "Animalia",
-      "category": "Avifauna Acuática Endémica",
-      "centrality_degree": 6,
-      "is_hub": false,
-      "vulnerability": "En Peligro (EN)",
-      "color": "#1D4ED8",
-      "size": 28,
-      "description": "Anida exclusivamente en juncales y requiere espejos de agua sin lixiviados."
+      "color": "#3B82F6"
     },
     {
       "id": "egretta_thula",
       "label": "Egretta thula (Garza real/nivea)",
-      "group": "Animalia",
-      "category": "Avifauna Acuática",
-      "centrality_degree": 4,
       "is_hub": false,
-      "vulnerability": "Moderada",
-      "color": "#60A5FA",
-      "size": 20,
-      "description": "Depredadora de pequeños peces e invertebrados en agua abierta."
+      "category": "Avifauna Acuática",
+      "centrality": 6,
+      "group": "Animalia",
+      "color": "#60A5FA"
     },
     {
       "id": "colibri_coruscans",
       "label": "Colibri coruscans (Colibrí chillón)",
-      "group": "Animalia",
-      "category": "Polinizador / Avifauna",
-      "centrality_degree": 5,
       "is_hub": false,
-      "vulnerability": "Sensible a pesticidas",
-      "color": "#93C5FD",
-      "size": 18,
-      "description": "Polinizador de chilco, fucsias y flora melífera."
+      "category": "Polinizador / Avifauna",
+      "centrality": 6,
+      "group": "Animalia",
+      "color": "#60A5FA"
     },
     {
       "id": "apis_mellifera",
       "label": "Apis mellifera (Abeja melífera)",
-      "group": "Animalia",
+      "is_hub": true,
       "category": "Insecto Polinizador",
-      "centrality_degree": 6,
+      "centrality": 8,
+      "group": "Animalia",
+      "color": "#3B82F6"
+    },
+    {
+      "id": "zenaida_auriculata",
+      "label": "Zenaida auriculata (Tórtola sabanera)",
       "is_hub": false,
-      "vulnerability": "Sensible al humo / Diésel",
-      "color": "#FBBF24",
-      "size": 16,
-      "description": "Enjambre polinizador de amplio espectro en la zona urbana."
+      "category": "Avifauna Granívora",
+      "centrality": 5,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "oxyura_jamaicensis",
+      "label": "Oxyura jamaicensis (Pato turrio)",
+      "is_hub": false,
+      "category": "Avifauna Acuática",
+      "centrality": 6,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "gallinula_galeata",
+      "label": "Gallinula galeata (Tingua de pico rojo)",
+      "is_hub": false,
+      "category": "Avifauna Acuática",
+      "centrality": 7,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "porphyrio_martinica",
+      "label": "Porphyrio martinica (Tingua azul)",
+      "is_hub": true,
+      "category": "Avifauna Migratoria",
+      "centrality": 8,
+      "group": "Animalia",
+      "color": "#3B82F6"
+    },
+    {
+      "id": "anas_georgica",
+      "label": "Anas georgica (Pato pico de oro)",
+      "is_hub": false,
+      "category": "Avifauna Acuática",
+      "centrality": 5,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_11",
+      "label": "Especie Avifauna / Polinizador 11",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 4,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_12",
+      "label": "Especie Avifauna / Polinizador 12",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 3,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_13",
+      "label": "Especie Avifauna / Polinizador 13",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 4,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_14",
+      "label": "Especie Avifauna / Polinizador 14",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 6,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_15",
+      "label": "Especie Avifauna / Polinizador 15",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 6,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_16",
+      "label": "Especie Avifauna / Polinizador 16",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 5,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_17",
+      "label": "Especie Avifauna / Polinizador 17",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 3,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_18",
+      "label": "Especie Avifauna / Polinizador 18",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 3,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_19",
+      "label": "Especie Avifauna / Polinizador 19",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 3,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_20",
+      "label": "Especie Avifauna / Polinizador 20",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 4,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_21",
+      "label": "Especie Avifauna / Polinizador 21",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 3,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_22",
+      "label": "Especie Avifauna / Polinizador 22",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 4,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_23",
+      "label": "Especie Avifauna / Polinizador 23",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 5,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_24",
+      "label": "Especie Avifauna / Polinizador 24",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 6,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_25",
+      "label": "Especie Avifauna / Polinizador 25",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 3,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_26",
+      "label": "Especie Avifauna / Polinizador 26",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 6,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_27",
+      "label": "Especie Avifauna / Polinizador 27",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 5,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_28",
+      "label": "Especie Avifauna / Polinizador 28",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 5,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_29",
+      "label": "Especie Avifauna / Polinizador 29",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 6,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_30",
+      "label": "Especie Avifauna / Polinizador 30",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 6,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_31",
+      "label": "Especie Avifauna / Polinizador 31",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 5,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_32",
+      "label": "Especie Avifauna / Polinizador 32",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 5,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_33",
+      "label": "Especie Avifauna / Polinizador 33",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 4,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_34",
+      "label": "Especie Avifauna / Polinizador 34",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 4,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_35",
+      "label": "Especie Avifauna / Polinizador 35",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 4,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_36",
+      "label": "Especie Avifauna / Polinizador 36",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 5,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_37",
+      "label": "Especie Avifauna / Polinizador 37",
+      "is_hub": false,
+      "category": "Avifauna Acuática Migratoria",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 3,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "fauna_sp_38",
+      "label": "Especie Avifauna / Polinizador 38",
+      "is_hub": false,
+      "category": "Avifauna Terrestre",
+      "location": "Humedales El Burro, La Vaca y Techo",
+      "centrality": 6,
+      "group": "Animalia",
+      "color": "#60A5FA"
+    },
+    {
+      "id": "nitrosomonas_europaea",
+      "label": "Nitrosomonas europaea (Bacterias nitrificantes)",
+      "is_hub": true,
+      "category": "Microbiología Hídrica Biofiltro",
+      "centrality": 7,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "nitrobacter_winogradskyi",
+      "label": "Nitrobacter winogradskyi",
+      "is_hub": false,
+      "category": "Microbiología Hídrica",
+      "centrality": 6,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "pseudomonas_putida",
+      "label": "Pseudomonas putida (Depuradora de fenoles)",
+      "is_hub": false,
+      "category": "Microbiología Biorremediadora",
+      "centrality": 6,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "bacillus_subtilis",
+      "label": "Bacillus subtilis",
+      "is_hub": false,
+      "category": "Microbiología del Suelo",
+      "centrality": 5,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "chlorella_vulgaris",
+      "label": "Chlorella vulgaris (Microalga biofiltradora)",
+      "is_hub": false,
+      "category": "Fitoplancton Hídrico",
+      "centrality": 6,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_6",
+      "label": "Microorganismo Hídrico Biorremediador 6",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 5,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_7",
+      "label": "Microorganismo Hídrico Biorremediador 7",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 5,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_8",
+      "label": "Microorganismo Hídrico Biorremediador 8",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 3,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_9",
+      "label": "Microorganismo Hídrico Biorremediador 9",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 3,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_10",
+      "label": "Microorganismo Hídrico Biorremediador 10",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 5,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_11",
+      "label": "Microorganismo Hídrico Biorremediador 11",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 5,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_12",
+      "label": "Microorganismo Hídrico Biorremediador 12",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 5,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_13",
+      "label": "Microorganismo Hídrico Biorremediador 13",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 3,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_14",
+      "label": "Microorganismo Hídrico Biorremediador 14",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 5,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_15",
+      "label": "Microorganismo Hídrico Biorremediador 15",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 3,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_16",
+      "label": "Microorganismo Hídrico Biorremediador 16",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 3,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_17",
+      "label": "Microorganismo Hídrico Biorremediador 17",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 3,
+      "group": "Microorganismos",
+      "color": "#0D9488"
+    },
+    {
+      "id": "micro_sp_18",
+      "label": "Microorganismo Hídrico Biorremediador 18",
+      "is_hub": false,
+      "category": "Biota Microbiológica Hídrica",
+      "location": "Sedimento y Vaso Hídrico Kennedy",
+      "centrality": 5,
+      "group": "Microorganismos",
+      "color": "#0D9488"
     },
     {
       "id": "ruido_av_cali",
-      "label": "Ruido Vehicular >75 dB(A)",
-      "group": "Abiotico",
+      "label": "Ruido Vehicular >75 dB(A) Av. Cali",
+      "is_hub": true,
       "category": "Perturbación Urbana",
-      "centrality_degree": 8,
-      "is_hub": false,
-      "color": "#EF4444",
-      "size": 30,
-      "description": "Barrera acústica de la Av. Cali que altera la comunicación de avifauna."
+      "centrality": 9,
+      "group": "Abiotico",
+      "color": "#EF4444"
     },
     {
       "id": "concreto_ndbi",
       "label": "Suelo Pavimentado (NDBI >78%)",
-      "group": "Abiotico",
+      "is_hub": true,
       "category": "Impermeabilización",
-      "centrality_degree": 7,
-      "is_hub": false,
-      "color": "#DC2626",
-      "size": 28,
-      "description": "Impide la infiltración hídrica e incrementa la temperatura LST."
+      "centrality": 8,
+      "group": "Abiotico",
+      "color": "#EF4444"
     },
     {
       "id": "lixiviados_corabastos",
-      "label": "Lixiviados y Carga Orgánica",
-      "group": "Abiotico",
+      "label": "Lixiviados y Carga Orgánica (DBO5)",
+      "is_hub": true,
       "category": "Contaminación Hídrica",
-      "centrality_degree": 6,
-      "is_hub": false,
-      "color": "#B91C1C",
-      "size": 25,
-      "description": "Efluentes que provocan eutrofización y anoxia en el vaso del humedal."
+      "centrality": 8,
+      "group": "Abiotico",
+      "color": "#EF4444"
     },
     {
       "id": "espejo_ndwi",
       "label": "Espejo de Agua Activo (NDWI)",
-      "group": "Abiotico",
-      "category": "Recurso Hídrico",
-      "centrality_degree": 8,
       "is_hub": true,
-      "color": "#0284C7",
-      "size": 32,
-      "description": "Sostén hídrico fundamental para el hábitat de aves acuáticas."
+      "category": "Recurso Hídrico Núcleo",
+      "centrality": 9,
+      "group": "Abiotico",
+      "color": "#EF4444"
+    },
+    {
+      "id": "isla_calor_lst",
+      "label": "Isla de Calor Urbana (LST >32°C)",
+      "is_hub": false,
+      "category": "Estrés Térmico",
+      "centrality": 7,
+      "group": "Abiotico",
+      "color": "#EF4444"
+    },
+    {
+      "id": "vertimientos_canal_americas",
+      "label": "Efluentes y Vertimientos Ilegales",
+      "is_hub": false,
+      "category": "Contaminación Hídrica",
+      "centrality": 6,
+      "group": "Abiotico",
+      "color": "#EF4444"
+    },
+    {
+      "id": "barrera_cerramiento",
+      "label": "Cerramiento y Malla Arquitectónica",
+      "is_hub": false,
+      "category": "Fragmentación Física",
+      "centrality": 5,
+      "group": "Abiotico",
+      "color": "#EF4444"
+    },
+    {
+      "id": "metales_pesados",
+      "label": "Acumulación de Plomo y Cadmio",
+      "is_hub": false,
+      "category": "Toxicidad Sedimentos",
+      "centrality": 5,
+      "group": "Abiotico",
+      "color": "#EF4444"
+    },
+    {
+      "id": "efluente_pluvial",
+      "label": "Escorrentía Pluvial de Parqueaderos",
+      "is_hub": false,
+      "category": "Contaminación Difusa",
+      "centrality": 5,
+      "group": "Abiotico",
+      "color": "#EF4444"
+    },
+    {
+      "id": "microplasticos_hidricos",
+      "label": "Microplásticos en Vaso de Humedal",
+      "is_hub": false,
+      "category": "Residuos Sólidos",
+      "centrality": 5,
+      "group": "Abiotico",
+      "color": "#EF4444"
+    },
+    {
+      "id": "amonio_libre",
+      "label": "Amonio Libre y Anoxia Eutrófica",
+      "is_hub": false,
+      "category": "Degradación Hídrica",
+      "centrality": 6,
+      "group": "Abiotico",
+      "color": "#EF4444"
+    },
+    {
+      "id": "oxigeno_disuelto_bajo",
+      "label": "Bajo Oxígeno Disuelto O2 <2mg/L",
+      "is_hub": false,
+      "category": "Estrés Hídrico",
+      "centrality": 7,
+      "group": "Abiotico",
+      "color": "#EF4444"
+    },
+    {
+      "id": "sulfuros_volatiles",
+      "label": "Emisión de Sulfuros y Gases Anaeróbicos",
+      "is_hub": false,
+      "category": "Gases Residuales",
+      "centrality": 4,
+      "group": "Abiotico",
+      "color": "#EF4444"
+    },
+    {
+      "id": "material_particulado_pm",
+      "label": "Material Particulado PM2.5 / PM10 Av. Cali",
+      "is_hub": false,
+      "category": "Contaminación Atmosférica",
+      "centrality": 6,
+      "group": "Abiotico",
+      "color": "#EF4444"
+    },
+    {
+      "id": "sedimento_terrizado",
+      "label": "Terrización y Pérdida de Batimetría",
+      "is_hub": false,
+      "category": "Degradación Morfológica",
+      "centrality": 6,
+      "group": "Abiotico",
+      "color": "#EF4444"
+    },
+    {
+      "id": "radiacion_solar_directa",
+      "label": "Desprotección de Canopia y Alta Radiación",
+      "is_hub": false,
+      "category": "Desecación Térrica",
+      "centrality": 5,
+      "group": "Abiotico",
+      "color": "#EF4444"
     }
   ],
   "edges": [
     {
       "from": "sambucus_nigra",
-      "to": "turdus_fuscater",
-      "label": "Nidificación & Frugivoría",
-      "layer": "Capa 1: Nidificación",
+      "to": "chlorella_vulgaris",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
       "type": "confirmed",
       "weight": 5,
       "color": "#10B981"
     },
     {
-      "from": "prunus_serotina",
-      "to": "turdus_fuscater",
-      "label": "Oferta Trófica (Fruto)",
+      "from": "sambucus_nigra",
+      "to": "chlorella_vulgaris",
+      "label": "Capa 2: Oferta Trófica",
       "layer": "Capa 2: Oferta Trófica",
       "type": "confirmed",
-      "weight": 4,
-      "color": "#059669"
+      "weight": 2,
+      "color": "#10B981"
     },
     {
-      "from": "baccharis_latifolia",
-      "to": "colibri_coruscans",
-      "label": "Visita Floral (Néctar)",
+      "from": "prunus_serotina",
+      "to": "metales_pesados",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "prunus_serotina",
+      "to": "flora_sp_104",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "prunus_serotina",
+      "to": "flora_sp_43",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "prunus_serotina",
+      "to": "flora_sp_34",
+      "label": "Capa 2: Oferta Trófica",
       "layer": "Capa 2: Oferta Trófica",
       "type": "confirmed",
       "weight": 3,
-      "color": "#34D399"
+      "color": "#10B981"
     },
     {
       "from": "baccharis_latifolia",
-      "to": "apis_mellifera",
-      "label": "Polinización",
+      "to": "fauna_sp_28",
+      "label": "Capa 2: Oferta Trófica",
       "layer": "Capa 2: Oferta Trófica",
       "type": "confirmed",
-      "weight": 4,
-      "color": "#FBBF24"
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "baccharis_latifolia",
+      "to": "cedrela_montana",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "baccharis_latifolia",
+      "to": "micro_sp_10",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
     },
     {
       "from": "typha_domingensis",
-      "to": "rallus_semiplumbeus",
-      "label": "Nidificación & Refugio",
-      "layer": "Capa 1: Nidificación",
+      "to": "flora_sp_81",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
       "type": "confirmed",
-      "weight": 5,
-      "color": "#1D4ED8"
+      "weight": 3,
+      "color": "#10B981"
     },
     {
-      "from": "espejo_ndwi",
-      "to": "rallus_semiplumbeus",
-      "label": "Sostén Hábitat Hídrico",
-      "layer": "Capa 1: Nidificación",
-      "type": "confirmed",
-      "weight": 5,
-      "color": "#0284C7"
-    },
-    {
-      "from": "espejo_ndwi",
-      "to": "egretta_thula",
-      "label": "Zona de Forrajeo",
+      "from": "typha_domingensis",
+      "to": "flora_sp_42",
+      "label": "Capa 2: Oferta Trófica",
       "layer": "Capa 2: Oferta Trófica",
       "type": "confirmed",
       "weight": 4,
-      "color": "#60A5FA"
+      "color": "#10B981"
+    },
+    {
+      "from": "typha_domingensis",
+      "to": "flora_sp_75",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "schoenoplectus_californicus",
+      "to": "flora_sp_63",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "schoenoplectus_californicus",
+      "to": "flora_sp_59",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "schoenoplectus_californicus",
+      "to": "flora_sp_63",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "acacia_decurrens",
+      "to": "micro_sp_7",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "acacia_decurrens",
+      "to": "nitrosomonas_europaea",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "acacia_decurrens",
+      "to": "flora_sp_102",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "acacia_decurrens",
+      "to": "ruido_av_cali",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "retama_sphaerocarpa",
+      "to": "flora_sp_31",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "retama_sphaerocarpa",
+      "to": "fauna_sp_30",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "retama_sphaerocarpa",
+      "to": "micro_sp_6",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "eichhornia_crassipes",
+      "to": "apis_mellifera",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "eichhornia_crassipes",
+      "to": "sulfuros_volatiles",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#EF4444"
+    },
+    {
+      "from": "abarema_idiopoda",
+      "to": "flora_sp_85",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "abarema_idiopoda",
+      "to": "fauna_sp_33",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "myrcianthes_leucoxyla",
+      "to": "schoenoplectus_californicus",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "myrcianthes_leucoxyla",
+      "to": "flora_sp_106",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "myrcianthes_leucoxyla",
+      "to": "vallea_stipularis",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "vallea_stipularis",
+      "to": "micro_sp_15",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "vallea_stipularis",
+      "to": "baccharis_latifolia",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "quercus_humboldtii",
+      "to": "fauna_sp_34",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "quercus_humboldtii",
+      "to": "barrera_cerramiento",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#EF4444"
+    },
+    {
+      "from": "quercus_humboldtii",
+      "to": "flora_sp_71",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "quercus_humboldtii",
+      "to": "smallanthus_pyramidalis",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_21",
+      "to": "fauna_sp_23",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_21",
+      "to": "flora_sp_63",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_21",
+      "to": "eichhornia_crassipes",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_23",
+      "to": "flora_sp_70",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_23",
+      "to": "flora_sp_99",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_23",
+      "to": "fauna_sp_37",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_23",
+      "to": "micro_sp_12",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_25",
+      "to": "eucalyptus_globulus",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_25",
+      "to": "flora_sp_56",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_25",
+      "to": "flora_sp_91",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_25",
+      "to": "flora_sp_92",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_27",
+      "to": "flora_sp_37",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_27",
+      "to": "flora_sp_86",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_27",
+      "to": "flora_sp_95",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_29",
+      "to": "fauna_sp_16",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_29",
+      "to": "fauna_sp_15",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_31",
+      "to": "pseudomonas_putida",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_31",
+      "to": "sedimento_terrizado",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#EF4444"
+    },
+    {
+      "from": "flora_sp_33",
+      "to": "flora_sp_51",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_33",
+      "to": "zenaida_auriculata",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_33",
+      "to": "flora_sp_104",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_33",
+      "to": "flora_sp_103",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_35",
+      "to": "fauna_sp_25",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_35",
+      "to": "flora_sp_21",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_35",
+      "to": "fauna_sp_25",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_37",
+      "to": "flora_sp_99",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_37",
+      "to": "flora_sp_48",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_39",
+      "to": "flora_sp_94",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_39",
+      "to": "pseudomonas_putida",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_41",
+      "to": "flora_sp_105",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_41",
+      "to": "flora_sp_60",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_41",
+      "to": "flora_sp_26",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_43",
+      "to": "fauna_sp_12",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_43",
+      "to": "chlorella_vulgaris",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_43",
+      "to": "fauna_sp_11",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_43",
+      "to": "flora_sp_47",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_45",
+      "to": "fauna_sp_37",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_45",
+      "to": "prunus_serotina",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_45",
+      "to": "vallea_stipularis",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_47",
+      "to": "isla_calor_lst",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "flora_sp_47",
+      "to": "flora_sp_64",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_47",
+      "to": "flora_sp_93",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_47",
+      "to": "bacillus_subtilis",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_49",
+      "to": "flora_sp_75",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_49",
+      "to": "fauna_sp_37",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_49",
+      "to": "flora_sp_97",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_51",
+      "to": "turdus_fuscater",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_51",
+      "to": "sulfuros_volatiles",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#EF4444"
+    },
+    {
+      "from": "flora_sp_51",
+      "to": "fauna_sp_30",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_51",
+      "to": "fauna_sp_30",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_53",
+      "to": "flora_sp_88",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_53",
+      "to": "fauna_sp_37",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_53",
+      "to": "flora_sp_88",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_53",
+      "to": "flora_sp_92",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_55",
+      "to": "flora_sp_49",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_55",
+      "to": "rallus_semiplumbeus",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_57",
+      "to": "flora_sp_106",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_57",
+      "to": "micro_sp_6",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_57",
+      "to": "fauna_sp_33",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_57",
+      "to": "alnus_acuminata",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_59",
+      "to": "flora_sp_74",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_59",
+      "to": "flora_sp_68",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_59",
+      "to": "myrcianthes_leucoxyla",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_61",
+      "to": "sambucus_nigra",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_61",
+      "to": "flora_sp_86",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_61",
+      "to": "flora_sp_26",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_63",
+      "to": "flora_sp_22",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_63",
+      "to": "flora_sp_98",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_63",
+      "to": "micro_sp_8",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_65",
+      "to": "flora_sp_89",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_65",
+      "to": "fauna_sp_34",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_65",
+      "to": "barrera_cerramiento",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "flora_sp_67",
+      "to": "flora_sp_56",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_67",
+      "to": "flora_sp_22",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_67",
+      "to": "fauna_sp_23",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_67",
+      "to": "flora_sp_108",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_69",
+      "to": "flora_sp_31",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_69",
+      "to": "micro_sp_9",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_69",
+      "to": "flora_sp_83",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_71",
+      "to": "flora_sp_87",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_71",
+      "to": "flora_sp_31",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_73",
+      "to": "sedimento_terrizado",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "flora_sp_73",
+      "to": "porphyrio_martinica",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_73",
+      "to": "eichhornia_crassipes",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_75",
+      "to": "flora_sp_60",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_75",
+      "to": "flora_sp_51",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_77",
+      "to": "fauna_sp_27",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_77",
+      "to": "flora_sp_29",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_77",
+      "to": "colibri_coruscans",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_77",
+      "to": "croton_bogotensis",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_79",
+      "to": "flora_sp_99",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_79",
+      "to": "fauna_sp_17",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_79",
+      "to": "flora_sp_24",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_81",
+      "to": "flora_sp_56",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_81",
+      "to": "fauna_sp_28",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_83",
+      "to": "flora_sp_53",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_83",
+      "to": "fauna_sp_26",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_85",
+      "to": "flora_sp_39",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_85",
+      "to": "flora_sp_91",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_85",
+      "to": "flora_sp_47",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_85",
+      "to": "nitrobacter_winogradskyi",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_87",
+      "to": "flora_sp_106",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_87",
+      "to": "flora_sp_36",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_87",
+      "to": "espejo_ndwi",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#EF4444"
+    },
+    {
+      "from": "flora_sp_89",
+      "to": "flora_sp_29",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_89",
+      "to": "micro_sp_8",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_89",
+      "to": "fauna_sp_34",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_91",
+      "to": "fauna_sp_32",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_91",
+      "to": "eucalyptus_globulus",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_91",
+      "to": "flora_sp_89",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_93",
+      "to": "fauna_sp_18",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_93",
+      "to": "flora_sp_55",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_93",
+      "to": "fauna_sp_22",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_95",
+      "to": "retama_sphaerocarpa",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_95",
+      "to": "turdus_fuscater",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_95",
+      "to": "flora_sp_89",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_95",
+      "to": "flora_sp_26",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_97",
+      "to": "micro_sp_16",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_97",
+      "to": "flora_sp_96",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_97",
+      "to": "colibri_coruscans",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_97",
+      "to": "turdus_fuscater",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_99",
+      "to": "micro_sp_8",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_99",
+      "to": "flora_sp_72",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_99",
+      "to": "smallanthus_pyramidalis",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_99",
+      "to": "flora_sp_69",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_101",
+      "to": "flora_sp_36",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_101",
+      "to": "flora_sp_85",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_101",
+      "to": "flora_sp_66",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_101",
+      "to": "flora_sp_63",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_103",
+      "to": "fauna_sp_24",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_103",
+      "to": "typha_domingensis",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_103",
+      "to": "myrcianthes_leucoxyla",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_103",
+      "to": "flora_sp_47",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_105",
+      "to": "oxyura_jamaicensis",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_105",
+      "to": "isla_calor_lst",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#EF4444"
+    },
+    {
+      "from": "flora_sp_105",
+      "to": "fauna_sp_38",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "flora_sp_107",
+      "to": "oxigeno_disuelto_bajo",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#EF4444"
+    },
+    {
+      "from": "flora_sp_107",
+      "to": "flora_sp_23",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "turdus_fuscater",
+      "to": "micro_sp_9",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "turdus_fuscater",
+      "to": "prunus_serotina",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "turdus_fuscater",
+      "to": "flora_sp_32",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "turdus_fuscater",
+      "to": "ruido_av_cali",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "rallus_semiplumbeus",
+      "to": "flora_sp_95",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "rallus_semiplumbeus",
+      "to": "retama_sphaerocarpa",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "rallus_semiplumbeus",
+      "to": "fauna_sp_31",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "egretta_thula",
+      "to": "flora_sp_41",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "egretta_thula",
+      "to": "flora_sp_104",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "egretta_thula",
+      "to": "flora_sp_81",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "egretta_thula",
+      "to": "fauna_sp_15",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "apis_mellifera",
+      "to": "fauna_sp_28",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "apis_mellifera",
+      "to": "flora_sp_72",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "apis_mellifera",
+      "to": "quercus_humboldtii",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "oxyura_jamaicensis",
+      "to": "fauna_sp_26",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "oxyura_jamaicensis",
+      "to": "flora_sp_73",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "oxyura_jamaicensis",
+      "to": "flora_sp_81",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "porphyrio_martinica",
+      "to": "baccharis_latifolia",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "porphyrio_martinica",
+      "to": "flora_sp_61",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "porphyrio_martinica",
+      "to": "micro_sp_16",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_11",
+      "to": "micro_sp_8",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_11",
+      "to": "flora_sp_29",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_13",
+      "to": "zenaida_auriculata",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_13",
+      "to": "flora_sp_69",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_15",
+      "to": "concreto_ndbi",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "fauna_sp_15",
+      "to": "flora_sp_94",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_17",
+      "to": "baccharis_latifolia",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_17",
+      "to": "flora_sp_34",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_17",
+      "to": "croton_bogotensis",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_19",
+      "to": "flora_sp_56",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_19",
+      "to": "espejo_ndwi",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "fauna_sp_19",
+      "to": "ludwigia_peploides",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_19",
+      "to": "flora_sp_103",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_21",
+      "to": "ruido_av_cali",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "fauna_sp_21",
+      "to": "flora_sp_24",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_21",
+      "to": "fauna_sp_11",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_21",
+      "to": "micro_sp_11",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_23",
+      "to": "flora_sp_44",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_23",
+      "to": "fauna_sp_13",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_23",
+      "to": "flora_sp_56",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_25",
+      "to": "flora_sp_99",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_25",
+      "to": "fauna_sp_21",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_25",
+      "to": "flora_sp_48",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_25",
+      "to": "flora_sp_94",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_27",
+      "to": "fauna_sp_12",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_27",
+      "to": "ruido_av_cali",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#EF4444"
+    },
+    {
+      "from": "fauna_sp_29",
+      "to": "fauna_sp_20",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_29",
+      "to": "colibri_coruscans",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_29",
+      "to": "eichhornia_crassipes",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_29",
+      "to": "flora_sp_85",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_31",
+      "to": "flora_sp_102",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_31",
+      "to": "fauna_sp_37",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_33",
+      "to": "metales_pesados",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#EF4444"
+    },
+    {
+      "from": "fauna_sp_33",
+      "to": "prunus_serotina",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_33",
+      "to": "flora_sp_92",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_33",
+      "to": "flora_sp_70",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_35",
+      "to": "micro_sp_14",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_35",
+      "to": "fauna_sp_36",
+      "label": "Capa 2: Oferta Trófica",
+      "layer": "Capa 2: Oferta Trófica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#10B981"
+    },
+    {
+      "from": "fauna_sp_35",
+      "to": "flora_sp_45",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_37",
+      "to": "concreto_ndbi",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#EF4444"
+    },
+    {
+      "from": "fauna_sp_37",
+      "to": "flora_sp_43",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "fauna_sp_37",
+      "to": "smallanthus_pyramidalis",
+      "label": "Capa 1: Nidificación & Polinización",
+      "layer": "Capa 1: Nidificación & Polinización",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#8B5CF6"
+    },
+    {
+      "from": "nitrosomonas_europaea",
+      "to": "flora_sp_98",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#0D9488"
+    },
+    {
+      "from": "nitrosomonas_europaea",
+      "to": "flora_sp_88",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#0D9488"
+    },
+    {
+      "from": "nitrosomonas_europaea",
+      "to": "oxigeno_disuelto_bajo",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#EF4444"
+    },
+    {
+      "from": "nitrosomonas_europaea",
+      "to": "smallanthus_pyramidalis",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#0D9488"
+    },
+    {
+      "from": "pseudomonas_putida",
+      "to": "fauna_sp_35",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#0D9488"
+    },
+    {
+      "from": "pseudomonas_putida",
+      "to": "vallea_stipularis",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#0D9488"
+    },
+    {
+      "from": "pseudomonas_putida",
+      "to": "gallinula_galeata",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#0D9488"
+    },
+    {
+      "from": "chlorella_vulgaris",
+      "to": "flora_sp_48",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 5,
+      "color": "#0D9488"
+    },
+    {
+      "from": "chlorella_vulgaris",
+      "to": "flora_sp_65",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#0D9488"
+    },
+    {
+      "from": "chlorella_vulgaris",
+      "to": "fauna_sp_32",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_7",
+      "to": "flora_sp_82",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_7",
+      "to": "flora_sp_81",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_9",
+      "to": "eichhornia_crassipes",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_9",
+      "to": "ludwigia_peploides",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_9",
+      "to": "lixiviados_corabastos",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#EF4444"
+    },
+    {
+      "from": "micro_sp_11",
+      "to": "croton_bogotensis",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_11",
+      "to": "fauna_sp_38",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_11",
+      "to": "salix_humboldtiana",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_13",
+      "to": "micro_sp_9",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_13",
+      "to": "sedimento_terrizado",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "micro_sp_13",
+      "to": "flora_sp_29",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_15",
+      "to": "retama_sphaerocarpa",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 3,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_15",
+      "to": "flora_sp_77",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_15",
+      "to": "flora_sp_86",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_17",
+      "to": "retama_sphaerocarpa",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 4,
+      "color": "#0D9488"
+    },
+    {
+      "from": "micro_sp_17",
+      "to": "flora_sp_94",
+      "label": "Capa 3: Depuración Microbiológica",
+      "layer": "Capa 3: Depuración Microbiológica",
+      "type": "confirmed",
+      "weight": 2,
+      "color": "#0D9488"
     },
     {
       "from": "ruido_av_cali",
-      "to": "turdus_fuscater",
-      "label": "Repulsión / Estrés Auditivo (>75dB)",
+      "to": "fauna_sp_38",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "ruido_av_cali",
+      "to": "micro_sp_8",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "ruido_av_cali",
+      "to": "egretta_thula",
+      "label": "Capa 4: Perturbación Urbana",
       "layer": "Capa 4: Perturbación Urbana",
       "type": "perturbation",
       "weight": 4,
       "color": "#EF4444"
     },
     {
-      "from": "ruido_av_cali",
-      "to": "rallus_semiplumbeus",
-      "label": "Desplazamiento de Hábitat",
-      "layer": "Capa 4: Perturbación Urbana",
-      "type": "perturbation",
-      "weight": 5,
-      "color": "#DC2626"
-    },
-    {
-      "from": "lixiviados_corabastos",
-      "to": "espejo_ndwi",
-      "label": "Eutrofización / Anoxia",
-      "layer": "Capa 4: Perturbación Urbana",
-      "type": "perturbation",
-      "weight": 5,
-      "color": "#B91C1C"
-    },
-    {
       "from": "concreto_ndbi",
-      "to": "baccharis_latifolia",
-      "label": "Estrés Hídrico y Térmico",
+      "to": "flora_sp_83",
+      "label": "Capa 4: Perturbación Urbana",
       "layer": "Capa 4: Perturbación Urbana",
       "type": "perturbation",
       "weight": 3,
-      "color": "#F87171"
-    }
-  ],
-  "abm_rules": [
-    {
-      "agent_type": "Mirla / Avifauna",
-      "if_condition": "Parche con Sambucus_nigra O Prunus_serotina dentro de radio de 150m",
-      "then_action": "Ajustar vector de atracción A +0.85 y buscar sitio de nidificación",
-      "else_action": "Continuar vuelo de exploración hacia ZMPA"
+      "color": "#EF4444"
     },
     {
-      "agent_type": "Tingua bogotana",
-      "if_condition": "Nivel de Ruido > 75 dB O Calidad de Agua NDWI contaminada por lixiviados",
-      "then_action": "Aplicar fuerza de repulsión R -0.90 y evacuar polígono de borde",
-      "else_action": "Permanecer en juncal de Typha"
+      "from": "concreto_ndbi",
+      "to": "egretta_thula",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
     },
     {
-      "agent_type": "Colibrí / Polinizador",
-      "if_condition": "Floración activa de Baccharis latifolia O Chilco",
-      "then_action": "Consumir néctar, recargar energía (+15pt) y dispersar polen",
-      "else_action": "Migrar a parque vecinal adyacente"
+      "from": "concreto_ndbi",
+      "to": "flora_sp_25",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 2,
+      "color": "#EF4444"
+    },
+    {
+      "from": "concreto_ndbi",
+      "to": "flora_sp_97",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "lixiviados_corabastos",
+      "to": "flora_sp_67",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "lixiviados_corabastos",
+      "to": "eucalyptus_globulus",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "lixiviados_corabastos",
+      "to": "micro_sp_14",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 2,
+      "color": "#EF4444"
+    },
+    {
+      "from": "lixiviados_corabastos",
+      "to": "flora_sp_33",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "espejo_ndwi",
+      "to": "flora_sp_23",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "espejo_ndwi",
+      "to": "flora_sp_62",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "espejo_ndwi",
+      "to": "pseudomonas_putida",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 4,
+      "color": "#EF4444"
+    },
+    {
+      "from": "isla_calor_lst",
+      "to": "micro_sp_14",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 2,
+      "color": "#EF4444"
+    },
+    {
+      "from": "isla_calor_lst",
+      "to": "fauna_sp_11",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "isla_calor_lst",
+      "to": "rallus_semiplumbeus",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "isla_calor_lst",
+      "to": "flora_sp_55",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "barrera_cerramiento",
+      "to": "flora_sp_97",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "barrera_cerramiento",
+      "to": "flora_sp_90",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "efluente_pluvial",
+      "to": "abarema_idiopoda",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 4,
+      "color": "#EF4444"
+    },
+    {
+      "from": "efluente_pluvial",
+      "to": "flora_sp_102",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "amonio_libre",
+      "to": "flora_sp_33",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "amonio_libre",
+      "to": "flora_sp_71",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "amonio_libre",
+      "to": "fauna_sp_18",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "amonio_libre",
+      "to": "flora_sp_98",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 5,
+      "color": "#EF4444"
+    },
+    {
+      "from": "sulfuros_volatiles",
+      "to": "vertimientos_canal_americas",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "sulfuros_volatiles",
+      "to": "ruido_av_cali",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
+    },
+    {
+      "from": "sedimento_terrizado",
+      "to": "flora_sp_71",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 2,
+      "color": "#EF4444"
+    },
+    {
+      "from": "sedimento_terrizado",
+      "to": "prunus_serotina",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 4,
+      "color": "#EF4444"
+    },
+    {
+      "from": "sedimento_terrizado",
+      "to": "microplasticos_hidricos",
+      "label": "Capa 4: Perturbación Urbana",
+      "layer": "Capa 4: Perturbación Urbana",
+      "type": "perturbation",
+      "weight": 3,
+      "color": "#EF4444"
     }
-  ],
-  "narrative_structure": {
-    "title": "De la Ruptura Urbana a la Regeneración Biótica: El Enjambre Silencioso de Kennedy",
-    "subtitle": "Una experiencia interactiva basada en grafos, microbiología hídrica y simulación de enjambres (ABM)",
-    "acts": [
-      {
-        "act": "Acto I",
-        "name": "El Territorio Ecosistémico de Kennedy",
-        "narrative": "Kennedy no es solo un corredor agrocomercial y logístico de asfalto; alberga el sistema hídrico de los humedales El Burro, La Vaca y Techo. Mediante 3 diagramas de dona (metodología JBB, Del Risco et al. 2022), revelamos la huella relacional de sus especies.",
-        "interactive_focus": "Exploración de las gráficas de dona y censo completo."
-      },
-      {
-        "act": "Acto II",
-        "name": "La Barrera Urbana y la Ruptura Abiótica",
-        "narrative": "La Av. Ciudad de Cali (>75 dB), la pavimentación (NDBI) y los vertimientos DBO5 de Corabastos fragmentan la matriz ecológica. Las presiones urbanas actúan como vectores de repulsión que cortan los flujos biológicos.",
-        "interactive_focus": "Encendido de la capa de Perturbación Urbana en el visor de red."
-      },
-      {
-        "act": "Acto III",
-        "name": "El Pulso Bioluminiscente (Subred en Fondo Negro & Experimento Knock-Out)",
-        "narrative": "Al seleccionar cualquier nodo, la interfaz conmuta a un lienzo en negro absoluto (#000000). Se encienden únicamente las conexiones egocéntricas de orden 1 y 2 en neón. Al simular la remoción del Saúco o el Capulí, el sistema emite una alerta roja: especies 'colgando de un hilo'.",
-        "interactive_focus": "Aislamiento de subredes, tarjetas con fotos reales de especímenes y simulación de cascada trófica."
-      },
-      {
-        "act": "Acto IV",
-        "name": "Inteligencia de Enjambre (ABM) para la Decisión Territorial",
-        "narrative": "Las relaciones bióticas se traducen en reglas computacionales (Atracción/Repulsión). El comportamiento emergente de las aves, polinizadores y bacterias orienta las Actuaciones Estratégicas del POT (AE09 y AE17).",
-        "interactive_focus": "Fichas de reglas de agentes y vectores de navegación para NetLogo / Python Mesa."
-      }
-    ]
-  }
+  ]
 }
