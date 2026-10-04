@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interacciones bióticas · Enjambre 3D RIBB</title>
+<link rel="stylesheet" href="../../css/main.css"><link rel="stylesheet" href="../../css/sidebar.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--paper:#f7f7f3;--ink:#1f241f;--muted:#737a72;--glass:rgba(255,255,252,.94);--hair:#dde2d9;--green:#415c46;--shadow:0 18px 50px rgba(31,40,31,.10)}
+*{box-sizing:border-box}html,body{margin:0;height:100%}body{font-family:Inter,Arial,sans-serif;background:var(--paper);color:var(--ink);overflow:hidden}
+.app{display:flex;height:100vh}.main{position:relative;flex:1;min-width:0}.sidebar{z-index:60}
+#swarm{position:absolute;inset:0;width:100%;height:100%;background:radial-gradient(circle at 50% 50%,#fff 0,#fafaf6 48%,#eef1e9 100%);touch-action:none;cursor:grab}
+#swarm.dragging{cursor:grabbing}
+.title{position:absolute;z-index:8;top:20px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none}
+.title h1{margin:0;font-size:20px;font-weight:650}.title p{margin:6px 0;font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:#8a9088}
+.panel{position:absolute;z-index:15;background:var(--glass);border:1px solid var(--hair);box-shadow:var(--shadow);backdrop-filter:blur(18px)}
+.filters{left:18px;top:18px;width:248px;padding:13px;border-radius:18px;max-height:calc(100vh - 36px);overflow:auto}
+.detail{right:18px;top:18px;bottom:18px;width:330px;padding:18px;border-radius:20px;overflow:auto;transform:translateX(calc(100% + 36px));opacity:0;pointer-events:none;transition:.25s ease}
+.detail.open{transform:none;opacity:1;pointer-events:auto}
+.close{position:absolute;right:12px;top:12px;border:0;border-radius:50%;width:28px;height:28px;background:#edf0e9;cursor:pointer}
+h3{font-size:11px;margin:0 0 9px}.label{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:#8a9088;margin:10px 0 5px}
+.search,select{width:100%;border:1px solid var(--hair);background:#fff;border-radius:10px;padding:8px 9px;font-size:9px;outline:none}
+.checks{display:flex;gap:4px;flex-wrap:wrap}.btn{border:1px solid var(--hair);background:#fff;border-radius:999px;padding:5px 7px;font-size:7.5px;cursor:pointer}
+.btn.active{background:var(--green);color:#fff;border-color:var(--green)}
+.stats{display:flex;gap:6px;margin-top:10px}.stat{flex:1;background:#f0f3ec;border-radius:10px;padding:7px}.stat b{display:block;font-size:14px}.stat span{font-size:7px;color:var(--muted)}
+.reset{width:100%;margin-top:9px;border:0;background:#e8ece4;color:#465044;border-radius:9px;padding:7px;font-size:8px;cursor:pointer}
+.viewbar{position:absolute;z-index:10;top:18px;left:50%;transform:translateX(-50%);margin-top:48px;display:flex;gap:6px;background:rgba(255,255,252,.88);border:1px solid var(--hair);border-radius:999px;padding:5px;backdrop-filter:blur(12px)}
+.viewbar button{border:0;background:transparent;border-radius:999px;padding:6px 9px;font-size:8px;color:#5d665b;cursor:pointer}
+.viewbar button.active{background:#e8ece4;color:#2e3b2f}
+.detail h2{font-size:16px;margin:0 34px 8px 0;font-style:italic}.detail p{font-size:10px;line-height:1.55;color:#555d54}
+.detail h4{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:#8a9088;margin:15px 0 6px}
+.hero{height:150px;border-radius:14px;background:#e7eae3 center/cover;margin:10px 0}.badge{display:inline-block;font-size:7.5px;padding:5px 7px;background:#edf0e9;border-radius:999px;margin:2px}
+.warning{padding:10px;border-radius:10px;background:#f5f0df;color:#695c37;font-size:8px;line-height:1.45}
+.legend{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:9;background:rgba(255,255,252,.94);border:1px solid var(--hair);border-radius:999px;padding:7px 11px;display:flex;gap:9px;font-size:7px;box-shadow:0 8px 25px #0000000b;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}.line{display:inline-block;width:16px;border-top:1.5px solid #777;margin-right:4px;vertical-align:middle}.dash{border-top-style:dashed}.dotline{border-top-style:dotted}
+.loading{position:absolute;inset:0;display:grid;place-items:center;background:var(--paper);z-index:70;font-size:11px;color:#777}.hint{position:absolute;left:50%;bottom:50px;transform:translateX(-50%);font-size:7px;color:#929890;z-index:8;pointer-events:none}
+.small{font-size:7px!important;color:#888!important}.imageState{font-size:7px;color:#7f857c;margin-top:6px}
+.tooltip{position:absolute;z-index:20;pointer-events:none;background:#202720;color:#fff;border-radius:8px;padding:6px 8px;font-size:8px;display:none;max-width:180px}
+</style>
+</head>
+<body><div class="app">
+<aside class="sidebar">
+<a class="brand-icon" href="../../index.html"><i class="fa-solid fa-diagram-project"></i></a>
+<nav class="icon-nav">
+<a href="../../index.html" class="icon-nav-item"><i class="fa-solid fa-house"></i></a>
+<a href="../network-01/index.html" class="icon-nav-item"><i class="fa-solid fa-city"></i></a>
+<a href="index.html" class="icon-nav-item active"><i class="fa-solid fa-leaf"></i></a>
+</nav></aside>
+<main class="main">
+<div id="loading" class="loading">Cargando RIBB y preparando el enjambre 3D…</div>
+<canvas id="swarm"></canvas>
+<div class="tooltip" id="tooltip"></div>
+
+<div class="title">
+  <h1>Enjambre 3D de interacciones bióticas</h1>
+  <p>RIBB · Jardín Botánico de Bogotá · diciembre 2024</p>
+</div>
+
+<div class="viewbar">
+  <button id="autoRotate" class="active"><i class="fa-solid fa-rotate"></i> Giro</button>
+  <button id="fitView"><i class="fa-solid fa-expand"></i> Centrar</button>
+  <button id="labels"><i class="fa-solid fa-tag"></i> Etiquetas</button>
+</div>
+
+<aside class="panel filters">
+<h3>Explorar</h3>
+<input id="search" class="search" placeholder="Buscar taxón…">
+<span class="label">Cobertura</span>
+<div class="checks" id="district">
+  <button class="btn active" data-v="SI">Distrito</button>
+  <button class="btn" data-v="ALL">Toda la base</button>
+</div>
+<span class="label">Interacción</span>
+<select id="interaction"><option value="ALL">Todas</option></select>
+<span class="label">Origen</span>
+<div class="checks" id="origin">
+  <button class="btn active" data-v="ALL">Todos</button>
+  <button class="btn" data-v="Nativa">Nativa</button>
+  <button class="btn" data-v="No nativa">No nativa</button>
+</div>
+<span class="label">Calidad</span>
+<div class="checks" id="quality">
+  <button class="btn active" data-v="ALL">Todas</button>
+  <button class="btn" data-v="Alta">Alta</button>
+  <button class="btn" data-v="Media">Media</button>
+  <button class="btn" data-v="Baja">Baja</button>
+</div>
+<button id="reset" class="reset">Restablecer</button>
+<div class="stats">
+  <div class="stat"><b id="nodes">0</b><span>taxones</span></div>
+  <div class="stat"><b id="edges">0</b><span>registros</span></div>
+</div>
+<p id="meta" class="small"></p>
+<p id="imageProgress" class="imageState"></p>
+</aside>
+
+<aside id="detail" class="panel detail">
+<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>
+<h2>Selecciona un elemento</h2>
+<p>Arrastra para rotar el enjambre. Usa la rueda para acercar o alejar. Haz clic en un nodo o en una conexión para consultar su evidencia.</p>
+</aside>
+
+<div class="hint">Arrastra = rotar · rueda = zoom · nodo = especie · línea = evidencia</div>
+
+<div class="legend">
+<span><i class="dot" style="background:#6f9569"></i>Visita floral</span>
+<span><i class="dot" style="background:#be8b57"></i>Herbivoría</span>
+<span><i class="dot" style="background:#b45f5f"></i>Depredación</span>
+<span><i class="dot" style="background:#648bb2"></i>Dispersión</span>
+<span><i class="line"></i>Alta</span>
+<span><i class="line dash"></i>Media</span>
+<span><i class="line dotline"></i>Baja</span>
+</div>
+</main></div>
+
+<script>
+const COLORS={
+  "VISITA FLORAL":"#6f9569","HERBIVORÍA":"#be8b57","DEPREDACIÓN":"#b45f5f","DISPERSIÓN":"#648bb2",
+  "OVIPOSICIÓN":"#9870a6","PARASITISMO":"#8c73a5","MUTUALISMO":"#5a9a90","OTRAS INTERACCIONES":"#8a8a86"
+};
+
+const state={
+  district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:"",
+  focus:null, yaw:0.35,pitch:-0.16,zoom:1,auto:true,labels:false
+};
+
+let DATA=null,visible=[],nodes=[],nodeMap=new Map(),edgeScreen=[];
+let canvas=document.querySelector("#swarm"),ctx=canvas.getContext("2d"),tooltip=document.querySelector("#tooltip");
+let W=0,H=0,dpr=1,drag=false,dragMoved=false,lastX=0,lastY=0,hoverNode=null;
+let raf=null,lastFrame=performance.now();
+
+const imageCache=new Map();
+const imageQueue=[];
+let activeLoads=0,loadedCount=0,failedCount=0;
+const MAX_LOADS=5;
+
+function hash(s){
+  let h=2166136261;
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}
+  return h>>>0;
+}
+
+function unitSphere(id){
+  const h1=(hash(id)%100000)/100000;
+  const h2=(hash(id+"@z")%100000)/100000;
+  const theta=h1*Math.PI*2;
+  const z=h2*2-1;
+  const r=Math.sqrt(Math.max(0,1-z*z));
+  return {x:r*Math.cos(theta),y:z,z:r*Math.sin(theta)};
+}
+
+function resize(){
+  dpr=devicePixelRatio||1;
+  W=canvas.clientWidth; H=canvas.clientHeight;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+
+function rotatePoint(p){
+  const cy=Math.cos(state.yaw),sy=Math.sin(state.yaw);
+  const cp=Math.cos(state.pitch),sp=Math.sin(state.pitch);
+  const x1=p.x*cy-p.z*sy;
+  const z1=p.x*sy+p.z*cy;
+  const y2=p.y*cp-z1*sp;
+  const z2=p.y*sp+z1*cp;
+  return {x:x1,y:y2,z:z2};
+}
+
+function project(n){
+  const p=rotatePoint(n.base);
+  const depth=2.8-p.z;
+  const scale=state.zoom*(Math.min(W,H)*0.38)/depth;
+  return {
+    x:W*0.52+p.x*scale,
+    y:H*0.53+p.y*scale,
+    z:p.z,
+    scale:Math.max(.35,Math.min(2.4,1.15/depth*2.3))
+  };
+}
+
+function match(r){
+  if(state.district!=="ALL"&&r.district!==state.district)return false;
+  if(state.interaction!=="ALL"&&r.title!==state.interaction)return false;
+  if(state.quality!=="ALL"&&r.q!==state.quality)return false;
+  if(state.search){
+    const q=state.search.toLowerCase();
+    if(!r.s.toLowerCase().includes(q)&&!r.t.toLowerCase().includes(q))return false;
+  }
+  if(state.origin!=="ALL"){
+    const a=DATA.nodeById.get(r.s),b=DATA.nodeById.get(r.t);
+    const ok=[a?.origin||"",b?.origin||""].some(x=>x.toLowerCase().startsWith(state.origin.toLowerCase()));
+    if(!ok)return false;
+  }
+  return true;
+}
+
+function rebuild(){
+  visible=DATA.records.filter(match);
+  const ids=new Set();
+  visible.forEach(r=>{ids.add(r.s);ids.add(r.t)});
+  nodes=[...ids].map(id=>{
+    const src=DATA.nodeById.get(id)||{id,n:1,origin:""};
+    return {...src,id,base:unitSphere(id),screen:null};
+  });
+  nodeMap=new Map(nodes.map(n=>[n.id,n]));
+  document.querySelector("#nodes").textContent=nodes.length.toLocaleString("es-CO");
+  document.querySelector("#edges").textContent=visible.length.toLocaleString("es-CO");
+  queueImages();
+}
+
+function queueImages(){
+  const prioritized=[...nodes].sort((a,b)=>(b.n||0)-(a.n||0));
+  for(const n of prioritized){
+    if(imageCache.has(n.id))continue;
+    imageCache.set(n.id,{status:"queued",img:null,url:""});
+    imageQueue.push(n.id);
+  }
+  pumpImages();
+  updateImageProgress();
+}
+
+function updateImageProgress(){
+  const total=[...imageCache.values()].filter(x=>x.status!=="unused").length;
+  document.querySelector("#imageProgress").textContent=
+    total ? "Imágenes: "+loadedCount.toLocaleString("es-CO")+" cargadas · "+failedCount+" sin foto validada" : "";
+}
+
+async function resolveImage(name){
+  const pickPhoto=t=>t?.default_photo?.medium_url||t?.default_photo?.square_url||"";
+  try{
+    const exactRes=await fetch("https://api.inaturalist.org/v1/taxa?q="+encodeURIComponent(name)+"&per_page=10");
+    if(exactRes.ok){
+      const j=await exactRes.json();
+      const exact=(j.results||[]).find(x=>(x.name||"").toLowerCase()===name.toLowerCase()&&pickPhoto(x));
+      if(exact)return pickPhoto(exact);
+    }
+    const autoRes=await fetch("https://api.inaturalist.org/v1/taxa/autocomplete?q="+encodeURIComponent(name)+"&per_page=20");
+    if(autoRes.ok){
+      const j=await autoRes.json(),list=j.results||[];
+      const exact=list.find(x=>(x.name||"").toLowerCase()===name.toLowerCase()&&pickPhoto(x));
+      if(exact)return pickPhoto(exact);
+      const photographed=list.find(x=>pickPhoto(x));
+      if(photographed)return pickPhoto(photographed);
+    }
+    const genus=(name||"").trim().split(/\\s+/)[0];
+    if(genus&&genus!==name){
+      const gr=await fetch("https://api.inaturalist.org/v1/taxa/autocomplete?q="+encodeURIComponent(genus)+"&per_page=12");
+      if(gr.ok){
+        const gj=await gr.json();
+        const gt=(gj.results||[]).find(x=>pickPhoto(x));
+        if(gt)return pickPhoto(gt);
+      }
+    }
+    return "";
+  }catch{return ""}
+}
+
+function pumpImages(){
+  while(activeLoads<MAX_LOADS&&imageQueue.length){
+    const name=imageQueue.shift();
+    const entry=imageCache.get(name);
+    if(!entry||entry.status!=="queued")continue;
+    entry.status="loading";activeLoads++;
+    resolveImage(name).then(url=>{
+      if(!url){
+        entry.status="failed";failedCount++;return;
+      }
+      const img=new Image();
+      img.crossOrigin="anonymous";
+      img.onload=()=>{entry.status="loaded";entry.img=img;entry.url=url;loadedCount++;updateImageProgress()};
+      img.onerror=()=>{entry.status="failed";failedCount++;updateImageProgress()};
+      img.src=url;
+    }).finally(()=>{activeLoads--;updateImageProgress();pumpImages()});
+  }
+}
+
+function linePattern(q){
+  if(q==="Media")return [4,4];
+  if(q==="Baja")return [1,4];
+  return [];
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  edgeScreen=[];
+
+  const projected=new Map();
+  for(const n of nodes){n.screen=project(n);projected.set(n.id,n.screen)}
+
+  const orderedEdges=visible.slice().sort((a,b)=>{
+    const za=(projected.get(a.s)?.z||0)+(projected.get(a.t)?.z||0);
+    const zb=(projected.get(b.s)?.z||0)+(projected.get(b.t)?.z||0);
+    return za-zb;
+  });
+
+  ctx.lineCap="round";
+  for(const r of orderedEdges){
+    const a=projected.get(r.s),b=projected.get(r.t);
+    if(!a||!b)continue;
+    const hot=state.focus&&(state.focus===r.id||state.focus===r.s||state.focus===r.t);
+    const dim=state.focus&&!hot;
+    const depth=(a.z+b.z)/2;
+    ctx.globalAlpha=dim?.012:(hot?.9:Math.max(.035,.10+(depth+1)*.035));
+    ctx.strokeStyle=COLORS[r.title]||"#8b8f88";
+    ctx.lineWidth=hot?2.2:Math.max(.35,.65+(depth*.18));
+    ctx.setLineDash(linePattern(r.q));
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+    edgeScreen.push({r,a,b});
+  }
+  ctx.setLineDash([]);
+
+  const ordered=[...nodes].sort((a,b)=>a.screen.z-b.screen.z);
+  for(const n of ordered){
+    const p=n.screen;
+    const connected=state.focus?visible.some(r=>(r.s===state.focus&&r.t===n.id)||(r.t===state.focus&&r.s===n.id)):false;
+    const hot=state.focus===n.id;
+    const dim=state.focus&&!(hot||connected);
+    ctx.globalAlpha=dim?.08:Math.max(.35,.72+(p.z+1)*.14);
+
+    const baseRadius=4+Math.min(12,Math.sqrt(n.n||1)*.42);
+    const radius=Math.max(3,baseRadius*p.scale);
+    n.drawRadius=radius;
+
+    ctx.save();
+    ctx.beginPath();ctx.arc(p.x,p.y,radius,0,Math.PI*2);ctx.clip();
+    const im=imageCache.get(n.id);
+    if(im?.status==="loaded"&&im.img){
+      const iw=im.img.naturalWidth,ih=im.img.naturalHeight;
+      const side=Math.min(iw,ih);
+      const sx=(iw-side)/2,sy=(ih-side)/2;
+      ctx.drawImage(im.img,sx,sy,side,side,p.x-radius,p.y-radius,radius*2,radius*2);
+    }else{
+      const g=ctx.createLinearGradient(p.x-radius,p.y-radius,p.x+radius,p.y+radius);
+      g.addColorStop(0,"#d9dfd4");g.addColorStop(1,"#8da087");
+      ctx.fillStyle=g;ctx.fillRect(p.x-radius,p.y-radius,radius*2,radius*2);
+      ctx.fillStyle="rgba(255,255,255,.82)";
+      ctx.font=Math.max(6,radius*.7)+"px Inter,Arial";
+      ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillText((n.id||"?").charAt(0).toUpperCase(),p.x,p.y);
+    }
+    ctx.restore();
+
+    ctx.globalAlpha=dim?.08:1;
+    ctx.strokeStyle=hot?"#1f3d25":"rgba(255,255,255,.96)";
+    ctx.lineWidth=hot?3:Math.max(1,1.2*p.scale);
+    ctx.beginPath();ctx.arc(p.x,p.y,radius,0,Math.PI*2);ctx.stroke();
+
+    if(hot||state.labels){
+      ctx.globalAlpha=hot?1:.72;
+      ctx.fillStyle="#253025";
+      ctx.font=(hot?11:8)+"px Inter,Arial";
+      ctx.textAlign="center";ctx.textBaseline="top";
+      ctx.fillText(n.id,p.x,p.y+radius+5);
+    }
+  }
+  ctx.globalAlpha=1;
+}
+
+function animate(now){
+  const dt=Math.min(32,now-lastFrame);lastFrame=now;
+  if(state.auto&&!drag)state.yaw+=dt*.00008;
+  draw();
+  raf=requestAnimationFrame(animate);
+}
+
+function nearestNode(x,y){
+  let best=null,bd=26;
+  for(const n of nodes){
+    const p=n.screen;if(!p)continue;
+    const d=Math.hypot(x-p.x,y-p.y);
+    const hit=Math.max(12,n.drawRadius||6)+4;
+    if(d<Math.min(bd,hit)){bd=d;best=n}
+  }
+  return best;
+}
+
+function segDist(px,py,a,b){
+  const dx=b.x-a.x,dy=b.y-a.y,l2=dx*dx+dy*dy;
+  if(!l2)return 999;
+  let t=((px-a.x)*dx+(py-a.y)*dy)/l2;
+  t=Math.max(0,Math.min(1,t));
+  return Math.hypot(px-(a.x+t*dx),py-(a.y+t*dy));
+}
+
+function nearestEdge(x,y){
+  let best=null,bd=5;
+  for(const e of edgeScreen){
+    const d=segDist(x,y,e.a,e.b);
+    if(d<bd){bd=d;best=e.r}
+  }
+  return best;
+}
+
+function bindClose(){
+  const b=document.querySelector("#close");
+  if(b)b.onclick=()=>{
+    document.querySelector("#detail").classList.remove("open");
+    state.focus=null;
+  };
+}
+
+function openNode(n){
+  state.focus=n.id;
+  const d=document.querySelector("#detail");
+  d.classList.add("open");
+  const im=imageCache.get(n.id);
+  const hero=im?.status==="loaded"&&im.url ? 'style="background-image:url(\''+im.url+'\')"' : "";
+  d.innerHTML=
+    '<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>'+
+    '<h2>'+n.id+'</h2><div class="hero" '+hero+'></div>'+
+    '<span class="badge">'+(n.origin||"Origen no indicado")+'</span>'+
+    '<span class="badge">'+(n.n||0)+' registros</span>'+
+    '<h4>Lectura</h4><p>Se resaltan las relaciones directas de este taxón dentro del filtro actual. Su posición cambia con la rotación 3D, pero sus conexiones se conservan.</p>'+
+    '<p class="small">'+(im?.status==="loaded"?"Foto taxonómica cargada por nombre científico.":"La foto todavía se está resolviendo o no hay una fotografía validada disponible.")+'</p>';
+  bindClose();
+}
+
+function explain(r){
+  if(r.i==="Consume")return "<i>"+r.s+"</i> consume "+(r.part?"<b>"+r.part+"</b> de ":"")+"<i>"+r.t+"</i>.";
+  if(r.i==="Poliniza a")return "<i>"+r.s+"</i> participa en la polinización de <i>"+r.t+"</i>.";
+  if(r.i==="Dispersa"||r.i==="Dispersa a")return "<i>"+r.s+"</i> participa en la dispersión de <i>"+r.t+"</i>.";
+  if(r.i==="Parasita a")return "<i>"+r.s+"</i> parasita a <i>"+r.t+"</i>.";
+  return "<i>"+r.s+"</i> mantiene una interacción registrada con <i>"+r.t+"</i>.";
+}
+
+function openEdge(r){
+  state.focus=r.id;
+  const d=document.querySelector("#detail");
+  d.classList.add("open");
+  d.innerHTML=
+    '<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>'+
+    '<h2>'+r.s+' ↔ '+r.t+'</h2>'+
+    '<span class="badge">'+r.title+'</span><span class="badge">Calidad '+r.q+'</span>'+
+    '<h4>¿Por qué están conectadas?</h4><p>'+explain(r)+'</p>'+
+    '<h4>Evidencia</h4><p><b>Parte:</b> '+(r.part||"No indicada")+'<br><b>Fecha:</b> '+(r.date||"No indicada")+'<br><b>Coordenadas:</b> '+(r.coord||"No indicadas")+'</p>'+
+    '<h4>Fuente</h4><p>'+(r.ref||"Sin referencia visible")+'</p>'+
+    '<div class="warning">Este registro no demuestra por sí solo presencia local en Kennedy.</div>';
+  bindClose();
+}
+
+canvas.addEventListener("pointerdown",e=>{
+  drag=true;dragMoved=false;lastX=e.clientX;lastY=e.clientY;
+  canvas.setPointerCapture(e.pointerId);canvas.classList.add("dragging");
+});
+canvas.addEventListener("pointermove",e=>{
+  const rect=canvas.getBoundingClientRect();
+  const x=e.clientX-rect.left,y=e.clientY-rect.top;
+  if(drag){
+    const dx=e.clientX-lastX,dy=e.clientY-lastY;
+    if(Math.abs(dx)+Math.abs(dy)>2)dragMoved=true;
+    state.yaw+=dx*.006;state.pitch=Math.max(-1.25,Math.min(1.25,state.pitch+dy*.005));
+    lastX=e.clientX;lastY=e.clientY;
+  }else{
+    const n=nearestNode(x,y);
+    hoverNode=n;
+    if(n){
+      tooltip.style.display="block";
+      tooltip.style.left=(x+14)+"px";tooltip.style.top=(y+14)+"px";
+      tooltip.textContent=n.id+" · "+(n.n||0)+" registros";
+    }else tooltip.style.display="none";
+  }
+});
+canvas.addEventListener("pointerup",e=>{
+  canvas.classList.remove("dragging");
+  if(!dragMoved){
+    const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top;
+    const n=nearestNode(x,y);
+    if(n)openNode(n); else {const ed=nearestEdge(x,y);if(ed)openEdge(ed)}
+  }
+  drag=false;
+});
+canvas.addEventListener("pointercancel",()=>{drag=false;canvas.classList.remove("dragging")});
+canvas.addEventListener("wheel",e=>{
+  e.preventDefault();
+  state.zoom=Math.max(.55,Math.min(2.2,state.zoom*(e.deltaY>0?.92:1.08)));
+},{passive:false});
+
+function group(id,key){
+  document.querySelectorAll("#"+id+" .btn").forEach(b=>b.onclick=()=>{
+    document.querySelectorAll("#"+id+" .btn").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");state[key]=b.dataset.v;state.focus=null;rebuild();
+  });
+}
+
+document.querySelector("#autoRotate").onclick=e=>{
+  state.auto=!state.auto;e.currentTarget.classList.toggle("active",state.auto);
+};
+document.querySelector("#fitView").onclick=()=>{state.zoom=1;state.yaw=.35;state.pitch=-.16};
+document.querySelector("#labels").onclick=e=>{
+  state.labels=!state.labels;e.currentTarget.classList.toggle("active",state.labels);
+};
+
+async function init(){
+  try{
+    resize();
+    const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());
+    if(!res.ok)throw new Error("HTTP "+res.status);
+    DATA=await res.json();
+    DATA.nodeById=new Map(DATA.nodes.map(n=>[n.id,n]));
+    const sel=document.querySelector("#interaction");
+    Object.keys(DATA.meta.interactionTypes||{}).sort().forEach(k=>{
+      const o=document.createElement("option");o.value=k;o.textContent=k+" ("+DATA.meta.interactionTypes[k]+")";sel.appendChild(o);
+    });
+    document.querySelector("#meta").textContent=
+      "Base: "+DATA.meta.totalRecords.toLocaleString("es-CO")+" registros · "+
+      DATA.meta.districtRecords.toLocaleString("es-CO")+" reportados en el Distrito.";
+    group("district","district");group("origin","origin");group("quality","quality");
+    sel.onchange=e=>{state.interaction=e.target.value;rebuild()};
+    document.querySelector("#search").oninput=e=>{state.search=e.target.value.trim();rebuild()};
+    document.querySelector("#reset").onclick=()=>location.reload();
+    bindClose();
+    rebuild();
+    document.querySelector("#loading").remove();
+    lastFrame=performance.now();
+    raf=requestAnimationFrame(animate);
+  }catch(err){
+    document.querySelector("#loading").innerHTML="No pude cargar la base RIBB. Error: "+err.message;
+    console.error(err);
+  }
+}
+
+addEventListener("resize",()=>{resize()});
+init();
+</script>
+</body>
+</html>
