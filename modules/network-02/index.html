@@ -104,12 +104,12 @@ window.addEventListener("message",e=>{
 });
 
 const scenes={
- territory:{groups:["micro","fungi","plants","invert","birds","vertebrates"],interactions:[],neonGroups:[],neonInteractions:[],label:"Territorio · Kennedy",note:"Sistema completo como punto de partida."},
- gis:{groups:["plants"],interactions:[],neonGroups:["plants"],neonInteractions:[],label:"01 · Solo plantas y vegetación",note:"AISLAMIENTO: todos los demás grupos están apagados."},
- records:{groups:["plants","invert","micro","fungi"],interactions:["VISITA FLORAL","HERBIVORÍA","PARASITISMO"],neonGroups:["invert","micro","fungi"],neonInteractions:["VISITA FLORAL","HERBIVORÍA","PARASITISMO"],label:"02 · Visitan · consumen · parasitan",note:"Solo 3 relaciones: visita floral, herbivoría y parasitismo."},
- ribb:{groups:["plants","invert","birds","vertebrates"],interactions:["VISITA FLORAL","HERBIVORÍA","DEPREDACIÓN","DISPERSIÓN"],neonGroups:["birds","vertebrates"],neonInteractions:["DEPREDACIÓN","DISPERSIÓN"],label:"03 · Profundidad trófica",note:"ENTRAN AVES Y VERTEBRADOS: depredación y dispersión marcan el nuevo nivel."},
- evidence:{groups:["micro","fungi","plants","invert","birds","vertebrates"],interactions:[],neonGroups:[],neonInteractions:[],label:"Evidencia · calidad",note:"La red vuelve a estar completa; aquí el filtro actúa sobre la calidad documental."},
- hyp:{groups:["micro","fungi","plants","invert","birds","vertebrates"],interactions:[],neonGroups:["micro","fungi","plants","invert","birds","vertebrates"],neonInteractions:[],label:"Hipótesis · sistema",note:"Todas las capas se encienden de nuevo para leer el sistema completo."}
+ territory:{groups:["micro","fungi","plants","invert","birds","vertebrates"],includeIsolated:false,interactions:[],neonGroups:[],neonInteractions:[],label:"Territorio · Kennedy",note:"Sistema completo como punto de partida."},
+ gis:{groups:["plants"],interactions:[],neonGroups:["plants"],neonInteractions:[],includeIsolated:true,label:"01 · Solo plantas y vegetación",note:"AISLAMIENTO: todos los demás grupos están apagados."},
+ records:{groups:["plants","invert","micro","fungi"],includeIsolated:false,interactions:["VISITA FLORAL","HERBIVORÍA","PARASITISMO"],neonGroups:["invert","micro","fungi"],neonInteractions:["VISITA FLORAL","HERBIVORÍA","PARASITISMO"],label:"02 · Visitan · consumen · parasitan",note:"Solo 3 relaciones: visita floral, herbivoría y parasitismo."},
+ ribb:{groups:["plants","invert","birds","vertebrates"],includeIsolated:false,interactions:["VISITA FLORAL","HERBIVORÍA","DEPREDACIÓN","DISPERSIÓN"],neonGroups:["birds","vertebrates"],neonInteractions:["DEPREDACIÓN","DISPERSIÓN"],label:"03 · Profundidad trófica",note:"ENTRAN AVES Y VERTEBRADOS: depredación y dispersión marcan el nuevo nivel."},
+ evidence:{groups:["micro","fungi","plants","invert","birds","vertebrates"],includeIsolated:false,interactions:[],neonGroups:[],neonInteractions:[],label:"Evidencia · calidad",note:"La red vuelve a estar completa; aquí el filtro actúa sobre la calidad documental."},
+ hyp:{groups:["micro","fungi","plants","invert","birds","vertebrates"],includeIsolated:false,interactions:[],neonGroups:["micro","fungi","plants","invert","birds","vertebrates"],neonInteractions:[],label:"Hipótesis · sistema",note:"Todas las capas se encienden de nuevo para leer el sistema completo."}
 };
 
 let current=null;
@@ -118,7 +118,7 @@ function applyScene(scene){
   current=scene;
   document.querySelector("#sceneTag").textContent=c.label;
   document.querySelector("#sceneNote").textContent=c.note;
-  send(storyFrame,{type:"setScene",groups:c.groups,interactions:c.interactions,neonGroups:c.neonGroups,neonInteractions:c.neonInteractions,quality:"ALL"});
+  send(storyFrame,{type:"setScene",groups:c.groups,interactions:c.interactions,neonGroups:c.neonGroups,neonInteractions:c.neonInteractions,includeIsolated:!!c.includeIsolated,quality:"ALL"});
 }
 
 const observed=[...document.querySelectorAll(".step")];
