@@ -93,12 +93,18 @@
 const frame=document.querySelector("#networkFrame");
 const sceneTag=document.querySelector("#sceneTag");
 let frameReady=false,pending=[];
-
 function send(msg){
   if(!frameReady){pending.push(msg);return}
   frame.contentWindow.postMessage(msg,"*");
 }
-frame.addEventListener("load",()=>{frameReady=true;pending.splice(0).forEach(send);send({type:"resetNetwork"})});
+window.addEventListener("message",e=>{
+  if(e.source!==frame.contentWindow||e.data?.type!=="networkReady")return;
+  frameReady=true;
+  const queue=pending.splice(0);
+  send({type:"resetNetwork"});
+  queue.forEach(send);
+  updateSceneFromScroll(true);
+});
 
 const sceneConfig={
   full:{groups:["micro","fungi","plants","invert","birds","vertebrates"],label:"Red completa"},
@@ -119,13 +125,30 @@ function applyScene(scene){
 }
 
 const observed=[...document.querySelectorAll(".intro,.step")];
-const obs=new IntersectionObserver(entries=>{
-  const hit=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
-  if(!hit)return;
-  observed.forEach(x=>x.classList.toggle("active",x===hit.target));
-  applyScene(hit.target.dataset.scene||"full");
-},{threshold:[.45,.65]});
-observed.forEach(x=>obs.observe(x));
+let currentSceneEl=null;
+function updateSceneFromScroll(force=false){
+  const targetY=window.innerHeight*.48;
+  let best=null,bestDist=Infinity;
+  for(const el of observed){
+    const r=el.getBoundingClientRect();
+    const center=r.top+r.height*.5;
+    const d=Math.abs(center-targetY);
+    if(d<bestDist){bestDist=d;best=el}
+  }
+  if(!best)return;
+  if(!force&&best===currentSceneEl)return;
+  currentSceneEl=best;
+  observed.forEach(x=>x.classList.toggle("active",x===best));
+  applyScene(best.dataset.scene||"full");
+}
+let scrollTick=false;
+window.addEventListener("scroll",()=>{
+  if(scrollTick)return;
+  scrollTick=true;
+  requestAnimationFrame(()=>{scrollTick=false;updateSceneFromScroll(false)});
+},{passive:true});
+window.addEventListener("resize",()=>updateSceneFromScroll(true));
+updateSceneFromScroll(true);
 
 document.querySelector("#start").onclick=()=>document.querySelector(".step").scrollIntoView({behavior:"smooth"});
 document.querySelectorAll("[data-interaction]").forEach(b=>b.onclick=()=>{
