@@ -88,7 +88,7 @@ body.embed .analysis{display:none!important}
 
 .sub-node .pic{position:relative;overflow:hidden;background:#172019}
 .sub-node .pic img{width:100%;height:100%;object-fit:cover;display:block}
-.sub-node .pic.photo-loading:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,#172019 20%,#314437 45%,#172019 70%);background-size:200% 100%;animation:photoShimmer 1s linear infinite}
+.sub-node .pic.photo-loading:after{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(110deg,#172019 20%,#314437 45%,#172019 70%);background-size:200% 100%;animation:photoShimmer 1s linear infinite}.sub-node .pic img{position:relative;z-index:2}
 .sub-node .pic.representative-photo:after{content:"";position:absolute;right:2px;bottom:2px;background:rgba(0,0,0,.72);color:#fff;font-size:5px;letter-spacing:.08em;padding:2px 3px;border-radius:4px}
 @keyframes photoShimmer{to{background-position:-200% 0}}
 </style>
@@ -966,12 +966,12 @@ const REPRESENTATIVE_TAXA={
 };
 
 const CATEGORY_PHOTOS={
-  birds:"https://images.unsplash.com/photo-1444464666168-49d633b86797?auto=format&fit=crop&w=600&q=80",
-  plants:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=600&q=80",
-  invert:"https://images.unsplash.com/photo-1473445361085-b9a07f55608b?auto=format&fit=crop&w=600&q=80",
-  fungi:"https://images.unsplash.com/photo-1504545102780-26774c1bb073?auto=format&fit=crop&w=600&q=80",
-  micro:"https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=600&q=80",
-  vertebrates:"https://images.unsplash.com/photo-1474511320723-9a56873867b5?auto=format&fit=crop&w=600&q=80"
+  birds:"https://inaturalist-open-data.s3.amazonaws.com/photos/98999715/medium.jpeg",
+  plants:"https://inaturalist-open-data.s3.amazonaws.com/photos/6407152/medium.jpg",
+  invert:"https://static.wixstatic.com/media/f54b1e_f800e5b2872e46f2b8831b1e038e9cec.jpg",
+  fungi:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Agaricus_bisporus_2013_G1.jpg/640px-Agaricus_bisporus_2013_G1.jpg",
+  micro:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/EscherichiaColi_NIAID.jpg/640px-EscherichiaColi_NIAID.jpg",
+  vertebrates:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Red_fox_-_Nov_2010.jpg/640px-Red_fox_-_Nov_2010.jpg"
 };
 
 async function resolveGuaranteedPhoto(name){
@@ -1003,37 +1003,67 @@ async function resolveGuaranteedPhoto(name){
 
 async function ensureNodePhoto(name,el){
   if(!el)return;
-  el.classList.add("photo-loading");
-
   const eco=SPECIAL_ECO_GROUP[name]||ecoGroup(name);
-  const candidates=[...(EXACT_PHOTO_OVERRIDES[name]||[])];
-
   const cached=imageCache.get(name);
-  if(cached?.url)candidates.push(cached.url);
 
-  const resolved=await resolveGuaranteedPhoto(name);
-  if(resolved?.url)candidates.push(resolved.url);
-  candidates.push(CATEGORY_PHOTOS[eco]||CATEGORY_PHOTOS.plants);
-
-  const urls=[...new Set(candidates.filter(Boolean))];
-
-  const tryAt=index=>{
-    if(index>=urls.length){
-      el.classList.remove("photo-loading");
-      return;
-    }
+  // 1. If the main network already has a successfully loaded image,
+  // reuse the exact same browser-loaded image immediately.
+  if(cached?.status==="loaded"&&cached.img?.src){
     const img=document.createElement("img");
-    img.alt=name;
-    img.onload=()=>{
-      el.innerHTML="";
-      el.appendChild(img);
-      el.classList.remove("photo-loading");
-      if(index>0)el.classList.add("representative-photo");
-    };
-    img.onerror=()=>tryAt(index+1);
-    img.src=urls[index];
+    img.alt=name;img.src=cached.img.src;
+    el.innerHTML="";el.appendChild(img);
+    el.classList.remove("photo-loading");
+    if(cached.photoExact===false)el.classList.add("representative-photo");
+    return;
+  }
+
+  // 2. Never leave a dark/empty circle while resolving taxonomy.
+  // Put a photographic group fallback on screen immediately.
+  const immediate=CATEGORY_PHOTOS[eco]||CATEGORY_PHOTOS.plants;
+  const baseImg=document.createElement("img");
+  baseImg.alt=name;
+  baseImg.src=immediate;
+  baseImg.onload=()=>{
+    if(!el.querySelector("img"))el.appendChild(baseImg);
+    el.classList.remove("photo-loading");
+    el.classList.add("representative-photo");
   };
-  tryAt(0);
+  baseImg.onerror=()=>{ el.classList.remove("photo-loading"); };
+  el.innerHTML="";
+  el.appendChild(baseImg);
+  el.classList.add("representative-photo");
+  el.classList.remove("photo-loading");
+
+  // 3. Upgrade asynchronously to the exact/best available taxon photo.
+  try{
+    const exactCandidates=[...(EXACT_PHOTO_OVERRIDES[name]||[])];
+    const apiUrl=await resolveImage(name);
+    if(apiUrl)exactCandidates.push(apiUrl);
+
+    const clean=(name||"").replace(/\b(sp\.|spp\.|cf\.|aff\.)\b/gi,"").replace(/\s+/g," ").trim();
+    if(clean&&clean!==name){
+      const cleaned=await resolveImage(clean);
+      if(cleaned)exactCandidates.push(cleaned);
+    }
+
+    const urls=[...new Set(exactCandidates.filter(Boolean))];
+    const tryExact=index=>{
+      if(index>=urls.length)return;
+      const candidate=document.createElement("img");
+      candidate.alt=name;
+      candidate.onload=()=>{
+        el.innerHTML="";
+        el.appendChild(candidate);
+        el.classList.remove("photo-loading","representative-photo");
+        let entry=imageCache.get(name);
+        if(!entry){entry={status:"loaded",img:candidate,url:candidate.src};imageCache.set(name,entry)}
+        entry.status="loaded";entry.img=candidate;entry.url=candidate.src;entry.photoExact=true;entry.photoLabel="foto del taxón";
+      };
+      candidate.onerror=()=>tryExact(index+1);
+      candidate.src=urls[index];
+    };
+    tryExact(0);
+  }catch(e){}
 }
 
 function closeSubnetwork(){
