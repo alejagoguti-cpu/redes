@@ -60,6 +60,12 @@ h3{font-size:11px;margin:0 0 9px}.label{display:block;font-size:7px;text-transfo
 .subnet-legend span{display:flex;align-items:center;gap:5px}.subnet-legend i{width:18px;height:2px;border-radius:2px;display:block}
 .subnet-note{position:absolute;right:24px;bottom:18px;color:#7f8c82;font-size:8px;z-index:8}
 @media(max-width:760px){.subnet-modal{padding:10px}.subnet-shell{width:100%;height:86vh}.sub-node{width:82px}.sub-node .pic{width:48px;height:48px}.sub-node.center .pic{width:72px;height:72px}.sub-node .nm{font-size:7px}.subnet-head{left:14px;top:14px}.subnet-legend{left:14px;bottom:12px;max-width:70%}}
+
+body.embed .sidebar,body.embed .title,body.embed .filters,body.embed .detail,body.embed .viewbar,body.embed .hint{display:none!important}
+body.embed .app,body.embed .main{width:100vw;height:100vh}
+body.embed #swarm{inset:0}
+body.embed .legend{bottom:12px;background:rgba(255,255,252,.88)}
+body.embed .subnet-modal{z-index:200}
 </style>
 </head>
 <body><div class="app">
@@ -728,8 +734,36 @@ document.querySelectorAll("#ecoGroups .eco-btn").forEach(btn=>{
   });
 });
 
+
+function syncEcoButtons(){
+  document.querySelectorAll("#ecoGroups .eco-btn").forEach(btn=>btn.classList.toggle("active",activeEco.has(btn.dataset.eco)));
+}
+function applyEcoSet(list){
+  activeEco.clear();
+  (list||[]).forEach(k=>{if(ECO_LABELS[k])activeEco.add(k)});
+  if(!activeEco.size)Object.keys(ECO_LABELS).forEach(k=>activeEco.add(k));
+  syncEcoButtons();state.focus=null;closeSubnetwork();rebuild();
+}
+function resetNetworkState(){
+  activeEco.clear();Object.keys(ECO_LABELS).forEach(k=>activeEco.add(k));syncEcoButtons();
+  state.interaction="ALL";state.quality="ALL";state.origin="ALL";state.search="";state.focus=null;
+  const sel=document.querySelector("#interaction");if(sel)sel.value="ALL";
+  closeSubnetwork();rebuild();
+}
+window.addEventListener("message",e=>{
+  const m=e.data||{};if(!m||typeof m!=="object")return;
+  if(m.type==="setEco")applyEcoSet(m.groups);
+  if(m.type==="setInteraction"){state.interaction=m.value||"ALL";const sel=document.querySelector("#interaction");if(sel)sel.value=state.interaction;state.focus=null;rebuild()}
+  if(m.type==="setQuality"){state.quality=m.value||"ALL";state.focus=null;rebuild()}
+  if(m.type==="resetNetwork")resetNetworkState();
+  if(m.type==="focusTaxon"||m.type==="openTaxon"){
+    const n=nodeMap.get(m.taxon)||DATA?.nodeById?.get(m.taxon);
+    if(n){state.focus=n.id;if(m.type==="openTaxon")openNode(n);else draw()}
+  }
+});
 async function init(){
   try{
+    if(new URLSearchParams(location.search).get("embed")==="1")document.body.classList.add("embed");
     resize();
     const res=await fetch("../../assets/data/ribb_web.json?ts="+Date.now());
     if(!res.ok)throw new Error("HTTP "+res.status);
