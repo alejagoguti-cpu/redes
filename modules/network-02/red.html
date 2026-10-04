@@ -22,7 +22,7 @@ h3{font-size:11px;margin:0 0 9px}.label{display:block;font-size:7px;text-transfo
 .search,select{width:100%;border:1px solid var(--hair);background:#fff;border-radius:10px;padding:8px 9px;font-size:9px;outline:none}
 .checks{display:flex;gap:4px;flex-wrap:wrap}.btn{border:1px solid var(--hair);background:#fff;border-radius:999px;padding:5px 7px;font-size:7.5px;cursor:pointer}
 .btn.active{background:var(--green);color:#fff;border-color:var(--green)}
-.stats{display:flex;gap:6px;margin-top:10px}.stat{flex:1;background:#f0f3ec;border-radius:10px;padding:7px}.stat b{display:block;font-size:14px}.stat span{font-size:7px;color:var(--muted)}
+.eco-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}.eco-btn{min-height:34px;border:1px solid var(--hair);background:#fff;border-radius:10px;padding:6px 7px;display:flex;align-items:center;gap:6px;text-align:left;font-size:7px;color:#687068;cursor:pointer;line-height:1.15}.eco-btn i{width:9px;height:9px;border-radius:50%;flex:0 0 auto;box-shadow:0 0 0 2px #fff,0 0 0 3px #dfe4dc}.eco-btn:not(.active){opacity:.38;background:#f2f3ef;text-decoration:line-through}.eco-btn.active{border-color:#aab6aa;color:#26352a;box-shadow:inset 0 0 0 1px #e9ede7}.stats{display:flex;gap:6px;margin-top:10px}.stat{flex:1;background:#f0f3ec;border-radius:10px;padding:7px}.stat b{display:block;font-size:14px}.stat span{font-size:7px;color:var(--muted)}
 .reset{width:100%;margin-top:9px;border:0;background:#e8ece4;color:#465044;border-radius:9px;padding:7px;font-size:8px;cursor:pointer}
 .viewbar{position:absolute;z-index:10;top:18px;left:50%;transform:translateX(-50%);margin-top:48px;display:flex;gap:6px;background:rgba(255,255,252,.88);border:1px solid var(--hair);border-radius:999px;padding:5px;backdrop-filter:blur(12px)}
 .viewbar button{border:0;background:transparent;border-radius:999px;padding:6px 9px;font-size:8px;color:#5d665b;cursor:pointer}
@@ -93,6 +93,15 @@ h3{font-size:11px;margin:0 0 9px}.label{display:block;font-size:7px;text-transfo
 <div class="checks" id="district">
   <button class="btn active" data-v="SI">Distrito</button>
   <button class="btn" data-v="ALL">Toda la base</button>
+</div>
+<span class="label">Nivel ecológico · prender / apagar nodos</span>
+<div class="eco-grid" id="ecoGroups">
+  <button class="eco-btn active" data-eco="micro"><i style="background:#57a6a1"></i><span>Microorganismos</span></button>
+  <button class="eco-btn active" data-eco="fungi"><i style="background:#9a78aa"></i><span>Hongos</span></button>
+  <button class="eco-btn active" data-eco="plants"><i style="background:#6f9569"></i><span>Plantas y vegetación</span></button>
+  <button class="eco-btn active" data-eco="invert"><i style="background:#d09a55"></i><span>Invertebrados</span></button>
+  <button class="eco-btn active" data-eco="birds"><i style="background:#668eb5"></i><span>Aves</span></button>
+  <button class="eco-btn active" data-eco="vertebrates"><i style="background:#c46f67"></i><span>Otros vertebrados</span></button>
 </div>
 <span class="label">Interacción</span>
 <select id="interaction"><option value="ALL">Todas</option></select>
@@ -167,6 +176,10 @@ const COLORS={
   "OVIPOSICIÓN":"#9870a6","PARASITISMO":"#8c73a5","MUTUALISMO":"#5a9a90","OTRAS INTERACCIONES":"#8a8a86"
 };
 
+const ECO_COLORS={micro:"#57a6a1",fungi:"#9a78aa",plants:"#6f9569",invert:"#d09a55",birds:"#668eb5",vertebrates:"#c46f67"};
+const ECO_LABELS={micro:"Microorganismos",fungi:"Hongos",plants:"Plantas y vegetación",invert:"Invertebrados",birds:"Aves",vertebrates:"Otros vertebrados"};
+const activeEco=new Set(Object.keys(ECO_LABELS));
+
 const state={
   district:"SI",interaction:"ALL",origin:"ALL",quality:"ALL",search:"",
   focus:null, yaw:0.35,pitch:-0.16,zoom:1,auto:true,labels:false
@@ -226,7 +239,32 @@ function project(n){
   };
 }
 
+function ecoGroup(name){
+  const n=(name||"").toLowerCase();
+  const first=n.split(/\s+/)[0];
+  const micro=["bacteria","archaea","cyanobacteria","bacillota","proteobacteria","actinomycetota","bacteroidota","firmicutes","bacillus","pseudomonas","rhizobium","azotobacter","nostoc","micrococcus"];
+  const fungi=["fungi","ascomycota","basidiomycota","glomeromycetes","glomeromycota","agaricomycetes","sordariomycetes","eurotiomycetes","saccharomycetes","penicillium","aspergillus","fusarium","alternaria","candida"];
+  const plants=["plantae","spermatophyta","magnoliopsida","liliopsida","angiospermae","pinopsida","bryophyta","polypodiopsida","marchantiophyta","chlorophyta","charophyta"];
+  const invert=["insecta","arachnida","malacostraca","gastropoda","bivalvia","clitellata","nematoda","hexanauplia","collembola","chilopoda","diplopoda","hymenoptera","diptera","coleoptera","lepidoptera","hemiptera","orthoptera","blattodea","araneae","acari","odonata","formicidae","apidae"];
+  const birds=["aves","anseriformes","apodiformes","charadriiformes","columbiformes","falconiformes","galliformes","gruiformes","passeriformes","pelecaniformes","piciformes","psittaciformes","strigiformes","trochilidae"];
+  const verts=["mammalia","actinopterygii","amphibia","reptilia","chondrichthyes","squamata","rodentia","carnivora","chiroptera","primates","cypriniformes","siluriformes"];
+  if(micro.some(x=>n===x||first===x))return "micro";
+  if(fungi.some(x=>n===x||first===x))return "fungi";
+  if(plants.some(x=>n===x||first===x))return "plants";
+  if(invert.some(x=>n===x||first===x))return "invert";
+  if(birds.some(x=>n===x||first===x))return "birds";
+  if(verts.some(x=>n===x||first===x))return "vertebrates";
+  // genus/species heuristics for common RIBB groups
+  if(/^(apis|bombus|thygater|trigona|melipona|araneus|agriopa|steatoda|culex|aedes|drosophila|danaus|vanessa|heliconius)\b/.test(n))return "invert";
+  if(/^(colibri|diglossa|turdus|metallura|gallinula|zonotrichia|tyrannus|tangara|coeligena|lesbia|notiochelidon|patagioenas|zenaida)\b/.test(n))return "birds";
+  if(/^(cyprinus|oncorhynchus|poecilia|rattus|mus|canis|felis|didelphis|anolis|pristimantis)\b/.test(n))return "vertebrates";
+  // most binomial botanical taxa in RIBB are recognized by known botanical high-level nodes;
+  // unresolved taxa stay visible under plants only when their origin metadata identifies a plant below.
+  return "plants";
+}
+
 function match(r){
+  if(!activeEco.has(ecoGroup(r.s))||!activeEco.has(ecoGroup(r.t)))return false;
   if(state.district!=="ALL"&&r.district!==state.district)return false;
   if(state.interaction!=="ALL"&&r.title!==state.interaction)return false;
   if(state.quality!=="ALL"&&r.q!==state.quality)return false;
@@ -389,7 +427,7 @@ function draw(){
     ctx.restore();
 
     ctx.globalAlpha=dim?.08:1;
-    ctx.strokeStyle=hot?"#1f3d25":"rgba(255,255,255,.96)";
+    ctx.strokeStyle=hot?"#1f3d25":(ECO_COLORS[ecoGroup(n.id)]||"rgba(255,255,255,.96)");
     ctx.lineWidth=hot?3:Math.max(1,1.2*p.scale);
     ctx.beginPath();ctx.arc(p.x,p.y,radius,0,Math.PI*2);ctx.stroke();
 
@@ -543,7 +581,7 @@ function openSubnetwork(n){
     const node=document.createElement("div");
     node.className="sub-node";
     node.style.left=x+"%";node.style.top=y+"%";
-    node.innerHTML='<div class="pic">'+item.other.charAt(0).toUpperCase()+'</div><div class="nm">'+item.other+'</div><div class="rel">'+relationLabel(item.r,n.id)+(item.count>1?" · "+item.count+" registros":"")+'</div>';
+    node.innerHTML='<div class="pic" style="border-color:'+(ECO_COLORS[ecoGroup(item.other)]||'#fff')+'">'+item.other.charAt(0).toUpperCase()+'</div><div class="nm">'+item.other+'</div><div class="rel">'+ECO_LABELS[ecoGroup(item.other)]+' · '+relationLabel(item.r,n.id)+(item.count>1?" · "+item.count+" registros":"")+'</div>';
     node.addEventListener("click",()=>{
       const next=nodeMap.get(item.other)||DATA.nodeById.get(item.other)||{id:item.other,n:item.count,origin:""};
       openSubnetwork(next);
@@ -586,7 +624,7 @@ function openNode(n,showPopup=true){
   d.innerHTML=
     '<button id="close" class="close"><i class="fa-solid fa-xmark"></i></button>'+
     '<h2>'+n.id+'</h2><div class="hero" '+hero+'></div>'+
-    '<span class="badge">'+(n.origin||"Origen no indicado")+'</span>'+
+    '<span class="badge" style="border:1px solid '+(ECO_COLORS[ecoGroup(n.id)]||'#ddd')+'">'+ECO_LABELS[ecoGroup(n.id)]+'</span>'+ '<span class="badge">'+(n.origin||"Origen no indicado")+'</span>'+
     '<span class="badge">'+(n.n||0)+' registros</span>'+
     '<h4>Lectura</h4><p>Se resaltan las relaciones directas de este taxón dentro del filtro actual. Su posición cambia con la rotación 3D, pero sus conexiones se conservan.</p>'+
     '<p class="small">'+(im?.status==="loaded"?"Foto taxonómica cargada por nombre científico.":"La foto todavía se está resolviendo o no hay una fotografía validada disponible.")+'</p>';
@@ -668,6 +706,21 @@ document.querySelector("#fitView").onclick=()=>{state.zoom=1;state.yaw=.35;state
 document.querySelector("#labels").onclick=e=>{
   state.labels=!state.labels;e.currentTarget.classList.toggle("active",state.labels);
 };
+
+document.querySelectorAll("#ecoGroups .eco-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const k=btn.dataset.eco;
+    if(activeEco.has(k)){
+      if(activeEco.size===1)return;
+      activeEco.delete(k);btn.classList.remove("active");
+    }else{
+      activeEco.add(k);btn.classList.add("active");
+    }
+    state.focus=null;
+    closeSubnetwork();
+    rebuild();
+  });
+});
 
 async function init(){
   try{
