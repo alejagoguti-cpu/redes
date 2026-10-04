@@ -92,7 +92,7 @@ body.embed .analysis{display:none!important}
 .sub-node .pic.representative-photo:after{content:"";position:absolute;right:2px;bottom:2px;background:rgba(0,0,0,.72);color:#fff;font-size:5px;letter-spacing:.08em;padding:2px 3px;border-radius:4px}
 @keyframes photoShimmer{to{background-position:-200% 0}}
 
-.scene-editor-toggle{position:absolute;right:74px;top:18px;z-index:30;border:1px solid #d9f3df;background:#dff4e4;color:#17301f;border-radius:999px;padding:11px 16px;font-size:9px;font-weight:800;cursor:pointer;box-shadow:0 8px 26px #0006}
+.scene-editor-toggle{position:absolute;right:68px;top:18px;z-index:14;border:1px solid #ffffff26;background:#ffffff12;color:#fff;border-radius:999px;padding:10px 14px;font-size:8px;font-weight:700;cursor:pointer}
 .scene-editor{position:absolute;right:18px;top:68px;z-index:20;width:285px;max-height:calc(100% - 100px);overflow:auto;background:rgba(14,20,16,.96);border:1px solid #ffffff1f;border-radius:16px;padding:12px;color:#eef4ef;display:none;backdrop-filter:blur(14px)}
 .scene-editor.open{display:block}.scene-editor h3{margin:0 0 9px;font-size:12px}.scene-editor .field{display:grid;grid-template-columns:76px 1fr;gap:8px;align-items:center;margin:7px 0}.scene-editor label{font-size:7px;color:#9eaaa1;text-transform:uppercase;letter-spacing:.08em}
 .scene-editor input,.scene-editor select,.scene-editor textarea{width:100%;box-sizing:border-box;background:#07100a;color:#fff;border:1px solid #ffffff20;border-radius:8px;padding:7px;font:8px Inter,Arial}.scene-editor textarea{min-height:110px;resize:vertical}
@@ -249,8 +249,6 @@ body.embed .analysis{display:none!important}
       <div class="field"><label>Nodo</label><select id="editNode"></select></div>
       <div class="field"><label>X</label><input id="editX" type="number" min="2" max="98" step=".1"></div>
       <div class="field"><label>Y</label><input id="editY" type="number" min="8" max="92" step=".1"></div>
-      <div class="field"><label>Tamaño</label><input id="editNodeSize" type="range" min="34" max="110" step="2" value="58"></div>
-      <div class="field"><label>Separación</label><input id="editSpacing" type="range" min=".65" max="1.65" step=".05" value="1"></div>
       <div class="field"><label>Vínculo</label><select id="editEdge"></select></div>
       <div class="field"><label>Relación</label><select id="editRelation">
         <option>VISITA FLORAL</option><option>HERBIVORÍA</option><option>DEPREDACIÓN</option><option>DISPERSIÓN</option><option>PARASITISMO</option><option>NIDIFICACIÓN</option><option>CONSUMO FAUNA/HONGOS</option><option>OTRAS INTERACCIONES</option>
@@ -258,7 +256,7 @@ body.embed .analysis{display:none!important}
       <div class="field"><label>Línea</label><select id="editLineStyle"><option value="solid">continua</option><option value="dashed">segmentada</option><option value="dotted">punteada</option></select></div>
       <div class="field"><label>Grosor</label><input id="editWidth" type="range" min=".6" max="5" step=".2" value="1.6"></div>
       <div class="field"><label>Color</label><input id="editColor" type="color" value="#6f9569"></div>
-      <div class="row"><button id="saveScene" class="primary">guardar escena</button><button id="reflowScene">reorganizar</button><button id="restoreHidden">restaurar nodos</button><button id="resetScene">restablecer</button><button id="exportScene">generar JSON</button></div>
+      <div class="row"><button id="saveScene" class="primary">guardar escena</button><button id="resetScene">restablecer</button><button id="exportScene">generar JSON</button></div>
       <textarea id="sceneJSON" readonly placeholder="Aquí aparece el JSON para fijar la escena en el repositorio."></textarea>
       <span class="minihelp">Arrastra nodos directamente. X/Y están en porcentaje del lienzo. Puedes editar relación, tipo de línea, grosor y color.</span>
     </aside>
@@ -278,7 +276,7 @@ body.embed .analysis{display:none!important}
       <span><i style="background:#648bb2"></i>Dispersión / consumo</span>
       <span><i style="background:#8c73a5"></i>Parasitismo / otras</span>
     </div>
-    <div class="subnet-note">arrastra = mover · clic línea = editar vínculo · doble clic nodo = retirar y recalcular</div>
+    <div class="subnet-note">clic en una especie = convertirla en centro</div>
   </div>
 </div>
 
@@ -1130,7 +1128,7 @@ function bestRelationForNode(graph,rootId,id){
 }
 
 async let SUBNET_SCENES={};
-const sceneEditorState={root:null,graph:null,pos:new Map(),edgeStyles:new Map(),nodeSizes:new Map(),hiddenNodes:new Set(),selectedNode:null,selectedEdge:null,render:null,spacing:1};
+const sceneEditorState={root:null,graph:null,pos:new Map(),edgeStyles:new Map(),selectedNode:null,selectedEdge:null,render:null};
 
 async function loadSubnetScenes(){
   try{
@@ -1146,52 +1144,21 @@ function getSavedScene(root){
   }catch(e){}
   return SUBNET_SCENES[root]||null;
 }
-function forceDirectedPositions(ids,edges,hidden=new Set(),spacing=1){
-  const active=ids.filter(id=>!hidden.has(id));
-  const pts=new Map();
-  active.forEach((id,i)=>{
-    const a=((hash(id+"seed")%10000)/10000)*Math.PI*2;
-    const rr=.18+((hash(id+"rad")%1000)/1000)*.28;
-    pts.set(id,{x:.5+Math.cos(a)*rr,y:.5+Math.sin(a)*rr,vx:0,vy:0});
+function decentralizedPositions(ids){
+  const sorted=[...ids].sort((a,b)=>(hash(a+"scene")%10000)-(hash(b+"scene")%10000));
+  const cols=6,rows=Math.ceil(sorted.length/cols),map=new Map();
+  sorted.forEach((id,i)=>{
+    const col=i%cols,row=Math.floor(i/cols);
+    const jx=((hash(id+"x")%1000)/1000-.5)*6;
+    const jy=((hash(id+"y")%1000)/1000-.5)*5;
+    map.set(id,{x:9+(col/Math.max(1,cols-1))*82+jx,y:17+(row/Math.max(1,rows-1))*66+jy});
   });
-  const edgePairs=edges.filter(e=>pts.has(e.s)&&pts.has(e.t)).map(e=>[e.s,e.t]);
-  const N=active.length;
-  const desired=Math.max(.10,Math.min(.23,.52/Math.sqrt(Math.max(2,N))))*spacing;
-  for(let it=0;it<180;it++){
-    const alpha=(1-it/180)*.055;
-    // Repulsion
-    for(let i=0;i<active.length;i++){
-      const a=pts.get(active[i]);
-      for(let j=i+1;j<active.length;j++){
-        const b=pts.get(active[j]);let dx=a.x-b.x,dy=a.y-b.y;
-        let d2=dx*dx+dy*dy+.0008,d=Math.sqrt(d2);
-        const f=.00042*spacing/d2;
-        dx/=d;dy/=d;a.vx+=dx*f;b.vx-=dx*f;a.vy+=dy*f;b.vy-=dy*f;
-      }
-    }
-    // Links attract only enough to reveal topology, not a central hub.
-    for(const [sa,sb] of edgePairs){
-      const a=pts.get(sa),b=pts.get(sb);let dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)+.001;
-      const f=(d-desired)*.012;
-      dx/=d;dy/=d;a.vx+=dx*f;b.vx-=dx*f;a.vy+=dy*f;b.vy-=dy*f;
-    }
-    // Very weak centering.
-    for(const id of active){
-      const p=pts.get(id);
-      p.vx+=(0.5-p.x)*.002;p.vy+=(0.5-p.y)*.002;
-      p.vx*=.82;p.vy*=.82;
-      p.x=Math.max(.06,Math.min(.94,p.x+p.vx*alpha*20));
-      p.y=Math.max(.12,Math.min(.88,p.y+p.vy*alpha*20));
-    }
-  }
-  const map=new Map();
-  pts.forEach((p,id)=>map.set(id,{x:5+p.x*90,y:9+p.y*82}));
   return map;
 }
 function serializeScene(){
-  const nodes={};sceneEditorState.pos.forEach((p,id)=>nodes[id]={x:+p.x.toFixed(2),y:+p.y.toFixed(2),size:sceneEditorState.nodeSizes.get(id)||null});
+  const nodes={};sceneEditorState.pos.forEach((p,id)=>nodes[id]={x:+p.x.toFixed(2),y:+p.y.toFixed(2)});
   const edges={};sceneEditorState.edgeStyles.forEach((st,id)=>edges[id]={...st});
-  return {root:sceneEditorState.root,nodes,edges,hidden:[...sceneEditorState.hiddenNodes],spacing:sceneEditorState.spacing};
+  return {root:sceneEditorState.root,nodes,edges};
 }
 function saveSceneLocal(){
   const data=serializeScene();
@@ -1200,14 +1167,12 @@ function saveSceneLocal(){
 }
 function applySavedScene(root,pos,edgeStyles){
   const saved=getSavedScene(root);if(!saved)return;
-  Object.entries(saved.nodes||{}).forEach(([id,p])=>{if(pos.has(id)){pos.set(id,{x:+p.x,y:+p.y});if(p.size)sceneEditorState.nodeSizes.set(id,+p.size)}});
+  Object.entries(saved.nodes||{}).forEach(([id,p])=>{if(pos.has(id))pos.set(id,{x:+p.x,y:+p.y})});
   Object.entries(saved.edges||{}).forEach(([id,st])=>edgeStyles.set(id,{...st}));
-  sceneEditorState.hiddenNodes=new Set(saved.hidden||[]);
-  sceneEditorState.spacing=+saved.spacing||1;
 }
 function syncSceneEditorInputs(){
   const id=sceneEditorState.selectedNode,p=sceneEditorState.pos.get(id);
-  if(p){document.querySelector("#editNode").value=id;document.querySelector("#editX").value=p.x.toFixed(1);document.querySelector("#editY").value=p.y.toFixed(1);document.querySelector("#editNodeSize").value=sceneEditorState.nodeSizes.get(id)||58}
+  if(p){document.querySelector("#editNode").value=id;document.querySelector("#editX").value=p.x.toFixed(1);document.querySelector("#editY").value=p.y.toFixed(1)}
   const eid=sceneEditorState.selectedEdge,edge=sceneEditorState.graph?.edges.find(e=>e.id===eid);
   if(edge){
     document.querySelector("#editEdge").value=eid;
@@ -1234,8 +1199,6 @@ function bindSceneEditor(){
     document.querySelectorAll(".sub-node").forEach(n=>n.classList.toggle("editable",panel.classList.contains("open")));
   };
   document.querySelector("#editNode").onchange=e=>{sceneEditorState.selectedNode=e.target.value;syncSceneEditorInputs();highlightSceneSelection()};
-  document.querySelector("#editSpacing").oninput=e=>{sceneEditorState.spacing=+e.target.value;};
-  document.querySelector("#editNodeSize").oninput=e=>{const id=sceneEditorState.selectedNode;if(!id)return;sceneEditorState.nodeSizes.set(id,+e.target.value);sceneEditorState.render?.();};
   const updateNode=()=>{
     const id=sceneEditorState.selectedNode;if(!id)return;
     const x=Math.max(2,Math.min(98,+document.querySelector("#editX").value||50));
@@ -1251,19 +1214,10 @@ function bindSceneEditor(){
   };
   ["editRelation","editLineStyle","editWidth","editColor"].forEach(id=>document.querySelector("#"+id).oninput=updateEdge);
   document.querySelector("#saveScene").onclick=saveSceneLocal;
-  document.querySelector("#reflowScene").onclick=()=>{
-    sceneEditorState.pos=forceDirectedPositions(sceneEditorState.graph.selected,sceneEditorState.graph.edges,sceneEditorState.hiddenNodes,sceneEditorState.spacing);
-    sceneEditorState.render?.();
-  };
-  document.querySelector("#restoreHidden").onclick=()=>{
-    sceneEditorState.hiddenNodes.clear();
-    sceneEditorState.pos=forceDirectedPositions(sceneEditorState.graph.selected,sceneEditorState.graph.edges,sceneEditorState.hiddenNodes,sceneEditorState.spacing);
-    sceneEditorState.render?.();
-  };
   document.querySelector("#exportScene").onclick=()=>{document.querySelector("#sceneJSON").value=JSON.stringify(serializeScene(),null,2)};
   document.querySelector("#resetScene").onclick=()=>{
     try{localStorage.removeItem(sceneStorageKey(sceneEditorState.root))}catch(e){}
-    sceneEditorState.hiddenNodes.clear();sceneEditorState.nodeSizes.clear();sceneEditorState.spacing=1;sceneEditorState.pos=forceDirectedPositions(sceneEditorState.graph.selected,sceneEditorState.graph.edges,sceneEditorState.hiddenNodes,1);sceneEditorState.edgeStyles.clear();sceneEditorState.render?.();fillSceneEditor(sceneEditorState.graph);
+    sceneEditorState.pos=decentralizedPositions(sceneEditorState.graph.selected);sceneEditorState.edgeStyles.clear();sceneEditorState.render?.();fillSceneEditor(sceneEditorState.graph);
   };
 }
 async function openSubnetwork(n){
@@ -1288,16 +1242,14 @@ async function openSubnetwork(n){
   svg.appendChild(defs);
   const markerIndex=new Map(Object.keys(COLORS).map((k,i)=>[k,i]));
 
-  sceneEditorState.root=n.id;sceneEditorState.graph=graph;sceneEditorState.hiddenNodes=new Set();sceneEditorState.nodeSizes=new Map();sceneEditorState.spacing=1;
-  let pos=forceDirectedPositions(ids,graph.edges,sceneEditorState.hiddenNodes,sceneEditorState.spacing);
+  let pos=decentralizedPositions(ids);
   const edgeStyles=new Map();
-  sceneEditorState.pos=pos;sceneEditorState.edgeStyles=edgeStyles;
   applySavedScene(n.id,pos,edgeStyles);
+  sceneEditorState.root=n.id;sceneEditorState.graph=graph;sceneEditorState.pos=pos;sceneEditorState.edgeStyles=edgeStyles;
 
   function renderEdges(){
     [...svg.querySelectorAll("path[data-edge]")].forEach(x=>x.remove());
     for(const r of graph.edges){
-      if(sceneEditorState.hiddenNodes.has(r.s)||sceneEditorState.hiddenNodes.has(r.t))continue;
       const p1=pos.get(r.s),p2=pos.get(r.t);if(!p1||!p2)continue;
       const x1=p1.x*10,y1=p1.y*6.5,x2=p2.x*10,y2=p2.y*6.5;
       const mx=(x1+x2)/2,my=(y1+y2)/2;
@@ -1331,7 +1283,7 @@ async function openSubnetwork(n){
     el.dataset.node=id;
     el.style.left=p.x+"%";el.style.top=p.y+"%";
     const degree=graph.edges.filter(e=>e.s===id||e.t===id).length;
-    const size=sceneEditorState.nodeSizes.get(id)||(degree>=7?74:degree>=4?64:56);
+    const size=isRoot?104:(degree>=5?72:degree>=3?62:54);
     const direct=graph.edges.filter(r=>(r.s===n.id&&r.t===id)||(r.t===n.id&&r.s===id));
     const rel=direct[0]||bestRelationForNode(graph,n.id,id);
     const relation=isRoot?ECO_LABELS[eco]:(direct.length?direct.map(r=>r.i||relationLabel(r,n.id,id)).filter((v,i,a)=>a.indexOf(v)===i).join(" · "):(rel?relationLabel(rel,n.id,id):ECO_LABELS[eco]));
@@ -1342,16 +1294,10 @@ async function openSubnetwork(n){
     el.innerHTML='<div class="pic photo-loading" style="border-color:'+(ECO_COLORS[eco]||"#fff")+';width:'+size+'px;height:'+size+'px"></div>'+
       '<div class="nm">'+id+'</div>'+
       '<div class="rel">'+relation+(coord?'<br>'+coord:'')+(statusText?'<br>'+statusText:'')+'</div>';
-    el.addEventListener("click",()=>{sceneEditorState.selectedNode=id;syncSceneEditorInputs();highlightSceneSelection();});
-    el.addEventListener("dblclick",ev=>{
-      ev.preventDefault();ev.stopPropagation();
-      sceneEditorState.hiddenNodes.add(id);
-      sceneEditorState.pos=forceDirectedPositions(ids,graph.edges,sceneEditorState.hiddenNodes,sceneEditorState.spacing);
-      pos=sceneEditorState.pos;
-      sceneEditorState.render?.();
-    });
+    el.addEventListener("click",()=>{if(document.querySelector("#sceneEditor").classList.contains("open")){sceneEditorState.selectedNode=id;syncSceneEditorInputs();highlightSceneSelection();return;} if(!isRoot){openSubnetwork(nd);openNode(nd,false)}});
     holder.appendChild(el);ensureNodePhoto(id,el.querySelector(".pic"));
     el.addEventListener("pointerdown",ev=>{
+      if(!document.querySelector("#sceneEditor").classList.contains("open"))return;
       ev.preventDefault();ev.stopPropagation();
       sceneEditorState.selectedNode=id;syncSceneEditorInputs();highlightSceneSelection();
       el.setPointerCapture(ev.pointerId);
@@ -1370,17 +1316,13 @@ async function openSubnetwork(n){
   sceneEditorState.render=()=>{
     pos=sceneEditorState.pos;
     document.querySelectorAll(".sub-node").forEach(el=>{
-      const id=el.dataset.node;
-      if(sceneEditorState.hiddenNodes.has(id)){el.style.display="none";return}else el.style.display="";
-      const p=pos.get(id);if(p){el.style.left=p.x+"%";el.style.top=p.y+"%";}
-      const size=sceneEditorState.nodeSizes.get(id);
-      if(size){const pic=el.querySelector(".pic");if(pic){pic.style.width=size+"px";pic.style.height=size+"px";}}
+      const p=pos.get(el.dataset.node);if(p){el.style.left=p.x+"%";el.style.top=p.y+"%";}
     });
     renderEdges();
   };
   renderEdges();
   fillSceneEditor(graph);
-  document.querySelector("#sceneEditor").classList.add("open");document.querySelectorAll(".sub-node").forEach(n=>n.classList.add("editable"));
+  document.querySelector("#sceneEditor").classList.remove("open");
   document.querySelector("#sceneJSON").value="";
   highlightSceneSelection();
 
