@@ -36,6 +36,30 @@ h3{font-size:11px;margin:0 0 9px}.label{display:block;font-size:7px;text-transfo
 .loading{position:absolute;inset:0;display:grid;place-items:center;background:var(--paper);z-index:70;font-size:11px;color:#777}.hint{position:absolute;left:50%;bottom:50px;transform:translateX(-50%);font-size:7px;color:#929890;z-index:8;pointer-events:none}
 .small{font-size:7px!important;color:#888!important}.imageState{font-size:7px;color:#7f857c;margin-top:6px}
 .tooltip{position:absolute;z-index:20;pointer-events:none;background:#202720;color:#fff;border-radius:8px;padding:6px 8px;font-size:8px;display:none;max-width:180px}
+
+.subnet-modal{position:fixed;inset:0;z-index:120;background:rgba(4,8,6,.94);display:none;align-items:center;justify-content:center;padding:34px;backdrop-filter:blur(12px)}
+.subnet-modal.open{display:flex}
+.subnet-shell{position:relative;width:min(1180px,94vw);height:min(760px,88vh);border:1px solid rgba(255,255,255,.12);border-radius:24px;background:radial-gradient(circle at 50% 48%,#172019 0,#090d0a 48%,#040604 100%);overflow:hidden;box-shadow:0 24px 90px #0008}
+.subnet-head{position:absolute;left:24px;top:20px;z-index:8;color:#fff}
+.subnet-head .ey{font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:#9db1a2;margin-bottom:5px}
+.subnet-head h2{margin:0;font-size:18px;font-style:italic}
+.subnet-head p{margin:6px 0 0;font-size:9px;color:#98a69b;max-width:480px;line-height:1.45}
+.subnet-close{position:absolute;right:18px;top:18px;z-index:12;width:38px;height:38px;border:1px solid #ffffff26;border-radius:50%;background:#ffffff12;color:#fff;cursor:pointer;font-size:16px}
+.subnet-stage{position:absolute;inset:0}
+.subnet-svg{position:absolute;inset:0;width:100%;height:100%}
+.sub-ring{fill:none;stroke:#ffffff12;stroke-width:1;stroke-dasharray:4 7}
+.sub-node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;z-index:5;width:108px;color:#fff}
+.sub-node .pic{width:62px;height:62px;border-radius:50%;overflow:hidden;border:2px solid #fff;background:#36443a;box-shadow:0 8px 24px #0008;display:grid;place-items:center;font-size:18px;font-weight:700;color:#dce5de}
+.sub-node.center .pic{width:92px;height:92px;border-width:3px}
+.sub-node img{width:100%;height:100%;object-fit:cover;display:block}
+.sub-node .nm{font-size:9px;line-height:1.15;text-align:center;text-shadow:0 1px 4px #000;max-width:105px}
+.sub-node.center .nm{font-size:12px;font-weight:700}
+.sub-node .rel{font-size:7px;line-height:1.1;text-transform:uppercase;letter-spacing:.05em;opacity:.78;text-align:center}
+.sub-node:hover .pic{box-shadow:0 0 0 4px #ffffff1f,0 8px 28px #000}
+.subnet-legend{position:absolute;left:24px;bottom:18px;z-index:8;display:flex;gap:11px;flex-wrap:wrap;color:#b7c1ba;font-size:8px}
+.subnet-legend span{display:flex;align-items:center;gap:5px}.subnet-legend i{width:18px;height:2px;border-radius:2px;display:block}
+.subnet-note{position:absolute;right:24px;bottom:18px;color:#7f8c82;font-size:8px;z-index:8}
+@media(max-width:760px){.subnet-modal{padding:10px}.subnet-shell{width:100%;height:86vh}.sub-node{width:82px}.sub-node .pic{width:48px;height:48px}.sub-node.center .pic{width:72px;height:72px}.sub-node .nm{font-size:7px}.subnet-head{left:14px;top:14px}.subnet-legend{left:14px;bottom:12px;max-width:70%}}
 </style>
 </head>
 <body><div class="app">
@@ -112,6 +136,30 @@ h3{font-size:11px;margin:0 0 9px}.label{display:block;font-size:7px;text-transfo
 <span><i class="line dotline"></i>Baja</span>
 </div>
 </main></div>
+
+
+<div class="subnet-modal" id="subnetModal" aria-hidden="true">
+  <div class="subnet-shell" role="dialog" aria-modal="true" aria-labelledby="subnetTitle">
+    <button class="subnet-close" id="subnetClose" aria-label="Cerrar subred"><i class="fa-solid fa-xmark"></i></button>
+    <div class="subnet-head">
+      <div class="ey">Subred de interacción directa</div>
+      <h2 id="subnetTitle">Especie seleccionada</h2>
+      <p id="subnetSubtitle">Cada línea corresponde a un registro visible bajo los filtros actuales.</p>
+    </div>
+    <div class="subnet-stage" id="subnetStage">
+      <svg class="subnet-svg" id="subnetSvg" viewBox="0 0 1000 650" preserveAspectRatio="none"></svg>
+      <div id="subnetNodes"></div>
+    </div>
+    <div class="subnet-legend">
+      <span><i style="background:#6f9569"></i>Visita floral</span>
+      <span><i style="background:#be8b57"></i>Herbivoría</span>
+      <span><i style="background:#b45f5f"></i>Depredación</span>
+      <span><i style="background:#648bb2"></i>Dispersión</span>
+      <span><i style="background:#8c73a5"></i>Otras</span>
+    </div>
+    <div class="subnet-note">clic en una especie = convertirla en centro</div>
+  </div>
+</div>
 
 <script>
 const COLORS={
@@ -391,6 +439,136 @@ function nearestEdge(x,y){
   return best;
 }
 
+
+function directRelations(id){
+  return visible.filter(r=>r.s===id||r.t===id);
+}
+
+function relationLabel(r,centerId){
+  const other=r.s===centerId?r.t:r.s;
+  if(r.i==="Consume") return (r.s===centerId?"consume":"es consumido por");
+  if(r.i==="Poliniza a") return (r.s===centerId?"poliniza":"es polinizada por");
+  if(r.i==="Dispersa"||r.i==="Dispersa a") return (r.s===centerId?"dispersa":"es dispersada por");
+  if(r.i==="Parasita a") return (r.s===centerId?"parasita":"es parasitado por");
+  if(r.i==="Oviposita en") return (r.s===centerId?"oviposita en":"recibe oviposición de");
+  if(r.i==="Crece sobre") return (r.s===centerId?"crece sobre":"sirve de sustrato a");
+  return (r.title||r.i||"interacción").toLowerCase();
+}
+
+function bestRelationPerNeighbor(id){
+  const rels=directRelations(id);
+  const grouped=new Map();
+  for(const r of rels){
+    const other=r.s===id?r.t:r.s;
+    if(!grouped.has(other)) grouped.set(other,[]);
+    grouped.get(other).push(r);
+  }
+  return [...grouped.entries()].map(([other,rs])=>({
+    other,
+    r:rs[0],
+    count:rs.length
+  })).sort((a,b)=>b.count-a.count);
+}
+
+async function ensureNodePhoto(name,el){
+  const cached=imageCache.get(name);
+  if(cached?.status==="loaded"&&cached.url){
+    el.innerHTML='<img src="'+cached.url+'" alt="'+name+'">';
+    return;
+  }
+  const url=await resolveImage(name);
+  if(url){
+    let entry=imageCache.get(name);
+    if(!entry){entry={status:"loading",img:null,url:""};imageCache.set(name,entry)}
+    entry.url=url;
+    el.innerHTML='<img src="'+url+'" alt="'+name+'">';
+  }
+}
+
+function closeSubnetwork(){
+  const modal=document.querySelector("#subnetModal");
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden","true");
+}
+
+function openSubnetwork(n){
+  const modal=document.querySelector("#subnetModal");
+  const svg=document.querySelector("#subnetSvg");
+  const holder=document.querySelector("#subnetNodes");
+  const rels=bestRelationPerNeighbor(n.id);
+  const shown=rels.slice(0,18);
+
+  document.querySelector("#subnetTitle").textContent=n.id;
+  document.querySelector("#subnetSubtitle").textContent=
+    rels.length+" especies relacionadas · "+directRelations(n.id).length+" registros directos bajo los filtros actuales.";
+
+  svg.innerHTML='';
+  holder.innerHTML='';
+
+  const NS="http://www.w3.org/2000/svg";
+  [120,205,285].forEach(rad=>{
+    const c=document.createElementNS(NS,"circle");
+    c.setAttribute("cx","500");c.setAttribute("cy","330");c.setAttribute("r",String(rad));
+    c.setAttribute("class","sub-ring");svg.appendChild(c);
+  });
+
+  const center=document.createElement("div");
+  center.className="sub-node center";
+  center.style.left="50%";center.style.top="50%";
+  center.innerHTML='<div class="pic" data-photo="'+n.id+'">'+(n.id||"?").charAt(0).toUpperCase()+'</div><div class="nm">'+n.id+'</div><div class="rel">'+(n.n||0)+' registros en RIBB</div>';
+  holder.appendChild(center);
+  ensureNodePhoto(n.id,center.querySelector(".pic"));
+
+  const positions=[];
+  shown.forEach((item,i)=>{
+    const ring=i<7?1:(i<14?2:3);
+    const ringItems=shown.filter((_,j)=>(j<7?1:(j<14?2:3))===ring);
+    const indexInRing=ringItems.indexOf(item);
+    const radius=ring===1?27:ring===2?39:46;
+    const angle=(-Math.PI/2)+(indexInRing/(ringItems.length||1))*Math.PI*2+(ring===2?.18:ring===3?.08:0);
+    const x=50+Math.cos(angle)*radius;
+    const y=51+Math.sin(angle)*(radius*.78);
+    positions.push({x,y,item});
+
+    const line=document.createElementNS(NS,"line");
+    line.setAttribute("x1","500");line.setAttribute("y1","330");
+    line.setAttribute("x2",String(x*10));line.setAttribute("y2",String(y*6.5));
+    line.setAttribute("stroke",COLORS[item.r.title]||"#8c73a5");
+    line.setAttribute("stroke-width",item.count>2?"2.2":"1.3");
+    line.setAttribute("stroke-opacity",".88");
+    if(item.r.q==="Media") line.setAttribute("stroke-dasharray","7 6");
+    if(item.r.q==="Baja") line.setAttribute("stroke-dasharray","2 7");
+    svg.appendChild(line);
+
+    const node=document.createElement("div");
+    node.className="sub-node";
+    node.style.left=x+"%";node.style.top=y+"%";
+    node.innerHTML='<div class="pic">'+item.other.charAt(0).toUpperCase()+'</div><div class="nm">'+item.other+'</div><div class="rel">'+relationLabel(item.r,n.id)+(item.count>1?" · "+item.count+" registros":"")+'</div>';
+    node.addEventListener("click",()=>{
+      const next=nodeMap.get(item.other)||DATA.nodeById.get(item.other)||{id:item.other,n:item.count,origin:""};
+      openSubnetwork(next);
+      openNode(next,false);
+    });
+    holder.appendChild(node);
+    ensureNodePhoto(item.other,node.querySelector(".pic"));
+  });
+
+  if(rels.length>shown.length){
+    const txt=document.createElementNS(NS,"text");
+    txt.setAttribute("x","500");txt.setAttribute("y","620");txt.setAttribute("text-anchor","middle");
+    txt.setAttribute("fill","#8fa095");txt.setAttribute("font-size","10");
+    txt.textContent="+"+(rels.length-shown.length)+" especies adicionales no mostradas para mantener la lectura";
+    svg.appendChild(txt);
+  }
+
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden","false");
+}
+
+document.querySelector("#subnetClose").addEventListener("click",closeSubnetwork);
+document.querySelector("#subnetModal").addEventListener("click",e=>{if(e.target.id==="subnetModal")closeSubnetwork()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSubnetwork()});
+
 function bindClose(){
   const b=document.querySelector("#close");
   if(b)b.onclick=()=>{
@@ -399,7 +577,7 @@ function bindClose(){
   };
 }
 
-function openNode(n){
+function openNode(n,showPopup=true){
   state.focus=n.id;
   const d=document.querySelector("#detail");
   d.classList.add("open");
@@ -413,6 +591,7 @@ function openNode(n){
     '<h4>Lectura</h4><p>Se resaltan las relaciones directas de este taxón dentro del filtro actual. Su posición cambia con la rotación 3D, pero sus conexiones se conservan.</p>'+
     '<p class="small">'+(im?.status==="loaded"?"Foto taxonómica cargada por nombre científico.":"La foto todavía se está resolviendo o no hay una fotografía validada disponible.")+'</p>';
   bindClose();
+  if(showPopup)openSubnetwork(n);
 }
 
 function explain(r){
